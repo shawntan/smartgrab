@@ -1,0 +1,2 @@
+module PageAssociationsHelper
+end
