@@ -2,7 +2,9 @@
  * @author shawn
  */
 
-// javascript:(function(){document.body.appendChild(document.createElement('script')).src='http://localhost:3000/javascripts/bookmarklet/bootstrap.js?s='+Math.floor(Math.random()*1000);})();
+/**
+ * javascript:(function(){document.body.appendChild(document.createElement('script')).src='http://localhost:3000/javascripts/bookmarklet/bootstrap.js?s='+Math.floor(Math.random()*1000);})();
+ */
 
 var bookmarklet_home = "http://localhost:3000/javascripts/bookmarklet/"
 var pi;
