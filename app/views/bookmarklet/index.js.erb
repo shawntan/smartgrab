@@ -10,11 +10,20 @@
 
 (function() {
 	var bookmarklet_home = "<%= url_for(:action => 'index', :controller => 'bookmarklet', :only_path => false) %>";
-
+	var load_annotations = "<%= url_for(:action => 'page', :controller => 'bookmarklet', :only_path => false) %>";
+	var create_annotation= "<%= url_for(:action => 'annotate', :controller => 'bookmarklet', :only_path => false) %>";
+	var parcelsSelectedStyle = "parcels_selected";
+	var parcelsRejectedStyle = "parcels_rejected";
+	var parcelsHighlightedStyle = "parcels_highlight";
+	var parcelsInterfaceStyle = "parcels_interface";
+	
 <%=render :partial => 'util'%>
+
+<%=render :partial => 'connection'%>
 
 <%=render :partial => 'selector'%>
 
 <%=render :partial => 'interface'%>
 
 })();
+
