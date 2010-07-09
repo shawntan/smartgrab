@@ -75,7 +75,7 @@
 			});
 			var list = $B("ul", {className: parcelsInterfaceStyle + " " + "xpath_list",});
 			var status = $B("div",{className:parcelsInterfaceStyle});
-			iframe = Connection.MakeIframe("annotate_iframe");
+			
 			var workspace = $B("form",{
 				className: parcelsInterfaceStyle + " " + "workspace",
 				children:[
@@ -87,8 +87,12 @@
 				],
 				action: create_annotation,
 				method: "POST",
-				target: iframe.name
 			});
+			Connection.MakeIframeTarget(workspace,"annotate_iframe","annotate_done",function(obj){
+				console.log(obj);
+			}).onload = function(){
+				console.log("Submitted");
+			};
 			var main = $B("div", {
 				className: parcelsInterfaceStyle+" "+"main",
 				children: [list,workspace,status]
