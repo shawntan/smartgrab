@@ -8,6 +8,11 @@
 	opacity: 0.93;
 	filter:alpha(opacity=93);
 }
+.parcels_interface form input {
+	display:block;
+	width: 90%;
+}
+
 iframe.parcels_interface {
 	width: 0px;
 	height: 0px;

@@ -49,26 +49,42 @@
 		}
 		this.JSONDataRequest = function(url,callbackName,callback) {
 			window[callbackName] = callback;
+			var count = 0;
 			this.request = function(obj){
 				if(callback){
 					obj["callback"]=callbackName;
 				}
+				obj["s"] = count;
 				if(this.scriptObj) {
 					this.scriptObj.parentNode.removeChild(this.scriptObj);
 					delete this.scriptObj
 				}
 				var requrl = url +"?"+ serializeObject(obj);
 				this.scriptObj = loadScript(requrl);
+				count++;
 			}
 		};
-		this.MakeIframeTarget = function(form,iframe_name,callback_name,callback){
+		var iframe_count = 0;
+		this.MakeIframeTarget = function(form,encapsulating_object,callback){
+			var target = encapsulating_object +"_"+ iframe_count;
 			var iframe = $B("iframe",{
 				className: parcelsInterfaceStyle,
-				name: iframe_name
+				name: target
 			});
-			form.target = iframe_name;
-			form.appendChild($B('input',{type:"hidden",name:"callback",value:callback_name}));
-			window[callback_name] = callback;
+			iframe_count++;
+			form.target = target;
+			var inputs = form.getElementsByTagName("input");
+			for(var i=inputs.length-1;i>=0;i--){
+				if(!(inputs[i].exclude||inputs[i].encapsulated)){
+					inputs[i].name = encapsulating_object + "["+inputs[i].name+"]";
+					inputs[i].encapsulated = true;
+				}
+			}
+			if (callback) {
+				iframe.onload = function(obj1){
+					iframe.onload = callback;
+				}
+			}
 			document.body.appendChild(iframe);
 			return iframe;
 		};

@@ -7,7 +7,7 @@
 		var results = [];
 		resp = document.evaluate(expression, document, null, XPathResult.ANY_TYPE, null);
 		while (val = resp.iterateNext()) {
-			results.push(val);
+			if (!hasClass(val,parcelsInterfaceStyle)) results.push(val);
 		}
 		return results;
 	};
@@ -50,6 +50,17 @@
 			return fun.apply(element, [e]);
 		}
 	};
+	var bindAllMethods = function (element,funs) {
+		function bind(e,fun){
+			return function(){
+				return fun.apply(e, arguments);
+			};
+		}
+		for(var i in funs){
+			var fun = funs[i];
+			element[i] = bind(element,funs[i]);
+		}
+	};
 	var $B = function(tagName, object) {
 		var e = document.createElement(tagName);
 		for (var att in object) {
@@ -65,6 +76,21 @@
 				bindEvent(e,att,object[att]);
 			}
 			else e[att] = object[att];
+		}
+		if(tagName == "input"){
+			if(e.placeholder) {
+				e.onblur = function(){
+					if(e.value.length==0) {
+						e.value = e.placeholder;
+					}
+				}
+				e.onfocus = function(){
+					if(e.value == e.placeholder){
+						e.value = "";
+					}
+				}
+				
+			}
 		}
 		return e;
 	};
@@ -106,3 +132,11 @@
 	var addClass = function(element, className) {
 		element.className = (element.className + " " + className).trim();
 	};
+	
+	var removeAllChildren = function(element) {
+		if(element.hasChildNodes()) {
+			while (element.childNodes.length >= 1 ){
+				element.removeChild(element.firstChild);       
+			}
+		}
+	}

@@ -1,80 +1,161 @@
-	function ParcelsSelector() {
-	}
 	
-	ParcelsSelector.prototype = {
-		selectedList: [],
-		rejectedList: [],
-		selectedListDelete: function(el) {
-			if (contains(this.selectedList, el)) this.selectedList.splice(this.selectedList.indexOf(el), 1);
-			return StratUtil.predictXPath(this.selectedList);
-		},
-		selectElement: function(el){
-			if (!contains(this.selectedList, el)) 
-				this.selectedList.push(el);
-			return StratUtil.predictXPath(this.selectedList);
-		},
-		rejectElement: function(el){
-			if (!contains(this.rejectedList, el)) 
-				this.rejectedList.push(el);
-			return StratUtil.predictXPath(this.rejectedList);
-		},
-		rejectedListDelete: function(el) {
-			if (contains(this.rejectedList, el)) this.rejectedList.splice(this.rejectedList.indexOf(el), 1);
-			return StratUtil.predictXPath(this.rejectedList);
-		}
-	};
-	
-	var StratUtil = {
-		NO_COMMON: ["NO COMMON TRAITS"],
-		predictXPath: function(paths) {
-			if (paths.length == 0) return null;
-			//find similarities between targets.(finding only similar tags)
-			var catHash = {};
-			for (var i = 0; i < paths.length; i++) {
-				var cur = paths[i];
-				if (!catHash[cur.tagName]) catHash[cur.tagName] = [];
-				catHash[cur.tagName].push(this.getPath(cur));
-			}
-			//find path separately for similar groups
-			var positive_results = [];
-			for (var tag in catHash) {
-				var categorized_paths = catHash[tag];
-				positive_results.push(StratUtil.mergePath(categorized_paths));
-			}
-			var generalXPath;
-			for(var i=0;i<positive_results.length;i++){
-				if (generalXPath) generalXPath += " | " + StratUtil.generateXPath(positive_results[i]);
-				else generalXPath = StratUtil.generateXPath(positive_results[i]);
-			}
-			return generalXPath;
-			
-		},
-		mergePath: function(categorized_paths){
-			var resultPath = null;
-			for (var j = 0; j < categorized_paths.length; j++) {
-				if (resultPath) {
-					resultPath = StratUtil.longestCommonPathSequence(resultPath, categorized_paths[j]);
+	var ParcelsSelector = function(){
+		var error = new Error("No match!");
+		var methods = {//special methods to zhng elements
+		//[this] refers to element!
+			getIndex: function(){
+				if (this.index) return this.index;
+				var result = 1;
+				var temp = this;
+				var tagname = this.tagName;
+				//end
+				while (temp = temp.previousSibling){
+					if (temp.tagName == tagname) result++;
+				} 
+				if (result > 0) {
+					this.index = result;
+					return result;
 				}
+			},
+			isLast: function() {
+				if(this.last != null) return this.last;
+				var tl = this.parentNode.children[this.parentNode.children.length-1];
+				do {
+					if(tl==this) {
+						this.last = true;
+						return this.last;
+					}
+					tl = tl.previousSibling;
+				} while (tl.tagName!=this.tagName);
+				return false;
+			},
+			getClasses: function() {
+				if (this.classes) return this.classes;
+				if (this.className){
+					var result = this.className.split(/\s+/);
+					var index;
+					for(var i=classignorelist.length-1;i>=0;i--)
+						if((index = result.indexOf(classignorelist[i]))>=0)
+							result.splice(index, 1);
+					return this.classes = result;
+				}
+			},
+			getPath: function() {
+				if (this.path) return this.path;
 				else {
-					resultPath = categorized_paths[j];
+					var curr = this;
+					var result = [];
+					do {
+						preprocessor(curr);
+						result.unshift(curr);
+						curr = curr.parentNode
+					} while ((curr != document.body));
+					this.path = result;
+					return result;
+				}
+			},
+			getSelector:  function(){
+				var result = this.tagName.toLowerCase();
+				var selector;
+				if(this.id){
+					selector=  "@id='"+this.id+"'";
+				} else selector = this.getIndex();
+				return result+'['+selector+']';
+			},
+			getXPath:function(){
+				if(this.id){
+					return "//"+this.getSelector();
+				} else if (this.parentNode == document.body){
+					return "/html/body/"+this.getSelector();
+				} else {
+					if(!this.parentNode.preprocessed) preprocessor(this.parentNode);
+					return this.parentNode.getXPath()+"/"+this.getSelector();
+				}
+				
+			}
+		};
+		var PseudoElement = function(){
+		};
+		var selector_priority = [
+			function(pe){
+				if(pe.classes) return "contains(concat(' ',@class,' '),' " + pe.classes[0] + " ')";
+			},
+			function(pe){
+				if(pe.index) return pe.index;
+			},
+			function(pe){
+				if(pe.last) return "last()";
+			}
+		];
+		PseudoElement.prototype = {
+			preprocessed: true,
+			getIndex: function(){
+				if(this.index) return this.index;
+				else throw error;
+			},
+			isLast: function(){
+				if(this.last != null) return this.last;
+				else throw error;
+			},
+			getClasses: function(){
+				if(this.classes) return this.classes;
+				else throw error;
+			},
+			getPath: function(){
+				if(this.path) return this.path;
+				else throw error;
+			},
+			getSelector: function(){
+				var result;
+				if(this.tagName)result = this.tagName.toLowerCase();
+				else result = "*";
+				var selector;
+				for(var i=0;i<selector_priority.length;i++){
+					selector = selector_priority[i](this);
+					if(selector) break;
+				}
+				return result + (selector?'['+selector+']':"");
+			},
+			getXPath: function(){
+				if(this.path) {
+					var path = this.path;
+					var result = this.getSelector();
+					var match_any = false;
+					for(var i=path.length-2;i>=0;i--){
+						var temp;
+						if(path[i].getXPath && (temp=path[i].getXPath())){
+							return temp+'/'+result;
+						} else if(path[i]=='*'){
+							if(match_any) continue;
+							else {
+								result = "/"+result;
+								match_any = true;
+							}
+						}
+						else {
+							match_any = false;
+							result = path[i].getSelector()+'/'+result;
+						}
+					}
+					return "/html/body/"+result;
 				}
 			}
-			return resultPath;
-		},
-		tokenizeClasses: function(elem) {
-			if (!elem.classes) {
-				if (elem.className) {
-					elem.classes = elem.className.split(/\s+/);
-				}
+		};
+		
+		var preprocessor = function(e) {
+			if(e.preprocessed) return;
+			bindAllMethods(e,methods);
+			e.preprocessed = true;
+		}
+		var commonTagName = function(e1,e2,pseudo){
+			if (e1.tagName == e2.tagName) {
+				return pseudo.tagName = e1.tagName;
 			}
-			return elem.classes;
-		},
-		commonClasses: function(elem1, elem2) {
-			if (!elem1) return;
-			if (!elem2) return;
-			var classes1 = this.tokenizeClasses(elem1);
-			var classes2 = this.tokenizeClasses(elem2);
-			if(!classes1 || !classes2) return;
+		};
+		var commonClasses = function(e1,e2,pseudo) {
+			var classes1 = e1.getClasses();
+			var classes2 = e2.getClasses();
+			if(classes1.length==0||classes2.length==0) return;
 			var results = [];
 			var i = classes1.length;
 			while (i--) {
@@ -82,145 +163,89 @@
 				else if(classes1[i] == "parcels_highlight") continue;
 				else if (classes2.indexOf(classes1[i]) >= 0) results.unshift(classes1[i]);
 			}
-			return results;
-		},
-		getPath: function(elem) {
-			if (elem.parcels_path) return elem.parcels_path;
-			else {
-				var curr = elem;
-				var result = [];
-				do {
-					result.unshift(curr);
-					curr = curr.parentNode
-				} while ((curr != document.body));
-				elem.parcels_path = result;
-				return result;
-			}
-		},
-		xpathIndex: function(elem) {
-			if (elem.xpathIndex) return elem.xpathIndex;
-			if(elem.pseudoClass) return;
-			var result = 0;
-			var temp = elem;
-			var tagname = elem.tagName;
-			//check if last
-			var tl = elem.parentNode.children[elem.parentNode.children.length-1];
-			do {
-				if(tl==elem) {
-					temp.last = true;
-					break;
-				}
-				tl = tl.previousSibling;
-			} while (tl.tagName!=elem.tagName);
-			//end
-			do {
-				if (elem.tagName == tagname) result++;
-			} while (elem = elem.previousSibling);
-			temp.xpathIndex = result;
-			return result;
-		},
-		generateXPath: function(path) {
-			var result = "/html/body";
-			var prevStar = false;
-			for (var i = 0; i < path.length; i++) {
-				var e = path[i];
-				if (e == "*") {
-					if (!prevStar) {
-						prevStar = true;
-						result += "/";
-					}
-				}
-				else {
-					prevStar = false;
-					var thisToken = "/";
-					if (e.pseudoClass) thisToken += e.xpathSelector();
-					else {
-						thisToken += lower_tag = e.tagName.toLowerCase();
-						var selector;
-						if (e.id) {
-							result = "/";
-							selector = "@id='" + e.id + "'";
-						}
-						else {
-							selector = this.xpathIndex(e);
-						}
-						if (selector) thisToken += "[" + selector + "]";
-					}
-					result += thisToken;
+			if(results.length > 0) return pseudo.classes = results;
+		};
+		var commonIndex   = function(e1,e2,pseudo){
+			if(pseudo.tagName|| e1.tagName==e2.tagName) {
+				if(e1.getIndex() == e2.getIndex()) {
+					pseudo.index = e1.getIndex();
 				}
 			}
-			return result;
-		},
-		
-		
-		similarElements: function(elem1, elem2) {
-			if (elem1 == elem2) return elem1;
-			if (elem1=="*"||elem2=="*") return false;
-			var pe = new PseudoClass(); // both elements are not in commonalityHash, compute PseudoClass
-			var hasCommon = false;
-			//TAG
-			if (elem1.tagName == elem2.tagName) {
-				pe.tagName = elem1.tagName;
-				hasCommon = true;
-			//INDEX
-				var index;
-				if ((index = this.xpathIndex(elem1)) == this.xpathIndex(elem2)){
-					pe.xpathIndex = index;
-					hasCommon = true;
-				} else if(elem1.last && elem2.last){
-					pe.last = true;
-					hasCommon = true;
+
+		};
+		var commonIsLast  = function(e1,e2,pseudo) {
+			if (pseudo.tagName || e1.tagName == e2.tagName) {
+				if (e1.isLast() && e2.isLast()) {
+					return pseudo.last = true;
 				}
 			}
-			//CLASSES
-			var commonClasses = this.commonClasses(elem1,elem2)
-			if(commonClasses && commonClasses.length) {
-				pe.classes = commonClasses;
-				hasCommon = true;
+		};
+		var comparators = [commonTagName,commonClasses,commonIndex,commonIsLast];
+		//comparision methods
+		var compareElements = function(e1,e2) {
+			preprocessor(e1);
+			preprocessor(e2);
+			if (e1 == e2) {
+				e1.hasCommon = true;
+				return e1;
 			}
-			if (hasCommon) {
-				pe.parents = [elem1,elem2]
-				return pe;
+			else if(e1=='*'||e2=='*'){
+				return null;
 			}
 			else {
-				delete pe;
-				return false;
+				var pseudo = new PseudoElement();
+				for (var i = 0; i < comparators.length; i++) {
+					var result;
+					try {
+						if (result = comparators[i](e1, e2, pseudo)) {
+							pseudo.hasCommon = true;
+						}
+					} 
+					catch (e) {
+					}
+				}
+				if (pseudo.hasCommon) {
+					pseudo.parents = [e1,e2];
+					return pseudo;
+				}
+				else 
+					delete pseudo;
 			}
-		},
-		
-		
-		
-		longestCommonPathSequence: function(path1, path2, lengthOnly) {
-			var p1 = path1;
-			var p2 = path2;
+		};
+		var score_zero = {score:0};
+		var longestPathSubsequence = function(e1,e2) {
+			var p1 = e1.getPath();
+			var p2 = e2.getPath();
 			var table = new Array(p1.length + 1);
-			for (var i = 0; i < table.length; i++) {
+			for (var i = 0; i < table.length; i++) {//i(1st path),j(2nd path) are row and column
 				table[i] = new Array(p2.length + 1);
 				for (var j = 0; j < table[i].length; j++) {
-					if (i == 0 || j == 0) table[i][j] = 0;
+					if (i == 0 || j == 0) table[i][j] = score_zero;
 					else {
-						if (this.similarElements(p1[i - 1], p2[j - 1])) {
-							table[i][j] = table[i - 1][j - 1] + 1;
+						var pseudo = compareElements(p1[i - 1], p2[j - 1]);
+						if (pseudo) {
+							pseudo.score = table[i - 1][j - 1].score + 1
+							table[i][j] = pseudo;
 						}
-						else table[i][j] = Math.max(table[i - 1][j], table[i][j - 1]);
+						else {
+							table[i][j] = table[i - 1][j].score > table[i][j - 1].score ? {
+								score: table[i - 1][j].score
+							} : {
+								score: table[i][j - 1].score
+							};
+						}
 					}
-				};
+				}
 			}
-			if (lengthOnly) {
-				result = table[p1.length][p2.length];
-				delete table;
-				return result;
-			}
-			var self = this;
 			function recon(i, j) {
 				var res;
 				var r;
 				if (i == 0 || j == 0) return [];
-				else if (res = self.similarElements(p1[i - 1], p2[j - 1])) {
+				else if (table[i][j].hasCommon) {
 					r = recon(i - 1, j - 1);
-					r.push(res);
+					r.push(table[i][j]);
 				}
-				else if (table[i - 1][j] > table[i][j - 1]) {
+				else if (table[i - 1][j].score > table[i][j - 1].score) {
 					r = recon(i - 1, j);
 					r.push('*');
 				}
@@ -230,28 +255,70 @@
 				}
 				return r;
 			}
+			var path = recon(p1.length, p2.length);
 			delete table;
-			return recon(p1.length, p2.length);
-		}
-	};
-	function PseudoClass(){}
-	PseudoClass.prototype = {
-		pseudoClass: true,
-		tagName:	 "*",
-		classes:	null,
-		xpathSelector: function() {
-			var result = this.tagName.toLowerCase();
-			var selector;
-			if (this.classes && this.classes.length) {
-				selector = "contains(concat(' ',@class,' '),' " + this.classes[0] + " ')";
+			path[path.length-1].path = path;
+			return path[path.length-1];
+		}	
+		
+		//higher level methods
+		var last_cached_result = {
+			selected: null,
+			rejected: null
+		};
+		var calculateXPath = function(type,newElement){ //type:"selected","rejected"
+			var result;
+			preprocessor(newElement);
+			if(last_cached_result[type]) {
+				result = longestPathSubsequence(last_cached_result[type],newElement);
+			} else {
+				result = tracker[type][0];
+				for(var i=1;i<tracker[type].length;i++){
+					result = longestPathSubsequence(result,tracker[type][i]);
+				}
 			}
-			else if (this.xpathIndex) {
-				selector = this.xpathIndex;
-			}
-			else if (this.last){
-				selector = "last()";
-			}
-			if (selector) result += "[" + selector + "]";
+			last_cached_result[type] = result;
 			return result;
 		}
+		
+		//start exposed functions.
+		this.tracker = {
+			selected: [],
+			rejected: [],
+			xpath: null
+		};
+		var tracker = this.tracker;
+		var selected = tracker.selected;
+		var rejected = tracker.rejected;
+		this.selectElement = function(el) {
+			if (contains(selected, el) || contains(rejected,el)) return;
+			else selected.push(el);
+			var result = calculateXPath("selected",el);
+			tracker.xpath = result.getXPath();
+			return tracker;
+		};
+		this.selectedDelete = function(el) {
+			if (contains(selected, el)){
+				last_cached_result.selected = null;
+				selected.splice(selected.indexOf(el), 1);
+			}
+			if(selected.length>0){
+				var result = calculateXPath("selected",el);
+				if(result) tracker.xpath = result.getXPath();
+				return tracker;
+			} else {
+				tracker.xpath = "";
+			}
+		};
+		this.rejectElement = function() {
+			if (contains(selected, el) || contains(rejected,el)) return;
+			else rejected.push(el);
+			return tracker;
+		};
+		this.rejectedDelete = function() {
+			if (contains(rejected, el)){
+				last_cached_result.rejected = null;
+				rejected.splice(rejected.indexOf(el), 1);
+			}
+		};
 	};
