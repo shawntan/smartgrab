@@ -6,9 +6,18 @@ class BookmarkletController < ApplicationController
       format.js
     end
 	end
+	def stylesheet
+		respond_to do |format|
+			format.css
+		end
+	end
 	
 	def page
-		@page = Page.find_by_url(params[:page][:url] );
+		if(params[:id])
+			@page = Page.find(params[:id]);
+		else
+			@page = Page.find_by_url(params[:page][:url] );
+		end
 		if @page 
 			render :js => "#{params[:callback]}(#{@page.to_json(:include => [:annotations])});"
 		else

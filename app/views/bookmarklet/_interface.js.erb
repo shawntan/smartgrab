@@ -3,7 +3,7 @@
 		var pi;
 		var iframe;
 		var allElements = document.body.getElementsByTagName("*");
-		//gui
+		//view
 	    var border_width = 5;
 		var makeBoxBorders = function(border_width, fix_side){
 			var self = this;
@@ -11,8 +11,7 @@
 			d.style[fix_side] = border_width + "px";
 			return d;
 		};
-		//box : this is the thing that "boxes" up the elements to be selected
-		var createBox = function(){
+		var createBox = function(){//box : this is the thing that "boxes" up the elements to be selected
 			var _box = {
 	        	visible: false,
 	        	top: makeBoxBorders(border_width, "height"),
@@ -53,8 +52,7 @@
 			_box.bottom.appendChild(_box.text);
 			return _box;
 		};
-		//suggestor: this is the prompt at the top right hand corner that "suggests" the xpath
-		var createSuggestor = function(){
+		var createSuggestor = function(){//suggestor: this is the prompt at the top right hand corner that "suggests" the xpath
 			var header = $B("div", {
 				children: [$B('div', {
 					className: parcelsInterfaceStyle,
@@ -81,16 +79,18 @@
 						name: "label",
 						placeholder: "Label Name"
 					}),
-					xpath_field = $B("input",{type:"text",name:"xpath"}),
-					$B("input",{type:"submit",exclude:true})
+					xpath_field = $B("input",{type:"hidden",name:"xpath"}),
+					$B("input",{value:"Add Selection",type:"submit",exclude:true})
 				],
 				action: create_annotation,
 				method: "POST"
 			});
 			
 			Connection.MakeIframeTarget(workspace,"annotation",function(){
-				loader.request({page:{url:document.location.href,title:document.title}});
+				clearAllInvolvedAndSelector();
+				loader.request({id:page_id_field.value});
 				label_field.value = "";
+				xpath_field.value = "";
 			});
 			var main = $B("div", {
 				className: parcelsInterfaceStyle+" "+"main",
@@ -112,25 +112,31 @@
 			s.label_field = label_field;
 			s.list = list;
 		    document.body.appendChild(s);
-			
 		    return s;
 		}
 		var displayAnnotations = function(annotations) {
 			var list = pi.suggestor.list;
 			removeAllChildren(list);
-			for (var i = 0; i < annotations.length; i++) {
-				list.appendChild($B("li", {
-					innerHTML: annotations[i].label,
-					data: annotations[i],
-					onclick: function() {
-						console.log(this.data);
-					}
-				}));
+			if (annotations) {
+				for (var i = 0; i < annotations.length; i++) {
+					list.appendChild($B("li", {
+						innerHTML: annotations[i].label,
+						data: annotations[i],
+						onmouseover: function(){
+							clearAllInvolvedAndSelector();
+							list.highlighted = queryDocument(this.data.xpath);
+							setElements(list.highlighted,"parcels_listshow",null);
+						},
+						onmouseout: function() {
+							clearElements(list.highlighted,"parcels_listshow");
+						}
+					}));
+				}
 			}
 			list.scrollTop = list.scrollHeight;
 		};
 		
-		//actions
+		//controllers
 		var loader = new Connection.JSONDataRequest(
 			load_annotations,
 			"requestPageData",
@@ -153,48 +159,67 @@
 				elements[i].parcels_action = fun;
 			}
 		};
+		var clearAllInvolved = function(){
+			if (pi && pi.selector) {
+				clearElements(pi.selector.tracker.selected, styles.selected)
+				clearElements(pi.selector.tracker.rejected, styles.rejected);
+				clearElements(pi.selector.tracker.highlighted, styles.highlighted);
+			}
+		}
+		var clearAllInvolvedAndSelector = function() {
+			if (pi && pi.selector) {
+				clearAllInvolved();
+				delete pi.selector;
+				pi.selector = new ParcelsSelector();
+			}
+		}
 		var overrideActions = {
 			onclick: function(e){
 				blockevent(e);
+				if(pi.selector.tracker.selected.length > 0 &&
+					pi.selector.tracker.selected[0].tagName != this.tagName) return false;
 				if(!this.parcels_action) this.parcels_action = parcels_actions.select;
 				var parcels_action = this.parcels_action;
-				clearElements(pi.selector.tracker.selected,styles.selected)
-				clearElements(pi.selector.tracker.rejected,styles.rejected);
-				clearElements(pi.elements,styles.highlighted);
+				
+				clearAllInvolved();
 				
 				parcels_action(this);
-				if(!pi.xpath || pi.xpath != pi.selector.tracker.xpath){
-					pi.xpath = pi.selector.tracker.xpath;
-					pi.elements = queryDocument(pi.xpath);
-					pi.suggestor.xpath_field.value = pi.xpath;
-				}
+				pi.suggestor.xpath_field.value = pi.selector.tracker.xpath;
 				
-				setElements(pi.elements,styles.highlighted,parcels_actions.reject);
+				setElements(pi.selector.tracker.highlighted,styles.highlighted,parcels_actions.reject);
 				setElements(pi.selector.tracker.rejected,styles.rejected,parcels_actions.dereject);
 				setElements(pi.selector.tracker.selected,styles.selected,parcels_actions.deselect);
 				
 				return false;
 			},
 			onmouseover: function(e){
+				if(pi.selector.tracker.selected.length > 0 &&
+					pi.selector.tracker.selected[0].tagName != this.tagName) return false;
 				pi.box.setPosition(getPos(this), {
 					width: this.offsetWidth,
 					height: this.offsetHeight
 				});
 				pi.box.setText(this.parentNode.tagName + " " + this.tagName);
+				this.parcels_temp_zIndex = this.style.zIndex;
+				this.style.zIndex = "999999";
 				blockevent(e);
+				return false;
+			},
+			onmouseout: function(e){
+				blockevent(e);
+				pi.box.setVisible(false);
+				this.style.zIndex = this.parcels_temp_zIndex; 
 				return false;
 			}
 		};
 		var parcels_actions = {
 			select: function(e){//change to green
-				console.log("SELECT");
 				return pi.selector.selectElement(e);
 			},
 			reject: function(e){
-				return {xpath:pi.xpath}; //TODO: debug stuff.
+				return pi.selector.rejectElement(e);
 			},
 			deselect: function(e){
-				console.log("DESELECT");
 				return pi.selector.selectedDelete(e);
 			},
 			dereject: function(e){
@@ -209,18 +234,11 @@
 		        }
 		    }
 		    //remove all additional elements added onto page
-		    interfaceElements = queryDocument("//*[@class='" + parcelsInterfaceStyle + "']");
-		    var i = interfaceElements.length;
-		    while (i--) {
-		        var curr = interfaceElements[i];
-		        curr.parentNode.removeChild(curr);
-				delete curr;
-		    }
-		    removeAllClass(styles.selected);
-		    removeAllClass(styles.highlighted);
-			removeAllClass(styles.rejected)
-		    delete pi;
-			delete ParcelsInterface;
+			$B.destroyAll();
+			
+			clearAllInvolved();
+		    delete pi.selector;
+			delete pi;
 		};
 		
 		//initialize
@@ -234,4 +252,3 @@
 		pi.suggestor.label_field.value = pi.suggestor.label_field.placeholder;
 		return pi;
 	})();
-
