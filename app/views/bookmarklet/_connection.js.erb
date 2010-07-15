@@ -61,11 +61,14 @@
 				this.scriptObj = loadScript(requrl);
 			}
 		};
-		this.MakeIframe = function(iframe_name){
+		this.MakeIframeTarget = function(form,iframe_name,callback_name,callback){
 			var iframe = $B("iframe",{
 				className: parcelsInterfaceStyle,
 				name: iframe_name
 			});
+			form.target = iframe_name;
+			form.appendChild($B('input',{type:"hidden",name:"callback",value:callback_name}));
+			window[callback_name] = callback;
 			document.body.appendChild(iframe);
 			return iframe;
 		};

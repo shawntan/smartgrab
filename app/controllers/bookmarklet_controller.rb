@@ -3,7 +3,7 @@ class BookmarkletController < ApplicationController
 
 	def index
 		respond_to do |format|
-      format.js   # foo/bar.js.erb
+      format.js
     end
 	end
 	
@@ -19,7 +19,15 @@ class BookmarkletController < ApplicationController
 		end
 	end
 	def annotate
-		
+		    @annotation = Annotation.new(params[:annotation])
+		    script = "#{params[:callback]}(#{@annotation.to_json});";
+    		respond_to do |format|
+    			if @annotation.save
+    				format.js {render(:js => script )}
+    				format.html 
+    			else
+    			end
+    		end
 	end
 	
 end
