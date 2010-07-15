@@ -1,0 +1,13 @@
+<p>
+  <b>Name:</b>
+  <%=h @extractor.name %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%=h @extractor.description %>
+</p>
+
+
+<%= link_to 'Edit', edit_extractor_path(@extractor) %> |
+<%= link_to 'Back', extractors_path %>
