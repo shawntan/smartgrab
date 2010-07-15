@@ -79,7 +79,11 @@
 						name: "label",
 						placeholder: "Label Name"
 					}),
+<<<<<<< HEAD
 					xpath_field = $B("input",{type:"hidden",name:"xpath"}),
+=======
+					xpath_field = $B("input",{type:"text",name:"xpath"}),
+>>>>>>> 8720a5a862f8684607e731f8f855f37dd059ee78
 					$B("input",{value:"Add Selection",type:"submit",exclude:true})
 				],
 				action: create_annotation,
@@ -88,7 +92,11 @@
 			
 			Connection.MakeIframeTarget(workspace,"annotation",function(){
 				clearAllInvolvedAndSelector();
+<<<<<<< HEAD
 				loader.request({id:page_id_field.value});
+=======
+				loader.request({page:{url:document.location.href,title:document.title}});
+>>>>>>> 8720a5a862f8684607e731f8f855f37dd059ee78
 				label_field.value = "";
 				xpath_field.value = "";
 			});
@@ -112,6 +120,10 @@
 			s.label_field = label_field;
 			s.list = list;
 		    document.body.appendChild(s);
+<<<<<<< HEAD
+=======
+			
+>>>>>>> 8720a5a862f8684607e731f8f855f37dd059ee78
 		    return s;
 		}
 		var displayAnnotations = function(annotations) {
@@ -251,4 +263,8 @@
 		loader.request({page:{url:document.location.href,title:document.title}});
 		pi.suggestor.label_field.value = pi.suggestor.label_field.placeholder;
 		return pi;
+<<<<<<< HEAD
 	})();
+=======
+	})();
+>>>>>>> 8720a5a862f8684607e731f8f855f37dd059ee78

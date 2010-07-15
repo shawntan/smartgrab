@@ -3,6 +3,10 @@ class PagesController < ApplicationController
   # GET /pages.xml
   def index
     @pages = Page.all
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8720a5a862f8684607e731f8f855f37dd059ee78
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @pages }
