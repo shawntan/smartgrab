@@ -2,16 +2,16 @@
 
 <table>
   <tr>
-    <th>Css selector</th>
     <th>Page</th>
     <th>Label</th>
+	<th>XPath</th>
   </tr>
 
 <% @annotations.each do |annotation| %>
   <tr>
-    <td><%=h annotation.css_selector %></td>
     <td><%=h annotation.page_id %></td>
     <td><%=h annotation.label_id %></td>
+	<td><%=h annotation.xpath %></td>
     <td><%= link_to 'Show', annotation %></td>
     <td><%= link_to 'Edit', edit_annotation_path(annotation) %></td>
     <td><%= link_to 'Destroy', annotation, :confirm => 'Are you sure?', :method => :delete %></td>
