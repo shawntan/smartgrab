@@ -27136,3 +27136,76 @@ Processing BookmarkletController#page (for 127.0.0.1 at 2010-07-15 12:11:09) [GE
   [4;36;1mAnnotation Load (0.2ms)[0m   [0;1mSELECT * FROM `annotations` WHERE (`annotations`.page_id = 14) [0m
   [4;35;1mAnnotation Columns (0.3ms)[0m   [0mSHOW FIELDS FROM `annotations`[0m
 Completed in 13ms (View: 1, DB: 1) | 200 OK [http://localhost/bookmarklet/page?page[url]=http%3A%2F%2Fdigg.com%2F&page[title]=Digg%20-%20The%20Latest%20News%20Headlines%2C%20Videos%20and%20Images&callback=requestPageData&s=1]
+  [4;36;1mSQL (74.0ms)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (11.7ms)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+
+
+Processing BookmarkletController#index (for 127.0.0.1 at 2010-07-15 14:28:42) [GET]
+  Parameters: {"s"=>"469"}
+Rendering bookmarklet/index
+Rendered bookmarklet/_util (0.8ms)
+Rendered bookmarklet/_connection (0.7ms)
+Rendered bookmarklet/_selector (1.8ms)
+Rendered bookmarklet/_interface (1.3ms)
+Completed in 90ms (View: 89, DB: 86) | 200 OK [http://localhost/bookmarklet?s=469]
+  [4;36;1mSQL (0.1ms)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.0ms)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+
+
+Processing BookmarkletController#stylesheet (for 127.0.0.1 at 2010-07-15 14:28:42) [GET]
+Rendering bookmarklet/stylesheet
+Completed in 7ms (View: 6, DB: 0) | 200 OK [http://localhost/bookmarklet/stylesheet]
+  [4;36;1mSQL (0.1ms)[0m   [0;1mSET NAMES 'utf8'[0m
+  [4;35;1mSQL (0.0ms)[0m   [0mSET SQL_AUTO_IS_NULL=0[0m
+
+
+Processing BookmarkletController#page (for 127.0.0.1 at 2010-07-15 14:28:42) [GET]
+  Parameters: {"page"=>{"url"=>"http://stackoverflow.com/questions/1680582/git-svn-password-change", "title"=>"git-svn password change - Stack Overflow"}, "callback"=>"requestPageData", "s"=>"0"}
+  [4;36;1mPage Columns (103.0ms)[0m   [0;1mSHOW FIELDS FROM `pages`[0m
+  [4;35;1mPage Load (25.2ms)[0m   [0mSELECT * FROM `pages` WHERE (`pages`.`url` = 'http://stackoverflow.com/questions/1680582/git-svn-password-change') LIMIT 1[0m
+  [4;36;1mSQL (2.6ms)[0m   [0;1mBEGIN[0m
+  [4;35;1mPage Create (0.2ms)[0m   [0mINSERT INTO `pages` (`title`, `url`, `created_at`, `updated_at`) VALUES('git-svn password change - Stack Overflow', 'http://stackoverflow.com/questions/1680582/git-svn-password-change', '2010-07-15 06:28:43', '2010-07-15 06:28:43')[0m
+  [4;36;1mSQL (334.3ms)[0m   [0;1mCOMMIT[0m
+Completed in 930ms (View: 1, DB: 465) | 200 OK [http://localhost/bookmarklet/page?page[url]=http%3A%2F%2Fstackoverflow.com%2Fquestions%2F1680582%2Fgit-svn-password-change&page[title]=git-svn%20password%20change%20-%20Stack%20Overflow&callback=requestPageData&s=0]
+  [4;35;1mSQL (0.9ms)[0m   [0mSET NAMES 'utf8'[0m
+  [4;36;1mSQL (0.2ms)[0m   [0;1mSET SQL_AUTO_IS_NULL=0[0m
+
+
+Processing BookmarkletController#page (for 127.0.0.1 at 2010-07-15 14:28:43) [GET]
+  Parameters: {"id"=>"", "callback"=>"requestPageData", "s"=>"1"}
+  [4;35;1mPage Columns (0.5ms)[0m   [0mSHOW FIELDS FROM `pages`[0m
+  [4;36;1mPage Load (0.1ms)[0m   [0;1mSELECT * FROM `pages` WHERE (`pages`.`id` = 0) [0m
+
+ActiveRecord::RecordNotFound (Couldn't find Page with ID=):
+  app/controllers/bookmarklet_controller.rb:17:in `page'
+  <internal:prelude>:8:in `synchronize'
+  /usr/lib/ruby/1.9.1/webrick/httpserver.rb:111:in `service'
+  /usr/lib/ruby/1.9.1/webrick/httpserver.rb:70:in `run'
+  /usr/lib/ruby/1.9.1/webrick/server.rb:183:in `block in start_thread'
+
+Rendered rescues/_trace (43.3ms)
+Rendered rescues/_request_and_response (1.0ms)
+Rendering rescues/layout (not_found)
+  [4;35;1mSQL (0.1ms)[0m   [0mSET NAMES 'utf8'[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1mSET SQL_AUTO_IS_NULL=0[0m
+
+
+Processing BookmarkletController#annotate (for 127.0.0.1 at 2010-07-15 14:29:17) [POST]
+  Parameters: {"annotation"=>{"page_id"=>"32", "label"=>"Add", "xpath"=>"(//div[@id='sidebar']/div[5]/div[1]/div[contains(concat(' ',@class,' '),' spacer ')]/a[1])[not(.=(//div[@id='sidebar']/div[5]/div[1]/div[19]/a[1]))]"}}
+  [4;35;1mAnnotation Columns (4.8ms)[0m   [0mSHOW FIELDS FROM `annotations`[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1mBEGIN[0m
+  [4;35;1mAnnotation Create (0.1ms)[0m   [0mINSERT INTO `annotations` (`page_id`, `label`, `xpath`, `created_at`, `updated_at`) VALUES(32, 'Add', '(//div[@id=\'sidebar\']/div[5]/div[1]/div[contains(concat(\' \',@class,\' \'),\' spacer \')]/a[1])[not(.=(//div[@id=\'sidebar\']/div[5]/div[1]/div[19]/a[1]))]', '2010-07-15 06:29:17', '2010-07-15 06:29:17')[0m
+  [4;36;1mSQL (7.7ms)[0m   [0;1mCOMMIT[0m
+Rendering bookmarklet/annotate
+Completed in 61ms (View: 9, DB: 13) | 200 OK [http://localhost/bookmarklet/annotate]
+  [4;35;1mSQL (0.1ms)[0m   [0mSET NAMES 'utf8'[0m
+  [4;36;1mSQL (0.0ms)[0m   [0;1mSET SQL_AUTO_IS_NULL=0[0m
+
+
+Processing BookmarkletController#page (for 127.0.0.1 at 2010-07-15 14:29:17) [GET]
+  Parameters: {"id"=>"32", "callback"=>"requestPageData", "s"=>"2"}
+  [4;35;1mPage Columns (0.5ms)[0m   [0mSHOW FIELDS FROM `pages`[0m
+  [4;36;1mPage Load (0.2ms)[0m   [0;1mSELECT * FROM `pages` WHERE (`pages`.`id` = 32) [0m
+  [4;35;1mAnnotation Load (0.2ms)[0m   [0mSELECT * FROM `annotations` WHERE (`annotations`.page_id = 32) [0m
+  [4;36;1mAnnotation Columns (0.3ms)[0m   [0;1mSHOW FIELDS FROM `annotations`[0m
+Completed in 10ms (View: 0, DB: 1) | 200 OK [http://localhost/bookmarklet/page?id=32&callback=requestPageData&s=2]
