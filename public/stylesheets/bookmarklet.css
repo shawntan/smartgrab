@@ -10,7 +10,8 @@
 }
 .parcels_interface form input {
 	display:block;
-	width: 90%;
+	clear: both;
+	width: 300px;
 }
 
 iframe.parcels_interface {
@@ -46,7 +47,7 @@ iframe.parcels_interface {
 .parcels_interface.xpath_list {
 	list-style: none;
 	width: 300px;
-	height: 70px;
+	height: 120px;
 	overflow: auto;
 }
 .parcels_interface.xpath_list li {

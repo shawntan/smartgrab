@@ -1,4 +1,3 @@
-	
 	var ParcelsSelector = function(){
 		var error = new Error("No match!");
 		var methods = {//special methods to zhng elements
@@ -77,15 +76,9 @@
 		var PseudoElement = function(){
 		};
 		var selector_priority = [
-			function(pe){
-				if(pe.classes) return "contains(concat(' ',@class,' '),' " + pe.classes[0] + " ')";
-			},
-			function(pe){
-				if(pe.index) return pe.index;
-			},
-			function(pe){
-				if(pe.last) return "last()";
-			}
+			function(pe){if(pe.index) return pe.index},
+			function(pe){if(pe.last) return "last()"},
+			function(pe){if (pe.classes) return "contains(concat(' ',@class,' '),' " + pe.classes[0] + " ')"}
 		];
 		PseudoElement.prototype = {
 			preprocessed: true,
@@ -260,65 +253,171 @@
 			path[path.length-1].path = path;
 			return path[path.length-1];
 		}	
-		
-		//higher level methods
-		var last_cached_result = {
-			selected: null,
-			rejected: null
-		};
-		var calculateXPath = function(type,newElement){ //type:"selected","rejected"
-			var result;
-			preprocessor(newElement);
-			if(last_cached_result[type]) {
-				result = longestPathSubsequence(last_cached_result[type],newElement);
-			} else {
-				result = tracker[type][0];
-				for(var i=1;i<tracker[type].length;i++){
-					result = longestPathSubsequence(result,tracker[type][i]);
+		var flatPathCompare = function(e1,e2){
+			var path1 = e1.getPath();
+			var path2 = e2.getPath();
+			if(path1.length == path2.length) {
+				var result = [];
+				var depth = e1.getPath().length;
+				for(var i=depth-1;i>=0;i--){
+					var el;
+					if(path1[i]==path2[i]) el  = path1[i];
+					else if(el = compareElements(path1[i],path2[i]));
+					else el = "*";
+					result.unshift(el);
 				}
-			}
-			last_cached_result[type] = result;
-			return result;
+				result[result.length-1].path =result;
+				return result[result.length-1];
+			} else throw new Error("Different path length!");
 		}
 		
 		//start exposed functions.
 		this.tracker = {
 			selected: [],
 			rejected: [],
-			xpath: null
+			highlighted: null,
+			update: function() {
+				tracker.xpath = tracker.getXPath();
+				if (!tracker.xpath) {
+					tracker.xpath = "";
+					tracker.highlighted = [];
+				}
+				else {
+					tracker.highlighted = queryDocument(tracker.getXPath());
+				} 
+				
+			}
 		};
 		var tracker = this.tracker;
-		var selected = tracker.selected;
+		tracker.getXPath = function() {
+			if(selected.length == 0) return;
+			var result = selected.getXPath();
+			var rejectedXPath = rejected.getXPath();
+			if(rejectedXPath) result = "("+result+")" + "["+"not(.=("+rejected.getXPath()+"))"+"]";
+			return result;
+		}
+		var selected = tracker.selected;		
 		var rejected = tracker.rejected;
+		selected._push = selected.push;
+		selected.push = function(e){
+			if (contains(selected, e) || contains(rejected, e)) return;
+			else if(contains(rejected.results,e)) return;
+			else {
+				preprocessor(e);
+				if (!selected.path) 
+					selected.path = e;
+				else {
+					selected.path = longestPathSubsequence(selected.path, e);
+				}
+				selected._push(e);
+				selected.results = selected.getResults();
+			}
+			tracker.getXPath();//TODO:REMOVE!!
+		};
+		selected.remove = function(e){
+			if (contains(selected, e)) selected.splice(selected.indexOf(e), 1);
+			else return;
+			if (selected.length > 0) {
+				var temp = selected[0];
+				for(var j=1;j<selected.length;j++){
+					temp = longestPathSubsequence(selected[j],temp);
+				}
+				selected.path = temp;
+			}
+			else delete selected.path;
+			selected.results = selected.getResults();
+		}
+		selected.getXPath = function(){
+			if(selected.path) return selected.path.getXPath();
+		}
+		selected.getResults = function(){
+			var results
+			if(selected.path) results = queryDocument(selected.path.getXPath());
+			tracker.update();
+			return results;
+		}
+		rejected.groups = {};
+		rejected._push = rejected.push;
+		rejected.push = function(e){
+			if (contains(selected, e) || contains(rejected,e)) return;
+			preprocessor(e);
+			var depth = e.getPath().length;
+			if(!rejected.groups[depth])	rejected.groups[depth] = new RejectTagArray();
+			if(rejected.groups[depth].push(e)) {
+				rejected._push(e);
+				rejected.results = rejected.getResults();
+			}
+		};
+		rejected.remove = function(e){
+			var index;
+			if((index = rejected.indexOf(e)) >= 0) rejected.splice(index, 1);
+			else return;
+			var depth = e.getPath().length;
+			rejected.groups[depth].remove(e);
+			rejected.results = rejected.getResults();
+		};
+		rejected.getXPath = function(){
+			var groups = rejected.groups;
+			var resultXPath;
+			var temp;
+			for(var i in groups) {
+				if(groups[i] && groups[i].path) {
+					if(resultXPath) resultXPath = resultXPath + " | " + groups[i].path.getXPath();
+					else resultXPath = groups[i].path.getXPath();
+				}
+			}
+			return resultXPath;
+		}
+		rejected.getResults = function() {
+			tracker.update();
+			return queryDocument(rejected.getXPath());
+		};
+		var RejectTagArray= function(){
+			var arr = [];
+			arr._push = arr.push;
+			arr.push = function(e){
+				var temp = arr.path;//save previous
+				if (!arr.path) arr.path = e;
+				else arr.path = flatPathCompare(arr.path,e);
+				if(arr.isPathInViolation()) {
+					arr.splice(arr.indexOf(e), 1);
+					arr.path = temp;
+					return false;
+				} else {
+					arr._push(e);
+				}
+				return true;
+			};
+			arr.isPathInViolation = function() {
+				var result = queryDocument(arr.path.getXPath());
+				for(var i=selected.length-1;i>=0;i--){
+					if(result.indexOf(selected[i])>=0) return true;
+				}
+				return false;
+			}
+			arr.remove = function(e){
+				arr.splice(arr.indexOf(e), 1);
+				if(arr.length > 0) {
+					var temp = arr[0];
+					for(var j=1;j<arr.length;j++){
+						temp = flatPathCompare(temp,arr[j]);
+					}
+					arr.path = temp;	
+				} else delete arr.path;
+			}
+			return arr;
+		}
+		
 		this.selectElement = function(el) {
-			if (contains(selected, el) || contains(rejected,el)) return;
-			else selected.push(el);
-			var result = calculateXPath("selected",el);
-			tracker.xpath = result.getXPath();
-			return tracker;
+			selected.push(el);
 		};
 		this.selectedDelete = function(el) {
-			if (contains(selected, el)){
-				last_cached_result.selected = null;
-				selected.splice(selected.indexOf(el), 1);
-			}
-			if(selected.length>0){
-				var result = calculateXPath("selected",el);
-				if(result) tracker.xpath = result.getXPath();
-				return tracker;
-			} else {
-				tracker.xpath = "";
-			}
+			selected.remove(el)
 		};
-		this.rejectElement = function() {
-			if (contains(selected, el) || contains(rejected,el)) return;
-			else rejected.push(el);
-			return tracker;
+		this.rejectElement = function(el) {
+			rejected.push(el);
 		};
-		this.rejectedDelete = function() {
-			if (contains(rejected, el)){
-				last_cached_result.rejected = null;
-				rejected.splice(rejected.indexOf(el), 1);
-			}
+		this.rejectedDelete = function(el) {
+			rejected.remove(el);
 		};
 	};

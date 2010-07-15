@@ -6,6 +6,11 @@ class BookmarkletController < ApplicationController
       format.js
     end
 	end
+	def stylesheet
+		respond_to do |format|
+			format.css
+		end
+	end
 	
 	def page
 		@page = Page.find_by_url(params[:page][:url] );

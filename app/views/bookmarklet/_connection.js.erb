@@ -80,10 +80,22 @@
 					inputs[i].encapsulated = true;
 				}
 			}
-			if (callback) {
-				iframe.onload = function(obj1){
-					iframe.onload = callback;
+			var ret;
+			if(form.onsubmit) ret = form.onsubmit;
+			var setElementsDisabled = function(v){
+				for (var i = inputs.length - 1; i >= 0; i--) {
+					inputs[i].disabled = v;
 				}
+			}
+			form.onsubmit = function(){
+				if(ret  && ret(arguments)){
+					setElementsDisabled(true);
+				}
+				return true;
+			};
+			iframe.onload = function(obj1){
+				setElementsDisabled(false);
+				if(callback) callback();
 			}
 			document.body.appendChild(iframe);
 			return iframe;

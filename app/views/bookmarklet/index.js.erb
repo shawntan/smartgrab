@@ -3,23 +3,33 @@
  */
 
 /**
- * javascript:(function(){document.body.appendChild(document.createElement('script')).src='http://localhost:3000/javascripts/bookmarklet/bootstrap.js?s='+Math.floor(Math.random()*1000);})();
+ * javascript:(function(){document.body.appendChild(document.createElement('script')).src='http://localhost:3000/bookmarklet?s='+Math.floor(Math.random()*1000);})();
  * Paste this into bookmarklet, ANOTHER TEST!
  * Third test.
  */
 
+
 (function() {
 	var bookmarklet_home = "<%= url_for(:action => 'index', :controller => 'bookmarklet', :only_path => false) %>";
+	var stylesheet_home = "<%= url_for(:action => 'stylesheet', :controller => 'bookmarklet', :only_path => false) %>";
 	var load_annotations = "<%= url_for(:action => 'page', :controller => 'bookmarklet', :only_path => false) %>";
 	var create_annotation= "<%= url_for(:action => 'annotate', :controller => 'bookmarklet', :only_path => false) %>";
 	var parcelsInterfaceStyle = "parcels_interface";
+	
+	(function(){
+		var link = document.createElement("link");
+		link.rel = "stylesheet";
+		link.type = "text/css";
+		link.href = stylesheet_home;
+		document.getElementsByTagName("head")[0].appendChild(link);
+	})();
+	
 	var styles = {
 		selected:"parcels_selected",
 		rejected:"parcels_rejected",
 		highlighted:"parcels_highlight",
 		interface: parcelsInterfaceStyle
-	};
-	
+	}
 	var classignorelist = [styles.selected,styles.rejected,styles.highlighted,styles.interface];
 <%=render :partial => 'util'%>
 
