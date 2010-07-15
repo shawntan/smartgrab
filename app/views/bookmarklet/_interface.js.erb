@@ -2,7 +2,7 @@
 	var ParcelsInterface = (function(){
 		var pi;
 		var iframe;
-
+		var allElements = document.body.getElementsByTagName("*");
 		//gui
 	    var border_width = 5;
 		var makeBoxBorders = function(border_width, fix_side){
@@ -56,10 +56,6 @@
 		//suggestor: this is the prompt at the top right hand corner that "suggests" the xpath
 		var createSuggestor = function(){
 			var header = $B("div", {
-	        	style: {
-	            	width: "100%",
-	            	display: "block"
-				},
 				children: [$B('div', {
 					className: parcelsInterfaceStyle,
 	            	innerHTML: "X",
@@ -75,24 +71,27 @@
 			});
 			var list = $B("ul", {className: parcelsInterfaceStyle + " " + "xpath_list",});
 			var status = $B("div",{className:parcelsInterfaceStyle});
-			
+			var page_id_field,xpath_field,label_field;
 			var workspace = $B("form",{
 				className: parcelsInterfaceStyle + " " + "workspace",
 				children:[
-					$B("input",{
-						className:parcelsInterfaceStyle,
+					page_id_field = $B("input",{type:"hidden",name:"page_id"}),
+					label_field = $B("input",{
 						type: "text",
-						name: "test"
-					})
+						name: "label",
+						placeholder: "Label Name"
+					}),
+					xpath_field = $B("input",{type:"text",name:"xpath"}),
+					$B("input",{type:"submit",exclude:true})
 				],
 				action: create_annotation,
-				method: "POST",
+				method: "POST"
 			});
-			Connection.MakeIframeTarget(workspace,"annotate_iframe","annotate_done",function(obj){
-				console.log(obj);
-			}).onload = function(){
-				console.log("Submitted");
-			};
+			
+			Connection.MakeIframeTarget(workspace,"annotation",function(){
+				loader.request({page:{url:document.location.href,title:document.title}});
+				label_field.value = "";
+			});
 			var main = $B("div", {
 				className: parcelsInterfaceStyle+" "+"main",
 				children: [list,workspace,status]
@@ -106,80 +105,74 @@
 					else status.innerHTML = "nothing selected";
 		           // if (s.rejectedXPath) 
 		           //     main.innerHTML += "Rejected: " + s.rejectedXPath + "<br/>";
-		        },
-				appendAnnotation: function(element){
-					list.appendChild(element);
-				}
+		        }
 		    });
+			s.page_id_field = page_id_field;
+			s.xpath_field = xpath_field;
+			s.label_field = label_field;
+			s.list = list;
 		    document.body.appendChild(s);
+			
 		    return s;
 		}
+		var displayAnnotations = function(annotations) {
+			var list = pi.suggestor.list;
+			removeAllChildren(list);
+			for (var i = 0; i < annotations.length; i++) {
+				list.appendChild($B("li", {
+					innerHTML: annotations[i].label,
+					data: annotations[i],
+					onclick: function() {
+						console.log(this.data);
+					}
+				}));
+			}
+			list.scrollTop = list.scrollHeight;
+		};
+		
 		//actions
 		var loader = new Connection.JSONDataRequest(
 			load_annotations,
 			"requestPageData",
 			function(page,first){
-				var annotations = page.annotations;
-				for(var i=0;i<annotations.length;i++){
-					pi.suggestor.appendAnnotation($B("li",{
-						innerHTML:annotations[i].label,
-						xpath:annotations[i]
-					}));
-				}
+				displayAnnotations(page.annotations);
+				pi.suggestor.page_id_field.value = page.id;
 			}
 		);
-		var select = function(element){
-		    var xpath;
-			if (element[parcelsSelectedStyle]) {//already selected
-				xpath = pi.selector.selectedListDelete(element);
-				delete element[parcelsSelectedStyle];
-				removeClass(element,parcelsSelectedStyle);
-				removeAllClass(parcelsHighlightedStyle);
+		var clearElements = function(elements,className){
+			if(!elements) return;
+			for(var i=elements.length-1;i>=0;i--){
+				removeClass(elements[i],className);
+				delete elements[i].parcels_action;
 			}
-			else {
-				xpath = pi.selector.selectElement(element);
-				addClass(element, parcelsSelectedStyle);
-				element[parcelsSelectedStyle] = true;
-			}
-			return xpath;
 		};
-		var reject = function(element){
-		    var xpath;
-		    if (element[parcelsRejectedStyle]) {
-			        xpath = pi.selector.rejectedListDelete(element);
-			        delete element[parcelsRejectedStyle];
-			        removeClass(element,parcelsRejectedStyle);
+		var setElements = function(elements,className,fun){
+			if(!elements) return;
+			for(var i=elements.length-1;i>=0;i--){
+				addClass(elements[i],className);
+				elements[i].parcels_action = fun;
 			}
-			else {
-				xpath = pi.selector.rejectElement(element);
-				addClass(element, parcelsRejectedStyle);
-				element[parcelsRejectedStyle] = true;
-			}
-			pi.suggestor.rejectedXPath = xpath;
-			return xpath;
 		};
-		var doHighlighting = function(element){
-			var selectedXPath;
-			var rejectedXPath;
-			if ((hasClass(element, parcelsHighlightedStyle) ||
-				hasClass(element, parcelsRejectedStyle)) && !hasClass(element,parcelsSelectedStyle)) {
-				rejectedXPath = reject(element);
-				pi.suggestor.rejectedXPath = rejectedXPath;
-			} else {
-				selectedXPath = select(element);
-				pi.suggestor.selectedXPath = selectedXPath;
-			}
-
-			pi.suggestor.setText();
-			xpathAddClass(pi.suggestor.selectedXPath,parcelsHighlightedStyle);
-			xpathRemoveClass(pi.suggestor.rejectedXPath,parcelsHighlightedStyle);
-		};
-		
-		var allElements = document.body.getElementsByTagName("*");
 		var overrideActions = {
 			onclick: function(e){
 				blockevent(e);
-				doHighlighting(this);
+				if(!this.parcels_action) this.parcels_action = parcels_actions.select;
+				var parcels_action = this.parcels_action;
+				clearElements(pi.selector.tracker.selected,styles.selected)
+				clearElements(pi.selector.tracker.rejected,styles.rejected);
+				clearElements(pi.elements,styles.highlighted);
+				
+				parcels_action(this);
+				if(!pi.xpath || pi.xpath != pi.selector.tracker.xpath){
+					pi.xpath = pi.selector.tracker.xpath;
+					pi.elements = queryDocument(pi.xpath);
+					pi.suggestor.xpath_field.value = pi.xpath;
+				}
+				
+				setElements(pi.elements,styles.highlighted,parcels_actions.reject);
+				setElements(pi.selector.tracker.rejected,styles.rejected,parcels_actions.dereject);
+				setElements(pi.selector.tracker.selected,styles.selected,parcels_actions.deselect);
+				
 				return false;
 			},
 			onmouseover: function(e){
@@ -190,6 +183,22 @@
 				pi.box.setText(this.parentNode.tagName + " " + this.tagName);
 				blockevent(e);
 				return false;
+			}
+		};
+		var parcels_actions = {
+			select: function(e){//change to green
+				console.log("SELECT");
+				return pi.selector.selectElement(e);
+			},
+			reject: function(e){
+				return {xpath:pi.xpath}; //TODO: debug stuff.
+			},
+			deselect: function(e){
+				console.log("DESELECT");
+				return pi.selector.selectedDelete(e);
+			},
+			dereject: function(e){
+				return pi.selector.rejectedDelete(e);
 			}
 		};
 		exit = function(){
@@ -205,23 +214,24 @@
 		    while (i--) {
 		        var curr = interfaceElements[i];
 		        curr.parentNode.removeChild(curr);
+				delete curr;
 		    }
-		    removeAllClass(parcelsSelectedStyle);
-		    removeAllClass(parcelsHighlightedStyle);
-			removeAllClass(parcelsRejectedStyle)
+		    removeAllClass(styles.selected);
+		    removeAllClass(styles.highlighted);
+			removeAllClass(styles.rejected)
 		    delete pi;
 			delete ParcelsInterface;
 		};
-		overridePageElements(overrideActions);
 		
 		//initialize
+		overridePageElements(overrideActions);
 		pi =  {
 			suggestor: createSuggestor(),
 			box: createBox(),
 			selector: new ParcelsSelector()
 		};
-		
 		loader.request({page:{url:document.location.href,title:document.title}});
+		pi.suggestor.label_field.value = pi.suggestor.label_field.placeholder;
 		return pi;
 	})();
 

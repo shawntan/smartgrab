@@ -1,1 +1,0 @@
-../../../app/views/bookmarklet/_util.js.erb
