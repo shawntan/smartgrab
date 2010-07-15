@@ -35,6 +35,7 @@ ParcelsInterface.prototype = {
 	selector: null,
 	headTag: null,
 	parcelsSelectedStyle: "parcels_selected",
+	parcelsRejectedStyle: "parcels_rejected",
 	parcelsHighlightedStyle: "parcels_highlight",
 	parcelsInterfaceStyle: "parcels_interface",
 	overrideActions: null,
@@ -167,8 +168,10 @@ ParcelsInterface.prototype = {
 				color: "#fefefe"
 			},
 			children: [header, main],
-			setText: function(text) {
-				main.innerHTML = text;
+			setText: function() {
+				main.innerHTML="";
+				if(this.selectedXPath) main.innerHTML="Selected: "+this.selectedXPath+"<br/>";
+				if(this.rejectedXPath) main.innerHTML+="Rejected: "+this.rejectedXPath+"<br/>"; 
 			}
 		});
 		this.suggestor = s;
@@ -179,6 +182,13 @@ ParcelsInterface.prototype = {
 		for (var i = 0; i < elements.length; i++) {
 			if (!this.hasClass(elements[i], className) && !this.hasClass(elements[i], this.parcelsSelectedStyle))
 				this.addClass(elements[i],this.parcelsHighlightedStyle);
+		}
+	},
+	xpathRemoveClass: function(xpath,className) {
+		elements = queryDocument(xpath);
+		var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
+		for (var i = 0; i < elements.length; i++) {
+			elements[i].className = elements[i].className.replace(reg, ' ').trim();
 		}
 	},
 	hasClass: function(obj, className) {
@@ -195,12 +205,8 @@ ParcelsInterface.prototype = {
 		return false;
 	},
 	removeAllClass: function(className) {
-		elements = queryDocument("//*[contains(concat(' ',@class,' '),' " + className + " ')]");
-		var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
-		for (var i = 0; i < elements.length; i++) {
-			elements[i].className = elements[i].className.replace(reg, ' ').trim();
-		};
-			},
+		this.xpathRemoveClass("//*[contains(concat(' ',@class,' '),' " + className + " ')]",className);
+	},
 	removeClass: function(element, className) {
 		var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
 		element.className = element.className.replace(reg, ' ').trim();
@@ -209,7 +215,23 @@ ParcelsInterface.prototype = {
 		element.className = (element.className + " " + className).trim();
 	},
 	doHighlighting: function(element) {
-		if (this.hasClass(element, this.parcelsHighlightedStyle)) return;
+		var selectedXPath;
+		var rejectedXPath;
+		
+		if (this.hasClass(element, this.parcelsHighlightedStyle) ||
+			this.hasClass(element, this.parcelsRejectedStyle)) {
+			rejectedXPath = this.reject(element);
+			this.suggestor.rejectedXPath = rejectedXPath;
+		}
+		else {
+			selectedXPath = this.select(element);
+			this.suggestor.selectedXPath = selectedXPath;
+		}
+		this.suggestor.setText();
+		this.xpathAddClass(this.suggestor.selectedXPath, this.parcelsHighlightedStyle);
+		this.xpathRemoveClass(this.suggestor.rejectedXPath,this.parcelsHighlightedStyle);
+	},
+	select: function(element){
 		var xpath;
 		if (element[this.parcelsSelectedStyle]) {//already selected
 			xpath = this.selector.selectedListDelete(element);
@@ -222,14 +244,23 @@ ParcelsInterface.prototype = {
 			this.addClass(element, this.parcelsSelectedStyle);
 			element[this.parcelsSelectedStyle] = true;
 		}
-		if (xpath) {
-			this.xpathAddClass(xpath, this.parcelsHighlightedStyle);
-			this.suggestor.setText(xpath);
+		
+		return xpath;
+	},
+	reject: function(element){
+		var xpath;
+		if (element[this.parcelsRejectedStyle]) {
+			xpath = this.selector.rejectedListDelete(element);
+			delete element[this.parcelsRejectedStyle];
+			this.removeClass(element, this.parcelsRejectedStyle);
 		}
 		else {
-			this.suggestor.setText('');
+			xpath = this.selector.rejectElement(element);
+			this.addClass(element, this.parcelsRejectedStyle);
+			element[this.parcelsRejectedStyle] = true;
 		}
-		
+		this.suggestor.rejectedXPath = xpath;
+		return xpath;
 	}
 };
 ParcelsInterface.exit = function(pi) {
@@ -269,6 +300,7 @@ function getPos(obj) {
 }
 
 function queryDocument(expression) {
+	if(!expression) return [];
 	var resp;
 	var results = [];
 	resp = document.evaluate(expression, document, null, XPathResult.ANY_TYPE, null);

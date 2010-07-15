@@ -3,66 +3,36 @@
  */
 function ParcelsSelector() {
 }
-
 ParcelsSelector.prototype = {
 	selectedList: [],
-	rejectedList: [],
+	selectedPaths:[],
 	selectedListDelete: function(el) {
-		if (contains(this.selectedList, el)) this.selectedList.splice(this.selectedList.indexOf(el), 1);
+		if (contains(this.selectedList, el)) {
+			this.selectedList.splice(this.selectedList.indexOf(el), 1);
+			for(var i=this.selectedPaths.length-1;i>=0;i--){
+				var cur = this.selectedPaths[i];
+				if(cur[cur.length-1]== el){
+					this.selectedPaths.splice(i, 1);
+				}
+			}
+		}
 		return StratUtil.predictXPath(this.selectedList);
 	},
-	selectElement: function(el){
-		if (!contains(this.selectedList, el)) 
+	selectElement: function(el) {
+		if(!contains(this.selectedList,el)) {
 			this.selectedList.push(el);
-		return StratUtil.predictXPath(this.selectedList);
-	},
-	rejectElement: function(el){
-		if (!contains(this.rejectedList, el)) 
-			this.rejectedList.push(el);
-		return StratUtil.predictXPath(this.rejectedList);
-	},
-	rejectedListDelete: function(el) {
-		if (contains(this.rejectedList, el)) this.rejectedList.splice(this.rejectedList.indexOf(el), 1);
-		return StratUtil.predictXPath(this.rejectedList);
+			this.selectedPaths.push(StratUtil.getPath(el));
+		}
+		console.log(this.selectedList);
+		console.log(this.selectedPaths);
+		return StratUtil.predictXPath(this.selectedPaths);
 	}
 };
 
 var StratUtil = {
 	NO_COMMON: ["NO COMMON TRAITS"],
 	predictXPath: function(paths) {
-		if (paths.length == 0) return null;
-		//find similarities between targets.(finding only similar tags)
-		var catHash = {};
-		for (var i = 0; i < paths.length; i++) {
-			var cur = paths[i];
-			if (!catHash[cur.tagName]) catHash[cur.tagName] = [];
-			catHash[cur.tagName].push(this.getPath(cur));
-		}
-		//find path separately for similar groups
-		var positive_results = [];
-		for (var tag in catHash) {
-			var categorized_paths = catHash[tag];
-			positive_results.push(StratUtil.mergePath(categorized_paths));
-		}
-		var generalXPath;
-		for(var i=0;i<positive_results.length;i++){
-			if (generalXPath) generalXPath += " | " + StratUtil.generateXPath(positive_results[i]);
-			else generalXPath = StratUtil.generateXPath(positive_results[i]);
-		}
-		return generalXPath;
 		
-	},
-	mergePath: function(categorized_paths){
-		var resultPath = null;
-		for (var j = 0; j < categorized_paths.length; j++) {
-			if (resultPath) {
-				resultPath = StratUtil.longestCommonPathSequence(resultPath, categorized_paths[j]);
-			}
-			else {
-				resultPath = categorized_paths[j];
-			}
-		}
-		return resultPath;
 	},
 	tokenizeClasses: function(elem) {
 		if (!elem.classes) {
@@ -106,16 +76,6 @@ var StratUtil = {
 		var result = 0;
 		var temp = elem;
 		var tagname = elem.tagName;
-		//check if last
-		var tl = elem.parentNode.children[elem.parentNode.children.length-1];
-		do {
-			if(tl==elem) {
-				temp.last = true;
-				break;
-			}
-			tl = tl.previousSibling;
-		} while (tl.tagName!=elem.tagName);
-		//end
 		do {
 			if (elem.tagName == tagname) result++;
 		} while (elem = elem.previousSibling);
@@ -170,9 +130,6 @@ var StratUtil = {
 			if ((index = this.xpathIndex(elem1)) == this.xpathIndex(elem2)){
 				pe.xpathIndex = index;
 				hasCommon = true;
-			} else if(elem1.last && elem2.last){
-				pe.last = true;
-				hasCommon = true;
 			}
 		}
 		//CLASSES
@@ -193,48 +150,7 @@ var StratUtil = {
 	
 	
 	
-	longestCommonPathSequence: function(path1, path2, lengthOnly) {
-		var p1 = path1;
-		var p2 = path2;
-		var table = new Array(p1.length + 1);
-		for (var i = 0; i < table.length; i++) {
-			table[i] = new Array(p2.length + 1);
-			for (var j = 0; j < table[i].length; j++) {
-				if (i == 0 || j == 0) table[i][j] = 0;
-				else {
-					if (this.similarElements(p1[i - 1], p2[j - 1])) {
-						table[i][j] = table[i - 1][j - 1] + 1;
-					}
-					else table[i][j] = Math.max(table[i - 1][j], table[i][j - 1]);
-				}
-			};
-		}
-		if (lengthOnly) {
-			result = table[p1.length][p2.length];
-			delete table;
-			return result;
-		}
-		var self = this;
-		function recon(i, j) {
-			var res;
-			var r;
-			if (i == 0 || j == 0) return [];
-			else if (res = self.similarElements(p1[i - 1], p2[j - 1])) {
-				r = recon(i - 1, j - 1);
-				r.push(res);
-			}
-			else if (table[i - 1][j] > table[i][j - 1]) {
-				r = recon(i - 1, j);
-				r.push('*');
-			}
-			else {
-				r = recon(i, j - 1);
-				r.push('*');
-			}
-			return r;
-		}
-		delete table;
-		return recon(p1.length, p2.length);
+	alignPaths: function(path1, path2) {
 	}
 };
 
@@ -255,9 +171,6 @@ PseudoClass.prototype = {
 		}
 		else if (this.xpathIndex) {
 			selector = this.xpathIndex;
-		}
-		else if (this.last){
-			selector = "last()";
 		}
 		if (selector) result += "[" + selector + "]";
 		return result;
