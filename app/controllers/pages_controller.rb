@@ -1,12 +1,9 @@
 class PagesController < ApplicationController
+	before_filter :login_required	
   # GET /pages
   # GET /pages.xml
   def index
-    @pages = Page.all
-<<<<<<< HEAD
-=======
-
->>>>>>> 8720a5a862f8684607e731f8f855f37dd059ee78
+    @pages = current_user.pages.all
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @pages }
@@ -16,7 +13,7 @@ class PagesController < ApplicationController
   # GET /pages/1
   # GET /pages/1.xml
   def show
-    @page = Page.find(params[:id])
+    @page = current_user.pages.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -27,7 +24,7 @@ class PagesController < ApplicationController
   # GET /pages/new
   # GET /pages/new.xml
   def new
-    @page = Page.new
+    @page = current_user.pages.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -37,13 +34,13 @@ class PagesController < ApplicationController
 
   # GET /pages/1/edit
   def edit
-    @page = Page.find(params[:id])
+    @page = current_user.pages.find(params[:id])
   end
 
   # POST /pages
   # POST /pages.xml
   def create
-    @page = Page.new(params[:page])
+    @page = current_user.pages.new(params[:page])
 
     respond_to do |format|
       if @page.save
@@ -52,7 +49,7 @@ class PagesController < ApplicationController
         format.xml  { render :xml => @page, :status => :created, :location => @page }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @page.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @page.errors, :status => :unpcurrent_user.pages.sable_entity }
       end
     end
   end
@@ -60,7 +57,7 @@ class PagesController < ApplicationController
   # PUT /pages/1
   # PUT /pages/1.xml
   def update
-    @page = Page.find(params[:id])
+    @page = current_user.pages.find(params[:id])
 
     respond_to do |format|
       if @page.update_attributes(params[:page])
@@ -77,7 +74,7 @@ class PagesController < ApplicationController
   # DELETE /pages/1
   # DELETE /pages/1.xml
   def destroy
-    @page = Page.find(params[:id])
+    @page = current_user.pages.find(params[:id])
     @page.destroy
 
     respond_to do |format|

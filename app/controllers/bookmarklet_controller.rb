@@ -1,6 +1,6 @@
 class BookmarkletController < ApplicationController
+	before_filter :login_required  
 	skip_before_filter :verify_authenticity_token
-
 	def index
 		respond_to do |format|
       format.js
@@ -14,21 +14,21 @@ class BookmarkletController < ApplicationController
 	
 	def page
 		if(params[:id])
-			@page = Page.find(params[:id]);
+			@page = current_user.pages.find(params[:id]);
 		else
-			@page = Page.find_by_url(params[:page][:url] );
+			@page = curent_user.pages.find_by_url(params[:page][:url] );
 		end
 		if @page 
 			render :js => "#{params[:callback]}(#{@page.to_json(:include => [:annotations])});"
 		else
-			@page = Page.new(params[:page])
+			@page = current_user.pages.new(params[:page])
 			if @page.save
 				render :js => "#{params[:callback]}(#{@page.to_json},true);"
 			end
 		end
 	end
 	def annotate
-		    @annotation = Annotation.new(params[:annotation])
+		    @annotation = current_user.pages.new(params[:annotation])
 		    script = "#{params[:callback]}(#{@annotation.to_json});";
     		respond_to do |format|
     			if @annotation.save
