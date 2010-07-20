@@ -5,15 +5,10 @@ ActionController::Routing::Routes.draw do |map|
   map.signup '/signup', :controller => 'users', :action => 'new'
   
   map.resources :users
-
-  map.resource :session
-
+  map.resource  :session
   map.resources :pages
-
   map.resources :page_associations
-
   map.resources :extractors
-
   map.resources :annotations
 
   # The priority is based upon order of creation: first created -> highest priority.
@@ -41,6 +36,7 @@ ActionController::Routing::Routes.draw do |map|
   #     products.resources :sales, :collection => { :recent => :get }
   #   end
 
+
   # Sample resource route within a namespace:
   #   map.namespace :admin do |admin|
   #     # Directs /admin/products/* to Admin::ProductsController (app/controllers/admin/products_controller.rb)
@@ -55,6 +51,8 @@ ActionController::Routing::Routes.draw do |map|
   # Install the default routes as the lowest priority.
   # Note: These default routes make all actions in every controller accessible via GET requests. You should
   # consider removing or commenting them out if you're using named routes and resources.
+  map.connect ':controller.:format'
+  map.connect ':controller/:action.:format'
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
 end

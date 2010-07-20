@@ -25,6 +25,7 @@ class SessionsController < ApplicationController
       @login       = params[:login]
       @remember_me = params[:remember_me]
       render :action => 'new'
+     	
     end
   end
 

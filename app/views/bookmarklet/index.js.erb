@@ -11,8 +11,8 @@
 
 (function() {
 	var bookmarklet_home = "<%= url_for(:action => 'index', :controller => 'bookmarklet', :only_path => false) %>";
-	var stylesheet_home = "<%= url_for(:action => 'stylesheet', :controller => 'bookmarklet', :only_path => false) %>";
-	var load_annotations = "<%= url_for(:action => 'page', :controller => 'bookmarklet', :only_path => false) %>";
+	var stylesheet_home = "<%= url_for(:action => 'stylesheet', :controller => 'bookmarklet',:format => :css, :only_path => false) %>";
+	var load_annotations = "<%= url_for(:action => 'page', :controller => 'bookmarklet',:format =>:js, :only_path => false) %>";
 	var create_annotation= "<%= url_for(:action => 'annotate', :controller => 'bookmarklet', :only_path => false) %>";
 	var parcelsInterfaceStyle = "parcels_interface";
 	
