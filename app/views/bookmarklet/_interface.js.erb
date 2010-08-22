@@ -1,150 +1,118 @@
-	var exit;
 	var ParcelsInterface = (function(){
 		var pi;
 		var iframe;
 		var allElements = document.body.getElementsByTagName("*");
 		//view
-	    var border_width = 5;
-		var makeBoxBorders = function(border_width, fix_side){
-			var self = this;
-			var d = $B('div', {className: parcelsInterfaceStyle+" "+"box_border"});
-			d.style[fix_side] = border_width + "px";
-			return d;
-		};
-		var createBox = function(){//box : this is the thing that "boxes" up the elements to be selected
-			var _box = {
-	        	visible: false,
-	        	top: makeBoxBorders(border_width, "height"),
-	        	bottom: makeBoxBorders(border_width, "height"),
-	        	left: makeBoxBorders(border_width, "width"),
-	        	right: makeBoxBorders(border_width, "width"),
-	        	text: $B('span', {
-	            	className: parcelsInterfaceStyle,
-	        	}),
-				setPosition: function(position, size){
-					_box.setVisible(true);
-					_box.bottom.style.width = _box.top.style.width = (size.width + border_width * 2) + "px";
-					_box.left.style.height = _box.right.style.height = size.height + "px";
-					_box.left.style.top = _box.right.style.top = position.top + "px";
-					_box.left.style.left = _box.bottom.style.left = _box.top.style.left = (position.left - border_width) + "px";
-					_box.top.style.top = position.top - border_width + "px";
-					_box.right.style.left = position.left + size.width + "px";
-					_box.bottom.style.top = position.top + size.height + "px";
+		var createAnnotationListItem = function(list,annotation,children){
+			return $B("li", {
+				children: children,
+				data: annotation,
+				onmouseover: function(){
+					clearAllInvolvedAndSelector();
+					list.highlighted = queryDocument(this.data.xpath);
+					setElements(list.highlighted,"parcels_listshow",null);
 				},
-				setText: function(text){
-					_box.text.innerHTML = text;
-				},
-				setVisible: function(visible){
-					if (visible != _box.visible) {
-						_box.top.style.display =
-						_box.bottom.style.display = 
-						_box.left.style.display = 
-						_box.right.style.display = visible ? "block" : "none";
-						_box.visible = visible;
-					}
+				onmouseout: function() {
+					clearElements(list.highlighted,"parcels_listshow");
 				}
-			};
-			_box.bottom.style.height = "auto";
-			document.body.appendChild(_box.top);
-			document.body.appendChild(_box.left);
-			document.body.appendChild(_box.bottom);
-			document.body.appendChild(_box.right);
-			_box.bottom.appendChild(_box.text);
-			return _box;
-		};
-		var createSuggestor = function(){//suggestor: this is the prompt at the top right hand corner that "suggests" the xpath
-			var header = $B("div", {
-				children: [$B('div', {
-					className: parcelsInterfaceStyle,
-	            	innerHTML: "X",
-	            	style: {
-	                	'float': 'right',
-	                	display: "block",
-						clear: "left"
-					},
-					onclick: function(){
-						exit(self);
-					}
-				})]
 			});
-			var list = $B("ul", {className: parcelsInterfaceStyle + " " + "xpath_list",});
-			var status = $B("div",{className:parcelsInterfaceStyle});
-			var page_id_field,xpath_field,label_field;
-			var workspace = $B("form",{
-				className: parcelsInterfaceStyle + " " + "workspace",
-				children:[
-					page_id_field = $B("input",{type:"hidden",name:"page_id"}),
-					label_field = $B("input",{
-						type: "text",
-						name: "label",
-						placeholder: "Label Name"
-					}),
-					xpath_field = $B("input",{type:"hidden",name:"xpath"}),
-					$B("input",{value:"Add Selection",type:"submit",exclude:true})
-				],
-				action: create_annotation,
-				method: "POST"
-			});
-			
-			Connection.MakeIframeTarget(workspace,"annotation",function(){
-				clearAllInvolvedAndSelector();
-				loader.request({id:page_id_field.value});
-				label_field.value = "";
-				xpath_field.value = "";
-			});
-			var main = $B("div", {
-				className: parcelsInterfaceStyle+" "+"main",
-				children: [list,workspace,status]
-			});
-			var s = $B("div", {
-				className: parcelsInterfaceStyle+" "+"suggestor",
-		        children: [header, main],
-		        setText: function(){
-		            if (s.selectedXPath) 
-		                status.innerHTML = s.selectedXPath;
-					else status.innerHTML = "nothing selected";
-		           // if (s.rejectedXPath) 
-		           //     main.innerHTML += "Rejected: " + s.rejectedXPath + "<br/>";
-		        }
-		    });
-			s.page_id_field = page_id_field;
-			s.xpath_field = xpath_field;
-			s.label_field = label_field;
-			s.list = list;
-		    document.body.appendChild(s);
-		    return s;
 		}
 		var displayAnnotations = function(annotations) {
 			var list = pi.suggestor.list;
 			removeAllChildren(list);
 			if (annotations) {
 				for (var i = 0; i < annotations.length; i++) {
-					list.appendChild($B("li", {
-						innerHTML: annotations[i].label,
-						data: annotations[i],
-						onmouseover: function(){
-							clearAllInvolvedAndSelector();
-							list.highlighted = queryDocument(this.data.xpath);
-							setElements(list.highlighted,"parcels_listshow",null);
-						},
-						onmouseout: function() {
-							clearElements(list.highlighted,"parcels_listshow");
-						}
-					}));
+					list.appendChild(
+						createAnnotationListItem(list,annotations[i],[$B("span",{
+							innerHTML: annotations[i].label
+						})])
+					);
 				}
 			}
 			list.scrollTop = list.scrollHeight;
 		};
+		var createSuggestedAnnotations = function(annotations){//returns a ul of list.
+			var list = $B("ul",{
+				className: parcelsInterfaceStyle+" xpath_list"
+			});
+			for (var i = 0; i < annotations.length; i++) {
+				console.log(annotations[i]);
+				list.appendChild(
+					createAnnotationListItem(list,annotations[i],[
+						$B("input",{
+							type: "checkbox",
+							name: "annotation_ids[]",
+							value: annotations[i].id
+						}),
+						$B("span",{
+							innerHTML: annotations[i].label
+						})
+					])
+				);
+			}
+			return list;
+		};
 		
+		var createAnnotationSuggest = function(annotations) {
+			console.log(annotations);
+			var annotation_form = $B("form",{
+				action:set_annotations,
+				children:[
+					createSuggestedAnnotations(annotations),
+					$B("input",{name:"id",type:"hidden",value:pi.suggestor.page_id_field.value}),
+					$B("input",{type:"submit",value:"Add"})
+				]
+			});
+			var float_div = $B("div",{
+				className: parcelsInterfaceStyle+" dialog",
+				children: [
+					annotation_form
+				],
+				style:{
+					top:"40px",
+					left:"40px"
+				}
+			});
+			Connection.MakeIframeTarget(annotation_form,false,function(){
+				loader.request({id:pi.suggestor.page_id_field.value});
+				float_div.parentNode.removeChild(float_div);
+				delete float_div;
+			});
+			document.body.appendChild(float_div);
+		}
 		//controllers
 		var loader = new Connection.JSONDataRequest(
 			load_annotations,
 			"requestPageData",
 			function(page,first){
-				displayAnnotations(page.annotations);
+				if(first) {
+					new Connection.JSONDataRequest(
+						suggest_annotations,
+						"suggestAnnotations",
+						function(annotations){
+							var i = 0;
+							while(i<annotations.length) {
+								var has_match = document.evaluate(
+									annotations[i].xpath,
+									document, null, XPathResult.BOOLEAN_TYPE, null
+								).booleanValue
+								if(!has_match) {
+									annotations.splice(i,1);
+									console.log("no match");
+								}
+								else i++;
+							}
+							if(annotations.length>0) createAnnotationSuggest(annotations);
+						}
+					).request({domain:document.location.hostname})
+				} else {
+					displayAnnotations(page.annotations);
+				}
 				pi.suggestor.page_id_field.value = page.id;
+
 			}
 		);
+
 		var clearElements = function(elements,className){
 			if(!elements) return;
 			for(var i=elements.length-1;i>=0;i--){
@@ -248,6 +216,13 @@
 			box: createBox(),
 			selector: new ParcelsSelector()
 		};
+		Connection.MakeIframeTarget(pi.suggestor.workspace,"annotation",function(){
+			clearAllInvolvedAndSelector();
+			loader.request({id:pi.suggestor.page_id_field.value});
+			pi.suggestor.label_field.value = "";
+			pi.suggestor.xpath_field.value = "";
+		});
+		
 		loader.request({page:{url:document.location.href,title:document.title}});
 		pi.suggestor.label_field.value = pi.suggestor.label_field.placeholder;
 		return pi;

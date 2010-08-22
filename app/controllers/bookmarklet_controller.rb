@@ -4,9 +4,9 @@ class BookmarkletController < ApplicationController
 	
 	def index
 		respond_to do |format|
-      format.js 
-      format.html
-    end
+	      format.js 
+	      format.html
+		end
 	end
 	def stylesheet
 		respond_to do |format|
@@ -14,7 +14,6 @@ class BookmarkletController < ApplicationController
 			format.html {redirect_back_or_default('/')}
 		end
 	end
-	
 	def page
 		if(params[:id])
 			@page = current_user.pages.find(params[:id]);
@@ -31,21 +30,41 @@ class BookmarkletController < ApplicationController
 		end
 	end
 	def annotate
-		    @annotation = Annotation.new(params[:annotation])
-		    script = "#{params[:callback]}(#{@annotation.to_json});";
-    		respond_to do |format|
-    			if @annotation.save
-    				format.js {render(:js => script )}
-    				format.html 
-    			else
-    			end
-    		end
+		page = current_user.pages.find(params[:page_id]); 
+		page.annotations.create(params[:annotation])
+		script = "#{params[:callback]}(#{@annotation.to_json});";
+		respond_to do |format|
+			format.js {render(:js => script )}
+			format.html 
+		end
 	end
-	 def access_denied
-  	respond_to do |format|
+
+	
+	def suggest
+		similar_annotations = Annotation.find(
+			:all,
+			:select => "DISTINCT annotations.*",
+			:joins => :pages,
+			:conditions => [ 
+				"(pages.url LIKE ?) AND (pages.user_id = ?)",
+				"%#{params[:domain]}%",
+				current_user.id
+			]
+		)
+		render :js => "#{params[:callback]}(#{similar_annotations.to_json});"
+	end
+	def save_suggestions
+		page = current_user.pages.find(params[:id]);
+		annotation_ids = params[:annotation_ids]
+		page.annotation_ids = annotation_ids
+	end
+	
+	
+	def access_denied
+		respond_to do |format|
 			format.js	{render(:js => 'alert("Please log in to Parcels before labeling.");')}
 			format.html {redirect_to :controller => 'sessions',:action => 'new'}
 		end
-  end
-	
+	end
 end
+

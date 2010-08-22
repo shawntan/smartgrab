@@ -65,19 +65,21 @@
 			}
 		};
 		var iframe_count = 0;
-		this.MakeIframeTarget = function(form,encapsulating_object,callback){
-			var target = encapsulating_object +"_"+ iframe_count;
-			var iframe = $B("iframe",{
+		this.MakeIframeTarget = function(form, encapsulating_object, callback){
+			var target = encapsulating_object + "_" + iframe_count;
+			var iframe = $B("iframe", {
 				className: parcelsInterfaceStyle,
 				name: target
 			});
 			iframe_count++;
 			form.target = target;
 			var inputs = form.getElementsByTagName("input");
-			for(var i=inputs.length-1;i>=0;i--){
-				if(!(inputs[i].exclude||inputs[i].encapsulated)){
-					inputs[i].name = encapsulating_object + "["+inputs[i].name+"]";
-					inputs[i].encapsulated = true;
+			if (encapsulating_object) {
+				for (var i = inputs.length - 1; i >= 0; i--) {
+					if (!(inputs[i].exclude || inputs[i].encapsulated)) {
+						inputs[i].name = encapsulating_object + "[" + inputs[i].name + "]";
+						inputs[i].encapsulated = true;
+					}
 				}
 			}
 			var ret;
@@ -93,9 +95,12 @@
 				}
 				return true;
 			};
-			iframe.onload = function(obj1){
-				setElementsDisabled(false);
-				if(callback) callback();
+			
+			iframe.onload = function() {
+				iframe.onload = function(obj1){
+					setElementsDisabled(false);
+					if(callback) callback();
+				}
 			}
 			document.body.appendChild(iframe);
 			return iframe;

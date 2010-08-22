@@ -2,14 +2,11 @@
 
 <table>
   <tr>
-    <th>Page</th>
     <th>Label</th>
 	<th>XPath</th>
   </tr>
-
 <% @annotations.each do |annotation| %>
   <tr>
-    <td><%=h annotation.page_id %></td>
     <td><%=h annotation.label %></td>
 	<td><%=h annotation.xpath %></td>
     <td><%= link_to 'Show', annotation %></td>
