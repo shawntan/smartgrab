@@ -1,0 +1,48 @@
+var border_width = 5;
+var makeBoxBorders = function(border_width, fix_side){
+	var self = this;
+	var d = $B('div', {className: parcelsInterfaceStyle+" "+"box_border"});
+	d.style[fix_side] = border_width + "px";
+	return d;
+};
+var createBox = function(){//box : this is the thing that "boxes" up the elements to be selected
+	var _box = {
+    	visible: false,
+    	top: makeBoxBorders(border_width, "height"),
+    	bottom: makeBoxBorders(border_width, "height"),
+    	left: makeBoxBorders(border_width, "width"),
+    	right: makeBoxBorders(border_width, "width"),
+    	text: $B('span', {
+        	className: parcelsInterfaceStyle,
+    	}),
+		setPosition: function(position, size){
+			_box.setVisible(true);
+			_box.bottom.style.width = _box.top.style.width = (size.width + border_width * 2) + "px";
+			_box.left.style.height = _box.right.style.height = size.height + "px";
+			_box.left.style.top = _box.right.style.top = position.top + "px";
+			_box.left.style.left = _box.bottom.style.left = _box.top.style.left = (position.left - border_width) + "px";
+			_box.top.style.top = position.top - border_width + "px";
+			_box.right.style.left = position.left + size.width + "px";
+			_box.bottom.style.top = position.top + size.height + "px";
+		},
+		setText: function(text){
+			_box.text.innerHTML = text;
+		},
+		setVisible: function(visible){
+			if (visible != _box.visible) {
+				_box.top.style.display =
+				_box.bottom.style.display = 
+				_box.left.style.display = 
+				_box.right.style.display = visible ? "block" : "none";
+				_box.visible = visible;
+			}
+		}
+	};
+	_box.bottom.style.height = "auto";
+	document.body.appendChild(_box.top);
+	document.body.appendChild(_box.left);
+	document.body.appendChild(_box.bottom);
+	document.body.appendChild(_box.right);
+	_box.bottom.appendChild(_box.text);
+	return _box;
+};

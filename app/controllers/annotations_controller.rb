@@ -13,7 +13,6 @@ class AnnotationsController < ApplicationController
   # GET /annotations/1.xml
   def show
     @annotation = Annotation.find(params[:id])
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @annotation }

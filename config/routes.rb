@@ -7,10 +7,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users
   map.resource  :session
   map.resources :pages
-  map.resources :page_associations
-  map.resources :extractors
   map.resources :annotations
-
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:

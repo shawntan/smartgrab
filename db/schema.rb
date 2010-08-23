@@ -9,6 +9,51 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 0) do
+ActiveRecord::Schema.define(:version => 20100811084941) do
+
+  create_table "annotations", :force => true do |t|
+    t.integer  "page_id"
+    t.string   "label"
+    t.string   "xpath",      :limit => 1024
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "datas", :force => true do |t|
+    t.integer  "annotation_id"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "pages", :force => true do |t|
+    t.string   "title"
+    t.string   "url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+    t.datetime "next_update"
+  end
+
+  create_table "revisions", :force => true do |t|
+    t.text     "html",       :limit => 2147483647
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "page_id",                          :null => false
+  end
+
+  create_table "users", :force => true do |t|
+    t.string   "login",                     :limit => 40
+    t.string   "name",                      :limit => 100, :default => ""
+    t.string   "email",                     :limit => 100
+    t.string   "crypted_password",          :limit => 40
+    t.string   "salt",                      :limit => 40
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "remember_token",            :limit => 40
+    t.datetime "remember_token_expires_at"
+  end
+
+  add_index "users", ["login"], :name => "index_users_on_login", :unique => true
 
 end

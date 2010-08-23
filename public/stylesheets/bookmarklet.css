@@ -28,15 +28,19 @@ iframe.parcels_interface {
 .parcels_interface.box_border span {
 	margin: 3px 3px;
 }
-.parcels_interface.suggestor{
+.parcels_interface.dialog {
 	position: fixed;
 	display: block;
-	right: 40px;
-	top: 40px;
 	z-index: 10000;
 	border: 2px solid #fefefe;
 	padding:5px;
 }
+.parcels_interface.suggestor{
+	right: 40px;
+	top: 40px;
+
+}
+
 
 .parcels_interface.main {
 	margin: 0px;

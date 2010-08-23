@@ -31,11 +31,15 @@
 			getClasses: function() {
 				if (this.classes) return this.classes;
 				if (this.className){
-					var result = this.className.split(/\s+/);
-					var index;
-					for(var i=classignorelist.length-1;i>=0;i--)
-						if((index = result.indexOf(classignorelist[i]))>=0)
-							result.splice(index, 1);
+					
+					if(this.className.trim() ="") result = [];
+					else {
+						var result = this.className.trim().split(/\s+/);
+						var index;
+						for(var i=classignorelist.length-1;i>=0;i--)
+							if((index = result.indexOf(classignorelist[i]))>=0)
+								result.splice(index, 1);
+					}
 					return this.classes = result;
 				}
 			},
