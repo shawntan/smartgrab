@@ -1,9 +1,0 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
-one:
-  annotation_id: 1
-  value: MyText
-
-two:
-  annotation_id: 1
-  value: MyText

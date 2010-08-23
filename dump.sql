@@ -24,13 +24,12 @@ DROP TABLE IF EXISTS `annotations`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `annotations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `page_id` int(11) DEFAULT NULL,
   `label` varchar(255) DEFAULT NULL,
   `xpath` varchar(1024) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,87 +38,65 @@ CREATE TABLE `annotations` (
 
 LOCK TABLES `annotations` WRITE;
 /*!40000 ALTER TABLE `annotations` DISABLE KEYS */;
-INSERT INTO `annotations` VALUES (5,1,'1','/html/body/table[1]/tbody[1]/tr[1]/td[1]/ol[1]/li','2010-07-07 16:41:38','2010-07-07 16:41:38'),(8,6,'Test 3','/html/body/table[1]/tbody[1]/tr[1]/td[1]/ol[1]/li','2010-07-07 21:35:52','2010-07-07 21:35:52'),(9,6,'Test 5','/html/body/table[1]/tbody[1]/tr[1]/td[1]/ol[1]/li','2010-07-07 21:36:02','2010-07-07 21:36:02'),(26,6,'Test 6 (ULs only)','/html/body/table[1]/tbody[1]/tr[1]/td/ul[1]/li','2010-07-09 15:42:20','2010-07-09 15:42:20'),(27,6,'TDs (I think)','/html/body/table[1]/tbody[1]/tr[1]/td','2010-07-09 15:56:22','2010-07-09 15:56:22'),(28,6,'TDs (I think) so','/html/body/table[1]/tbody[1]/tr[1]/td','2010-07-09 15:56:51','2010-07-09 15:56:51'),(30,6,'test','/html/body/table[1]/tbody[1]/tr[1]/td/ol[1]/li','2010-07-09 16:03:50','2010-07-09 16:03:50'),(31,6,'test','/html/body/table[1]/tbody[1]/tr[1]/td/ol[1]/li','2010-07-09 16:04:09','2010-07-09 16:04:09'),(36,6,'LAST ITEM','/html/body/table[1]/tbody[1]/tr[1]/td//li[last()]','2010-07-09 16:08:07','2010-07-09 16:08:07'),(38,6,'Test ','/html/body/table[1]/tbody[1]/tr[1]/td/ul[1]/li','2010-07-10 07:21:47','2010-07-10 07:21:47'),(63,6,'More TESTS','/html/body/table[1]/tbody[1]/tr[1]/td','2010-07-12 07:11:46','2010-07-12 07:11:46'),(65,11,'Label Name','//div[@id=\'ires\']/ol[1]/li[contains(concat(\' \',@class,\' \'),\' g \')]/h3[contains(concat(\' \',@class,\' \'),\' r \')]/a[contains(concat(\' \',@class,\' \'),\' l \')]','2010-07-12 07:44:07','2010-07-12 07:44:07'),(66,11,'search words','//div[@id=\'ires\']/ol[1]/li[contains(concat(\' \',@class,\' \'),\' g \')]/h3[contains(concat(\' \',@class,\' \'),\' r \')]/a[contains(concat(\' \',@class,\' \'),\' l \')]/em','2010-07-12 07:44:50','2010-07-12 07:44:50'),(67,12,'News Links','//ul[@id=\'lev2Menu\']/li/a[1]','2010-07-12 07:48:27','2010-07-12 07:48:27'),(68,12,'Headlines','//div[@id=\'bodyContent\']/div[contains(concat(\' \',@class,\' \'),\' row \')]/div[contains(concat(\' \',@class,\' \'),\' grid_4 \')]/div[contains(concat(\' \',@class,\' \'),\'  \')]/div[contains(concat(\' \',@class,\' \'),\' bC \')]/div[contains(concat(\' \',@class,\' \'),\'  \')]/div[','2010-07-12 07:49:09','2010-07-12 07:49:09'),(69,12,'Label Name','//div[@id=\'bodyContent\']/div[contains(concat(\' \',@class,\' \'),\' row \')]/div[contains(concat(\' \',@class,\' \'),\' grid_4 \')]/div[contains(concat(\' \',@class,\' \'),\'  \')]/div[contains(concat(\' \',@class,\' \'),\' bH \')]/a[1]/h2[1]','2010-07-12 07:54:09','2010-07-12 07:54:09'),(71,12,'Featured Pictures','//div[@id=\'bodyContent\']/div[contains(concat(\' \',@class,\' \'),\' row \')]/div[contains(concat(\' \',@class,\' \'),\' grid_4 \')]/div[contains(concat(\' \',@class,\' \'),\'  \')]/div[contains(concat(\' \',@class,\' \'),\' bC \')]/div[contains(concat(\' \',@class,\' \'),\'  \')]/div[1]/ul[contains(concat(\' \',@class,\' \'),\' newslTop \')]/li[1]/a[1]/img[1]','2010-07-12 08:00:27','2010-07-12 08:00:27'),(72,13,'Headlines','//div[@id=\'main\']/div[1]/div[1]/div[1]/div[1]/div[contains(concat(\' \',@class,\' \'),\' columnGroup \')]/div[contains(concat(\' \',@class,\' \'),\' story \')]/h3[1]/a[1]','2010-07-12 10:46:16','2010-07-12 10:46:16'),(73,14,'Titles','//div[@id=\'wrapper\']/div[1]/div[contains(concat(\' \',@class,\' \'),\' news-summary \')]/div[contains(concat(\' \',@class,\' \'),\' news-body \')]/h3[1]/a[contains(concat(\' \',@class,\' \'),\' offsite \')]','2010-07-12 11:29:57','2010-07-12 11:29:57'),(75,14,'Top In All Topics','//div[@id=\'topten-list\']/div[contains(concat(\' \',@class,\' \'),\' news-summary \')]/h3[1]/a[1]','2010-07-12 12:12:53','2010-07-12 12:12:53'),(76,14,'Sections','//div[@id=\'h-pri\']/ul[1]/li[contains(concat(\' \',@class,\' \'),\' h-drop \')]/a[1]/strong[1]','2010-07-12 12:14:36','2010-07-12 12:14:36'),(77,15,'Latest Headlines','//div[@id=\'firehoselist\']/div[contains(concat(\' \',@class,\' \'),\' fhitem \')]/h3[contains(concat(\' \',@class,\' \'),\' story \')]/span[contains(concat(\' \',@class,\' \'),\' cnin \')]/a[contains(concat(\' \',@class,\' \'),\' datitle \')]','2010-07-12 12:15:34','2010-07-12 12:15:34'),(78,15,'Label Name','//div[@id=\'firehoselist\']/div[contains(concat(\' \',@class,\' \'),\' fhitem \')]/div[contains(concat(\' \',@class,\' \'),\' details \')]/small[1]/a[1]','2010-07-12 12:16:51','2010-07-12 12:16:51'),(79,12,'Headlines','//div[@id=\'bodyContent\']/div[contains(concat(\' \',@class,\' \'),\' row \')]/div[contains(concat(\' \',@class,\' \'),\' grid_4 \')]/div[contains(concat(\' \',@class,\' \'),\'  \')]/div[contains(concat(\' \',@class,\' \'),\' bC \')]/div[contains(concat(\' \',@class,\' \'),\'  \')]/div[1]/ul/li/h3[1]/a[1]','2010-07-12 12:20:20','2010-07-12 12:20:20'),(80,16,'Score','//div[@id=\'fwcMatchHeader\']/div[2]/div[2]','2010-07-12 12:21:34','2010-07-12 12:21:34'),(81,13,'Headlines Test','/html/body/div[2]/div/div/div[1]/div[1]/div[1]/div[1]/div/div//a[1]','2010-07-13 02:42:37','2010-07-13 02:42:37'),(82,13,'Images','//div[@id=\'main\']/div[1]/div[1]/div[1]/div[1]/div[2]/div[contains(concat(\' \',@class,\' \'),\' story \')]/div[contains(concat(\' \',@class,\' \'),\' thumbnail \')]/a[1]/img[1]','2010-07-13 02:47:28','2010-07-13 02:47:28'),(84,17,'Headlines','//div[@id=\'bodyContent\']/div[1]/div[2]/div[1]/ul[1]/li[contains(concat(\' \',@class,\' \'),\'  \')]/h3[1]/a[1]','2010-07-13 03:11:02','2010-07-13 03:11:02'),(85,17,'Summary','//div[@id=\'bodyContent\']/div[1]/div[2]/div[1]/ul[1]/li[contains(concat(\' \',@class,\' \'),\'  \')]/p[3]','2010-07-13 03:12:21','2010-07-13 03:12:21'),(86,18,'Title','//div[@id=\'title\']/h1[1]/span[1]','2010-07-13 05:22:20','2010-07-13 05:22:20'),(87,18,'Author','//p[@id=\'byline\']/a[1]','2010-07-13 05:22:28','2010-07-13 05:22:28'),(88,13,'Label Name','//div[@id=\'main\']/div[1]/div[1]/div[1]/div[1]/div[contains(concat(\' \',@class,\' \'),\' columnGroup \')]/div/p[contains(concat(\' \',@class,\' \'),\' summary \')]','2010-07-13 05:48:48','2010-07-13 05:48:48'),(94,20,'Test','/html/body/table[2]/tbody[1]/tr[1]/td[2]/table[1]/tbody[1]/tr[1]/td[1]/table[3]/tbody[1]/tr[1]/td[1]/table[2]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/pre[1]','2010-07-13 06:21:46','2010-07-13 06:21:46'),(98,13,'HEadlines with Rejection','/html/body/div[2]/div/div/div[1]/div[1]/div[1]/div[1]/div/div//a[1][not(.=//table[@id=\'TwoWeekCalendar-ab\']/tbody[1]/tr/td/a[1])][not(.=//div[@id=\'main\']/div[1]/div[1]/div[1]/div[1]/div[contains(concat(\' \',@class,\' \'),\' columnGroup \')]/div/ul[contains(concat(\' \',@class,\' \'),\' refer \')]/li[last()]/span[contains(concat(\' \',@class,\' \'),\' commentCountLink \')]/a[1])][not(.=//div[@id=\'main\']/div[1]/div[1]/div[1]/div[1]/div[2]/div[contains(concat(\' \',@class,\' \'),\' story \')]/ul[contains(concat(\' \',@class,\' \'),\' refer \')]/li/a[1])]','2010-07-13 08:01:44','2010-07-13 08:05:59'),(100,13,'Headlines Improved','/html/body/div[2]/div/div/div[1]/div[1]/div[1]/div[1]/div/div//a[1])[not(.=(//div[@id=\'main\']/div[1]/div[1]/div[1]/div[1]/div[2]/div[6]/div[1]/a[1] | //div[@id=\'main\']/div[1]/div[1]/div[1]/div[1]/div[contains(concat(\' \',@class,\' \'),\' columnGroup \')]/div/ul[1]/li/a[1] | //table[@id=\'TwoWeekCalendar-ab\']/tbody[1]/tr/td/a[1]))]','2010-07-14 13:13:27','2010-07-14 13:31:14'),(102,13,'Headlines Improved III','(/html/body/div[2]/div/div/div[1]/div[1]/div[1]/div[1]/div/div//a[1])[not(.=(//div[@id=\'main\']/div[1]/div[1]/div[1]/div[1]/div[contains(concat(\' \',@class,\' \'),\' columnGroup \')]/div/ul[1]/li/a[1] | //table[@id=\'TwoWeekCalendar-ab\']/tbody[1]/tr/td/a[1]))]','2010-07-14 13:44:57','2010-07-14 13:44:57'),(103,26,'Top Stories Headlines','//div[@id=\'basecolour_bn\']/table[1]/tbody[1]/tr[1]/td[2]/div[1]/div[3]/div[2]/h1/a[1]','2010-07-14 13:55:42','2010-07-14 13:55:42'),(104,26,'Top Stories Summary','//div[@id=\'basecolour_bn\']/table[1]/tbody[1]/tr[1]/td[2]/div[1]/div[3]/div[2]/p','2010-07-14 13:56:09','2010-07-14 13:56:09'),(105,26,'Top Stories Headlines','//div[@id=\'basecolour_bn\']/table[1]/tbody[1]/tr[1]/td[2]/div[1]/div[3]/div[2]//a[1]','2010-07-14 13:56:30','2010-07-14 13:56:30'),(106,13,'Headlines WITH REJECTION!!!!! 4','(/html/body/div[2]/div/div/div[1]/div[1]/div[1]/div[1]/div/div//a[1])[not(.=(//div[@id=\'main\']/div[1]/div[1]/div[1]/div[1]/div[2]/div[contains(concat(\' \',@class,\' \'),\' story \')]/ul[1]/li/a[1] | //div[@id=\'main\']/div[1]/div[1]/div[1]/div[1]/div[2]/div[8]/ul[1]/li[1]/span[1]/a[1] | //table[@id=\'TwoWeekCalendar-ab\']/tbody[1]/tr/td/a[1]))]','2010-07-15 02:29:52','2010-07-15 02:29:52'),(107,30,'Top Stories','//div[@id=\'basecolour_bn\']/table[1]/tbody[1]/tr[1]/td[2]/div[1]/div[3]/div[2]//a[1]','2010-07-15 02:34:58','2010-07-15 02:34:58'),(108,6,'Test','/html/body/table[1]/tbody[1]/tr[1]/td[2]/ul[1]/li','2010-07-15 04:07:11','2010-07-15 04:07:11'),(109,32,'Add','(//div[@id=\'sidebar\']/div[5]/div[1]/div[contains(concat(\' \',@class,\' \'),\' spacer \')]/a[1])[not(.=(//div[@id=\'sidebar\']/div[5]/div[1]/div[19]/a[1]))]','2010-07-15 06:29:17','2010-07-15 06:29:17'),(110,NULL,'test','//div[@id=\'content\']/div[1]/h2','2010-07-18 14:40:35','2010-07-18 14:40:35'),(111,36,'Test','//div[@id=\'content\']/div[1]/h2','2010-07-18 14:44:20','2010-07-18 14:44:20'),(112,38,'Music News headlines','(/html/body/center[1]/div[1]/table[3]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/table/tbody[1]/tr[last()]/td/table[1]/tbody[1]/tr/td[1]/a[1])[not(.=(/html/body/center[1]/div[1]/table[3]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[6]/td[1]/a[1]))]','2010-07-19 06:37:56','2010-07-19 06:37:56'),(113,39,'Posters','//form[@id=\'quickModForm\']/div[contains(concat(\' \',@class,\' \'),\' bordercolor \')]/div[1]/div[1]/h4[1]/a[1]','2010-07-19 07:55:30','2010-07-19 07:55:30'),(114,41,'Last Items','/html/body/table[1]/tbody[1]/tr[1]/td//li[last()]','2010-07-19 07:55:51','2010-07-19 07:55:51');
+INSERT INTO `annotations` VALUES (135,'Headlines','//div[@id=\'wrapper\']/div[1]/div/div[1]/h3[1]/a[1]','2010-08-19 15:18:28','2010-08-19 15:18:28'),(136,'Digg Count','//div[@id=\'wrapper\']/div[1]/div/ul[1]/li[1]/a[1]/strong[1]','2010-08-19 15:18:47','2010-08-19 15:18:47'),(137,'YCombinator Headlines','/html/body/center[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr/td[3]/a[1]','2010-08-21 06:57:38','2010-08-21 06:57:38'),(138,'YCombinator Headlines','/html/body/center[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr/td[3]/a[1]','2010-08-21 06:57:40','2010-08-21 06:57:40'),(139,'YCombinator Headlines','/html/body/center[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr/td[3]/a[1]','2010-08-21 06:57:41','2010-08-21 06:57:41'),(140,'Posters','/html/body/center[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr/td[2]/a[1]','2010-08-21 07:03:34','2010-08-21 07:03:34'),(141,'Headlines','(/html/body/div[2]/div/div/div[1]/div[1]/div[1]/div/div//a[1])[not(.=(//div[@id=\'main\']/div[1]/div[1]/div[1]/div[2]/div[7]/div[1]/p[1]/a[1] | //div[@id=\'main\']/div[1]/div[1]/div[1]/div[1]/div/div/ul[1]/li/a[1] | //div[@id=\'main\']/div[1]/div[1]/div[1]/div[2]/div[5]/div[1]/div[2]/ul[1]/li[1]/a[1]))]','2010-08-21 07:06:32','2010-08-21 07:06:32'),(142,'Comments','//div[@id=\'maincontent\']/div[3]/div','2010-08-21 08:00:18','2010-08-21 08:00:18'),(143,'Label Name','','2010-08-21 08:02:57','2010-08-21 08:02:57'),(144,'Label Name','//div[@id=\'maincontent\']/div[3]/div','2010-08-21 08:05:33','2010-08-21 08:05:33'),(145,'Gizmodo headlines','/html/body/div/div/div/div/h1[1]/a[1]','2010-08-22 05:08:37','2010-08-22 05:08:37'),(146,'Headlines','/html/body/div/div/div/div/h1[1]/a[1]','2010-08-22 05:10:56','2010-08-22 05:10:56'),(147,'Headlines','//div[@id=\'mainContent\']/div[1]/div[1]/ul/li/h3[1]/a[1]','2010-08-22 10:01:11','2010-08-22 10:01:11'),(148,'Date','//div[@id=\'mainContent\']/div[1]/div[1]/ul/li/div[1]','2010-08-22 10:01:20','2010-08-22 10:01:20'),(149,'Titles','//div[@id=\'maincontent\']/div/h2[1]/a[1]','2010-08-23 04:29:32','2010-08-23 04:29:32');
 /*!40000 ALTER TABLE `annotations` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `extractors`
+-- Table structure for table `annotations_pages`
 --
 
-DROP TABLE IF EXISTS `extractors`;
+DROP TABLE IF EXISTS `annotations_pages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `extractors` (
+CREATE TABLE `annotations_pages` (
+  `annotation_id` int(11) NOT NULL,
+  `page_id` int(11) NOT NULL,
+  KEY `fk_annotations_has_pages_pages1` (`page_id`),
+  KEY `fk_annotations_pages_1` (`annotation_id`),
+  KEY `fk_annotations_pages_2` (`page_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `annotations_pages`
+--
+
+LOCK TABLES `annotations_pages` WRITE;
+/*!40000 ALTER TABLE `annotations_pages` DISABLE KEYS */;
+INSERT INTO `annotations_pages` VALUES (133,58),(134,58),(135,60),(136,60),(135,61),(136,61),(137,67),(138,67),(139,67),(140,67),(141,63),(142,69),(143,69),(144,69),(145,77),(146,78),(137,89),(140,89),(147,90),(148,90),(147,91),(148,91),(147,92),(148,92),(147,93),(148,93),(149,94),(149,96),(147,97),(148,97),(137,98),(140,98);
+/*!40000 ALTER TABLE `annotations_pages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `datas`
+--
+
+DROP TABLE IF EXISTS `datas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `datas` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `description` text,
+  `annotation_id` int(11) DEFAULT NULL,
+  `value` text,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `revisions_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `annotation_id` (`annotation_id`),
+  KEY `fk_datas_revisions1` (`revisions_id`),
+  CONSTRAINT `annotation_id` FOREIGN KEY (`annotation_id`) REFERENCES `annotations` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_datas_revisions1` FOREIGN KEY (`revisions_id`) REFERENCES `revisions` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `extractors`
+-- Dumping data for table `datas`
 --
 
-LOCK TABLES `extractors` WRITE;
-/*!40000 ALTER TABLE `extractors` DISABLE KEYS */;
-/*!40000 ALTER TABLE `extractors` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `labels`
---
-
-DROP TABLE IF EXISTS `labels`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `labels` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `description` text,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `labels`
---
-
-LOCK TABLES `labels` WRITE;
-/*!40000 ALTER TABLE `labels` DISABLE KEYS */;
-INSERT INTO `labels` VALUES (1,'Title of Article',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(2,'Date/Time of Article',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(3,'Reporter Name',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(4,'Source Station',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(5,'Country where news occurred',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(6,'Image supporting contents of article',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(7,'Link supporting contents article',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(8,'Main content of article',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(9,'Supporting content of article',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(10,'Subheaders',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(11,'Links to related articles',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(12,'Newsletter',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(13,'Site images',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(14,'Site content',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(15,'Site links/navigation',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(16,'Ads',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54'),(17,'Search',NULL,'2010-05-14 12:32:54','2010-05-14 12:32:54');
-/*!40000 ALTER TABLE `labels` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `page_associations`
---
-
-DROP TABLE IF EXISTS `page_associations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `page_associations` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `page_id` int(11) DEFAULT NULL,
-  `extractor_id` int(11) DEFAULT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `page_associations`
---
-
-LOCK TABLES `page_associations` WRITE;
-/*!40000 ALTER TABLE `page_associations` DISABLE KEYS */;
-/*!40000 ALTER TABLE `page_associations` ENABLE KEYS */;
+LOCK TABLES `datas` WRITE;
+/*!40000 ALTER TABLE `datas` DISABLE KEYS */;
+/*!40000 ALTER TABLE `datas` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -136,8 +113,11 @@ CREATE TABLE `pages` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
+  `next_update` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -146,8 +126,36 @@ CREATE TABLE `pages` (
 
 LOCK TABLES `pages` WRITE;
 /*!40000 ALTER TABLE `pages` DISABLE KEYS */;
-INSERT INTO `pages` VALUES (1,'.js.erb VS .js - Stack Overflow','http://stackoverflow.com/questions/1127697/js-erb-vs-js','2010-05-14 13:33:53','2010-05-14 13:33:53',NULL),(2,'Google','http://www.google.com','2010-07-05 14:22:44','2010-07-05 14:22:44',NULL),(3,'Google','http://www.google.coasdfm','2010-07-05 14:29:12','2010-07-05 14:29:12',NULL),(4,'Google','http://www.google.co','2010-07-05 14:29:23','2010-07-05 14:29:23',NULL),(6,'Title','file:///home/shawn/Desktop/Title.html','2010-07-06 08:27:51','2010-07-06 08:27:51',NULL),(7,'Eclipse Productions','http://eclipse.speedsubs.org/projects/alchemist','2010-07-06 12:04:10','2010-07-06 12:04:10',NULL),(8,'Mayflower Scout Group Singapore','http://mayflowerscout.org/development/','2010-07-06 12:08:38','2010-07-06 12:08:38',NULL),(9,'ajax using script tags - Google Search','http://www.google.com.sg/search?q=ajax using script tags','2010-07-06 12:16:02','2010-07-06 12:16:02',NULL),(10,'adfadf','adfadsf','2010-07-07 18:16:15','2010-07-07 18:16:15',NULL),(11,'root url rails - Google Search','http://www.google.com.sg/search?sourceid=chrome&ie=UTF-8&q=root+url+rails','2010-07-12 07:38:36','2010-07-12 07:38:36',NULL),(12,'FIFA.com - 2010 FIFA World Cup South Africa™ news','http://www.fifa.com/worldcup/news/index.html','2010-07-12 07:46:28','2010-07-12 07:46:28',NULL),(13,'International News - The New York Times','http://www.nytimes.com/pages/world/index.html','2010-07-12 10:45:37','2010-07-12 10:45:37',NULL),(14,'Digg - The Latest News Headlines, Videos and Images','http://digg.com/','2010-07-12 11:29:31','2010-07-12 11:29:31',NULL),(15,'Slashdot Stories (10)','http://slashdot.org/','2010-07-12 12:15:14','2010-07-12 12:15:14',NULL),(16,'FIFA.com - Netherlands-Spain - The matches of 2010 FIFA World Cup South Africa','http://www.fifa.com/worldcup/matches/round=249721/match=300061509/index.html','2010-07-12 12:21:24','2010-07-12 12:21:24',NULL),(17,'FIFA.com','http://www.fifa.com/worldcup/news/news.html','2010-07-13 03:06:40','2010-07-13 03:06:40',NULL),(18,'What does !important mean in CSS?','http://webdesign.about.com/od/css/f/blcssfaqimportn.htm','2010-07-13 05:21:53','2010-07-13 05:21:53',NULL),(19,'Islamists Claim Attack in Uganda - NYTimes.com','http://www.nytimes.com/2010/07/13/world/africa/13uganda.html?_r=1','2010-07-13 05:41:02','2010-07-13 05:41:02',NULL),(20,'CodeToad - Javascript - Enable and Disable form elements.','http://www.codetoad.com/javascript/enable_disable_form_element.asp','2010-07-13 06:21:35','2010-07-13 06:21:35',NULL),(21,'Annotations: index','http://localhost:3000/annotations','2010-07-13 06:29:10','2010-07-13 06:29:10',NULL),(22,'document.evaluate - MDC','https://developer.mozilla.org/en/DOM/document.evaluate','2010-07-13 13:12:56','2010-07-13 13:12:56',NULL),(23,'Aptana RadRails','http://localhost:3000/','2010-07-14 06:57:46','2010-07-14 06:57:46',NULL),(24,'Simple Goods - Web Standards Solutions: The Markup and Style Handbook, Special Edition','http://astore.amazon.com/simplebits-20/detail/1430219203','2010-07-14 12:35:10','2010-07-14 12:35:10',NULL),(25,'Simple Goods - CSS','http://astore.amazon.com/simplebits-20?_encoding=UTF8&node=3','2010-07-14 12:35:25','2010-07-14 12:35:25',NULL),(26,'The Straits Times','http://www.straitstimes.com/BreakingNews/Breaking_News_Top_Stories_20100714.html','2010-07-14 13:55:27','2010-07-14 13:55:27',NULL),(27,'Breaking News','http://www.straitstimes.com/BreakingNews/Singapore/Singapore_20100714.html','2010-07-14 13:57:11','2010-07-14 13:57:11',NULL),(28,'Treehouse wins award','http://www.straitstimes.com/BreakingNews/Singapore/Story/STIStory_553424.html','2010-07-14 13:57:41','2010-07-14 13:57:41',NULL),(29,'Afghans to Form Local Forces to Fight Taliban - NYTimes.com','http://www.nytimes.com/2010/07/15/world/asia/15afghan.html?_r=1&ref=world','2010-07-15 02:17:33','2010-07-15 02:17:33',NULL),(30,'The Straits Times','http://www.straitstimes.com/BreakingNews/Breaking_News_Top_Stories_20100715.html','2010-07-15 02:34:38','2010-07-15 02:34:38',NULL),(31,'Facebook | Janet Lim','http://www.facebook.com/profile.php?id=645587532','2010-07-15 02:48:58','2010-07-15 02:48:58',NULL),(32,'git-svn password change - Stack Overflow','http://stackoverflow.com/questions/1680582/git-svn-password-change','2010-07-15 06:28:43','2010-07-15 06:28:43',NULL),(33,'run - Wiktionary','http://en.wiktionary.org/wiki/run','2010-07-15 07:40:32','2010-07-15 07:40:32',NULL),(34,'fuck - Wiktionary','http://en.wiktionary.org/wiki/fuck','2010-07-15 07:43:36','2010-07-15 07:43:36',NULL),(35,'Hello','http://www.google.com','2010-07-18 13:39:54','2010-07-18 13:39:54',1),(36,'Class: ActiveRecord::Base','http://api.rubyonrails.org/classes/ActiveRecord/Base.html','2010-07-18 14:43:57','2010-07-18 14:43:57',1),(37,'International News - The New York Times','http://www.nytimes.com/pages/world/index.html','2010-07-19 03:51:40','2010-07-19 03:51:40',1),(38,'Music News @ Ultimate-Guitar.Com','http://www.ultimate-guitar.com/news/','2010-07-19 06:37:24','2010-07-19 06:37:24',1),(39,'May Green tileset','http://www.bay12forums.com/smf/index.php?topic=48165.0','2010-07-19 07:45:29','2010-07-19 07:45:29',1),(40,'Tutorials - Dwarf Fortress Wiki','http://df.magmawiki.com/index.php/Tutorials','2010-07-19 07:49:06','2010-07-19 07:49:06',1),(41,'Title','file:///home/shawn/Desktop/Title.html','2010-07-19 07:54:10','2010-07-19 07:54:10',1),(42,'Jot Thought » Blog Archive » HTTP Basic Authentication using restful_authentication with Rails 1.2','http://jotthought.com/articles/2007/09/27/http-basic-authentication-using-restful_authentication-with-rails-12/','2010-07-19 08:27:57','2010-07-19 08:27:57',1);
+INSERT INTO `pages` VALUES (60,'Digg - The Latest News Headlines, Videos and Images','http://digg.com/','2010-08-19 15:17:18','2010-08-19 15:17:18',1,NULL),(61,'Digg - The Latest News Headlines, Videos and Images','http://digg.com/page2','2010-08-19 15:19:12','2010-08-19 15:19:12',1,NULL),(62,'Digg - The Latest News Headlines, Videos and Images','http://digg.com/page3','2010-08-19 15:39:34','2010-08-19 15:39:34',1,NULL),(63,'International News - The New York Times','http://www.nytimes.com/pages/world/index.html','2010-08-20 16:43:05','2010-08-20 16:43:05',1,NULL),(64,'Aptana RadRails','http://localhost:3000/','2010-08-20 16:43:41','2010-08-20 16:43:41',1,NULL),(65,'Dwarf Fortress Wiki:Centralized Discussion - Dwarf Fortress Wiki','http://df.magmawiki.com/index.php/Dwarf_Fortress_Wiki:Centralized_Discussion','2010-08-21 06:18:17','2010-08-21 06:18:17',1,NULL),(66,'Dwarf Fortress Wiki','http://df.magmawiki.com/index.php/Main_Page','2010-08-21 06:50:43','2010-08-21 06:50:43',1,NULL),(67,'Hacker News','http://news.ycombinator.com/','2010-08-21 06:51:29','2010-08-21 06:51:29',1,NULL),(68,'Title','file:///home/shawn/Desktop/Title.html','2010-08-21 07:50:18','2010-08-21 07:50:18',1,NULL),(69,'AUR (en) - kernel26-ck','http://aur.archlinux.org/packages.php?ID=32877','2010-08-21 07:59:57','2010-08-21 07:59:57',1,NULL),(70,'Hacker News','http://news.ycombinator.com/x?fnid=uDspqutqWm','2010-08-21 08:24:30','2010-08-21 08:24:30',1,NULL),(71,'Hacker News','http://news.ycombinator.com/x?fnid=vpPZpiQyTq','2010-08-21 08:25:02','2010-08-21 08:25:02',1,NULL),(72,'Digg - The Latest News Headlines, Videos and Images','http://digg.com/page4','2010-08-21 08:25:47','2010-08-21 08:25:47',1,NULL),(73,'Hacker News','http://news.ycombinator.com/x?fnid=hv4A2mO1tQ','2010-08-21 08:44:37','2010-08-21 08:44:37',1,NULL),(74,'Hacker News','http://news.ycombinator.com/x?fnid=wIoO7Kfnsb','2010-08-21 08:46:52','2010-08-21 08:46:52',1,NULL),(75,'Hacker News','http://news.ycombinator.com/x?fnid=qEG6JFvKjh','2010-08-21 08:51:21','2010-08-21 08:51:21',1,NULL),(76,'Hacker News','http://news.ycombinator.com/x?fnid=9qs7xe1A0D','2010-08-21 09:00:14','2010-08-21 09:00:14',1,NULL),(77,'Gizmodo, the Gadget Guide','http://gizmodo.com/','2010-08-22 05:07:33','2010-08-22 05:07:33',1,NULL),(78,'Lifehacker, tips and downloads for getting things done','http://lifehacker.com/','2010-08-22 05:09:44','2010-08-22 05:09:44',1,NULL),(79,'Lifehacker, tips and downloads for getting things done','http://lifehacker.com/?p=2','2010-08-22 05:11:17','2010-08-22 05:11:17',1,NULL),(80,'Lifehacker, tips and downloads for getting things done','http://lifehacker.com/?p=3','2010-08-22 05:12:16','2010-08-22 05:12:16',1,NULL),(81,'Lifehacker, tips and downloads for getting things done','http://lifehacker.com/?p=9','2010-08-22 05:45:27','2010-08-22 05:45:27',1,NULL),(82,'Digg - The Latest News Headlines, Videos and Images','http://digg.com/page5','2010-08-22 05:49:57','2010-08-22 05:49:57',1,NULL),(83,'rails unique find - Google Search','http://www.google.com.sg/search?q=rails+unique+find&ie=utf-8&oe=utf-8&aq=t&rls=org.mozilla:en-US:official&client=firefox-a','2010-08-22 06:24:41','2010-08-22 06:24:41',1,NULL),(84,'rails unique find - Google Search','http://www.google.com.sg/search?q=rails+unique+find&hl=en&safe=off&client=firefox-a&hs=Dd4&rls=org.mozilla:en-US:official&ei=9sFwTN-sKovuvQO78bhB&start=10&sa=N','2010-08-22 06:25:55','2010-08-22 06:25:55',1,NULL),(85,'rails unique find - Google Search','http://www.google.com.sg/search?q=rails+unique+find&hl=en&safe=off&client=firefox-a&rls=org.mozilla:en-US:official&ei=2cJwTOqjIYS4vQOLmK1B&start=20&sa=N','2010-08-22 06:27:24','2010-08-22 06:27:24',1,NULL),(86,'Digg - The Latest News Headlines, Videos and Images','http://digg.com/page6','2010-08-22 06:29:09','2010-08-22 06:29:09',1,NULL),(87,'benjamin tan wei hao - Google Search','http://www.google.com.sg/search?hl=en&safe=off&client=firefox-a&hs=QNl&rls=org.mozilla%3Aen-US%3Aofficial&q=benjamin+tan+wei+hao&aq=f&aqi=&aql=&oq=&gs_rfai=','2010-08-22 08:34:58','2010-08-22 08:34:58',1,NULL),(88,'benjamin tan wei hao - Google Search','http://www.google.com.sg/search?q=benjamin+tan+wei+hao&hl=en&safe=off&client=firefox-a&hs=ZNl&rls=org.mozilla:en-US:official&prmd=o&ei=MddwTOavEoOWuAOrkbFC&start=10&sa=N','2010-08-22 08:36:40','2010-08-22 08:36:40',1,NULL),(89,'Hacker News','http://news.ycombinator.com/x?fnid=IVzsIuZY0K','2010-08-22 08:46:13','2010-08-22 08:46:13',1,NULL),(90,'FIFA.com - FIFA News Centre','http://www.fifa.com/newscentre/news/index.html','2010-08-22 10:00:25','2010-08-22 10:00:25',1,NULL),(91,'FIFA.com - FIFA News Centre','http://www.fifa.com/newscentre/news/index,page=2.htmx','2010-08-22 10:01:35','2010-08-22 10:01:35',1,NULL),(92,'FIFA.com - FIFA News Centre','http://www.fifa.com/newscentre/news/index,page=3.htmx','2010-08-22 10:03:36','2010-08-22 10:03:36',1,NULL),(93,'FIFA.com - FIFA News Centre','http://www.fifa.com/newscentre/news/index,page=4.htmx','2010-08-22 10:04:35','2010-08-22 10:04:35',1,NULL),(94,'Ajaxian','http://ajaxian.com/','2010-08-23 04:29:13','2010-08-23 04:29:13',1,NULL),(95,'Ajaxian','http://ajaxian.com/page/2','2010-08-23 04:33:58','2010-08-23 04:33:58',1,NULL),(96,'Ajaxian','http://ajaxian.com/page/3','2010-08-23 04:34:40','2010-08-23 04:34:40',1,NULL),(97,'FIFA.com - FIFA News Centre','http://www.fifa.com/newscentre/news/index,page=5.htmx','2010-08-23 04:35:39','2010-08-23 04:35:39',1,NULL),(98,'Hacker News','http://news.ycombinator.com/x?fnid=9UUaHit9vB','2010-08-23 04:59:31','2010-08-23 04:59:31',1,NULL);
 /*!40000 ALTER TABLE `pages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `revisions`
+--
+
+DROP TABLE IF EXISTS `revisions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `revisions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `html` longtext,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `page_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `page_id` (`page_id`),
+  CONSTRAINT `page_id` FOREIGN KEY (`page_id`) REFERENCES `pages` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `revisions`
+--
+
+LOCK TABLES `revisions` WRITE;
+/*!40000 ALTER TABLE `revisions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `revisions` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -169,7 +177,7 @@ CREATE TABLE `schema_migrations` (
 
 LOCK TABLES `schema_migrations` WRITE;
 /*!40000 ALTER TABLE `schema_migrations` DISABLE KEYS */;
-INSERT INTO `schema_migrations` VALUES ('20100513134504'),('20100513134621'),('20100513135119'),('20100514113256'),('20100514113346'),('20100518144453'),('20100518144647'),('20100518144936'),('20100518145027'),('20100718120041'),('20100718122212');
+INSERT INTO `schema_migrations` VALUES ('20100513134504'),('20100513134621'),('20100513135119'),('20100514113256'),('20100514113346'),('20100518144453'),('20100518144647'),('20100518144936'),('20100518145027'),('20100718120041'),('20100718122212'),('20100722035134'),('20100811084941');
 /*!40000 ALTER TABLE `schema_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -215,4 +223,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-07-20 14:18:24
+-- Dump completed on 2010-08-23 22:19:54
