@@ -2,17 +2,24 @@
   <b>Css selector:</b>
   <%=h @annotation.xpath %>
 </p>
-
-<p>
-  <b>Page:</b>
-  <%=h @annotation.page_id %>
-</p>
-
 <p>
   <b>Label:</b>
   <%=h @annotation.label %>
 </p>
-
-
+<p>
+	<b>Pages that also use this label:</b>
+	<table>
+		<thead>
+			<th>URL</th>
+			<th></th>
+		</thead>
+		<%@annotation.pages.each do |page|%>
+		<tr>
+			<td><%=page.url%></td>
+			<td><%= link_to 'Show',page%></td>
+		</tr>
+		<%end%>
+	</table>
+</p>
 <%= link_to 'Edit', edit_annotation_path(@annotation) %> |
 <%= link_to 'Back', annotations_path %>

@@ -36,7 +36,6 @@
 				className: parcelsInterfaceStyle+" xpath_list"
 			});
 			for (var i = 0; i < annotations.length; i++) {
-				console.log(annotations[i]);
 				list.appendChild(
 					createAnnotationListItem(list,annotations[i],[
 						$B("input",{
@@ -54,7 +53,6 @@
 		};
 		
 		var createAnnotationSuggest = function(annotations) {
-			console.log(annotations);
 			var annotation_form = $B("form",{
 				action:set_annotations,
 				children:[
