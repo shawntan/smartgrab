@@ -69,37 +69,6 @@ INSERT INTO `annotations_pages` VALUES (133,58),(134,58),(135,60),(136,60),(135,
 UNLOCK TABLES;
 
 --
--- Table structure for table `datas`
---
-
-DROP TABLE IF EXISTS `datas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `datas` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `annotation_id` int(11) DEFAULT NULL,
-  `value` text,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `revisions_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `annotation_id` (`annotation_id`),
-  KEY `fk_datas_revisions1` (`revisions_id`),
-  CONSTRAINT `annotation_id` FOREIGN KEY (`annotation_id`) REFERENCES `annotations` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_datas_revisions1` FOREIGN KEY (`revisions_id`) REFERENCES `revisions` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `datas`
---
-
-LOCK TABLES `datas` WRITE;
-/*!40000 ALTER TABLE `datas` DISABLE KEYS */;
-/*!40000 ALTER TABLE `datas` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `pages`
 --
 
@@ -182,6 +151,37 @@ INSERT INTO `schema_migrations` VALUES ('20100513134504'),('20100513134621'),('2
 UNLOCK TABLES;
 
 --
+-- Table structure for table `scraped_values`
+--
+
+DROP TABLE IF EXISTS `scraped_values`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `scraped_values` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `annotation_id` int(11) DEFAULT NULL,
+  `value` text,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `revisions_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `annotation_id` (`annotation_id`),
+  KEY `fk_datas_revisions1` (`revisions_id`),
+  CONSTRAINT `annotation_id` FOREIGN KEY (`annotation_id`) REFERENCES `annotations` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_datas_revisions1` FOREIGN KEY (`revisions_id`) REFERENCES `revisions` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `scraped_values`
+--
+
+LOCK TABLES `scraped_values` WRITE;
+/*!40000 ALTER TABLE `scraped_values` DISABLE KEYS */;
+/*!40000 ALTER TABLE `scraped_values` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `users`
 --
 
@@ -223,4 +223,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-08-23 22:19:54
+-- Dump completed on 2010-08-23 22:48:08
