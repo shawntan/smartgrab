@@ -9,57 +9,6 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100718122212) do
-
-  create_table "annotations", :force => true do |t|
-    t.integer  "page_id"
-    t.string   "label"
-    t.string   "xpath",      :limit => 1024
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "extractors", :force => true do |t|
-    t.string   "name"
-    t.text     "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "labels", :force => true do |t|
-    t.string   "name"
-    t.text     "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "page_associations", :force => true do |t|
-    t.integer  "page_id"
-    t.integer  "extractor_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "pages", :force => true do |t|
-    t.string   "title"
-    t.string   "url"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "user_id"
-  end
-
-  create_table "users", :force => true do |t|
-    t.string   "login",                     :limit => 40
-    t.string   "name",                      :limit => 100, :default => ""
-    t.string   "email",                     :limit => 100
-    t.string   "crypted_password",          :limit => 40
-    t.string   "salt",                      :limit => 40
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "remember_token",            :limit => 40
-    t.datetime "remember_token_expires_at"
-  end
-
-  add_index "users", ["login"], :name => "index_users_on_login", :unique => true
+ActiveRecord::Schema.define(:version => 0) do
 
 end
