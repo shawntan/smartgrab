@@ -31,7 +31,7 @@
 			}
 			list.scrollTop = list.scrollHeight;
 		};
-		var createSuggestedAnnotations = function(annotations){//returns a ul of list.
+		var createSuggestedList = function(annotations){//returns a ul of list.
 			var list = $B("ul",{
 				className: parcelsInterfaceStyle+" xpath_list"
 			});
@@ -56,27 +56,24 @@
 			var annotation_form = $B("form",{
 				action:set_annotations,
 				children:[
-					createSuggestedAnnotations(annotations),
+					createSuggestedList(annotations),
 					$B("input",{name:"id",type:"hidden",value:pi.suggestor.page_id_field.value}),
 					$B("input",{type:"submit",value:"Add"})
 				]
 			});
-			var float_div = $B("div",{
-				className: parcelsInterfaceStyle+" dialog",
-				children: [
-					annotation_form
-				],
-				style:{
-					top:"40px",
-					left:"40px"
-				}
-			});
+			var sugWindow = new ParcelsWindow(
+				[annotation_form],
+				"recommendations",
+				function() {
+					sugWindow.close();
+				},
+				{left:40,top:40}
+			);
 			Connection.MakeIframeTarget(annotation_form,false,function(){
 				loader.request({id:pi.suggestor.page_id_field.value});
-				float_div.parentNode.removeChild(float_div);
+				sugWindow.close();
 				delete float_div;
 			});
-			document.body.appendChild(float_div);
 		}
 		//controllers
 		var loader = new Connection.JSONDataRequest(
