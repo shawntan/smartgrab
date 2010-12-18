@@ -7,7 +7,6 @@
 				var result = 1;
 				var temp = this;
 				var tagname = this.tagName;
-				//end
 				while (temp = temp.previousSibling){
 					if (temp.tagName == tagname) result++;
 				} 
@@ -77,13 +76,17 @@
 				
 			}
 		};
+		
+		
 		var PseudoElement = function(){
 		};
+		
 		var selector_priority = [
 			function(pe){if(pe.index) return pe.index},
 			function(pe){if(pe.last) return "last()"},
 			function(pe){if (pe.classes) return "contains(concat(' ',@class,' '),' " + pe.classes[0] + " ')"}
 		];
+		
 		PseudoElement.prototype = {
 			preprocessed: true,
 			getIndex: function(){
