@@ -1,5 +1,7 @@
 #!/bin/bash
+
 script/server -d
 sudo /etc/rc.d/mysqld start
+
 #(firefox http://localhost:3000 > /dev/null & ) &
 #tail -f log/development.log
