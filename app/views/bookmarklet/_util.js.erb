@@ -156,3 +156,43 @@
 			}
 		}
 	}
+	/*
+	 * Element zhnging methods
+	 */
+	
+	Element.prototype.getIndex = function(){
+		var result = 1;
+		var temp = this;
+		var tagname = this.tagName;
+		while (temp = temp.previousSibling)	if (temp.tagName == tagname) result++; 
+		return result;
+	};
+	
+	Element.prototype.isLast = function(){
+		var last = this.parentNode.children[this.parentNode.children.length-1];
+		do{
+			if(last == this){
+				return true;
+			} else {
+				last = last.previousSibling;
+			} 
+		} while(last.tagName!=this.tagName);
+		return false;
+	};
+	
+	Element.prototype.getClasses = function(){
+		var result; 
+		if(this.className) {
+			if(this.className.trim()=="") result = null;
+			else {
+				result = this.className.trim().split(/\s+/);
+				var index;
+				for(var i=classignorelist.length-1;i>=0;i--)
+					if((index = result.indexOf(classignorelist[i]))>=0)
+						result.splice(index, 1);
+			}
+		}
+		return result;
+	};
+	
+	
