@@ -1,16 +1,22 @@
 	var ParcelsSelector = function(){
+		
 		/**
 		 * special methods to zhng elements
 		 */
-		Element.prototype.getSelectorPath = function() {
-			var curr = this;
-			var result = [];
-			do {
-				preprocessor(curr);
-				result.unshift(curr.model);
-				curr = curr.parentNode
-			} while ((curr != document.body));
-			this.path = result;
+		HTMLElement.prototype.getSelectorPath = function() {
+			var result;
+			if(this.path) {
+				result = this.path;
+			} else {
+				var curr = this;
+				result = [];
+				do {
+					preprocessor(curr);
+					result.unshift(curr.model);
+					curr = curr.parentNode
+				} while ((curr != document.body));
+				this.path = result;
+			}
 			return result;
 		};
 		var preprocessor = function(e) {
@@ -32,9 +38,9 @@
 		 * Lists priority in selector for XPath string.
 		 **/
 		var selector_priority = [
-			function(pe){if (pe.classes) return "contains(concat(' ',@class,' '),' " + pe.classes[0] + " ')"},
 			function(pe){if(pe.index) return pe.index},
 			function(pe){if(pe.last) return "last()"},
+			function(pe){if (pe.classes) return "contains(concat(' ',@class,' '),' " + pe.classes[0] + " ')"},
 		];
 		
 		var selector = function(e) {
@@ -47,6 +53,7 @@
 			return tagName + (selector?'['+selector+']':"");
 		};
 		var array2XPath = function(arr) {
+			//console.log(arr);
 			var result = "";
 			var match_any = false;
 			for(var i=0;i<arr.length;i++){
@@ -131,6 +138,9 @@
 		 * Important part!
 		 * */
 		var longestPathSubsequence = function(p1,p2) {
+			//console.log("LCS time!");
+			//console.log(p1);
+			//console.log(p2);
 			var table = new Array(p1.length + 1);
 			for (var i = 0; i < table.length; i++) {//i(1st path),j(2nd path) are row and column
 				table[i] = new Array(p2.length + 1);
@@ -178,11 +188,11 @@
 		};
 
 		var flatPathCompare = function(e1,e2){
-			var path1 = e1.getSelectorPath();
-			var path2 = e2.getSelectorPath();
+			var path1 = e1;
+			var path2 = e2;
 			if(path1.length == path2.length) {
 				var result = [];
-				var depth = e1.getSelectorPath().length;
+				var depth = path1.length;
 				for(var i=depth-1;i>=0;i--){
 					var el;
 					if(path1[i]==path2[i]) el  = path1[i];
@@ -190,8 +200,7 @@
 					else el = "*";
 					result.unshift(el);
 				}
-				result[result.length-1].path =result;
-				return result[result.length-1];
+				return result;
 			} else throw new Error("Different path length!");
 		}
 		
@@ -238,7 +247,7 @@
 					selected.path = longestPathSubsequence(selected.path,pathArr);
 					//@@@@IMPORTANT@@@@
 				}
-				console.log(JSON.stringify(selected.path));
+				//console.log(JSON.stringify(selected.path));
 				selected._push(e);
 				selected.results = selected.getResults();
 			}
@@ -247,9 +256,9 @@
 			if (contains(selected, e)) selected.splice(selected.indexOf(e), 1);
 			else return;
 			if (selected.length > 0) {
-				var temp = selected[0];
+				var temp = selected[0].getSelectorPath();
 				for(var j=1;j<selected.length;j++){
-					temp = longestPathSubsequence(selected[j],temp);
+					temp = longestPathSubsequence(selected[j].getSelectorPath(),temp);
 				}
 				selected.path = temp;
 			}
@@ -261,41 +270,76 @@
 		}
 		selected.getResults = function(){
 			var results;
-			var xpath = array2XPath(selected.path);
-			console.log(xpath);
-			if(selected.path) results = queryDocument(xpath);
+			if (selected.path) {
+				var xpath = array2XPath(selected.path);
+				//console.log("test");
+				//console.log(xpath);
+				if (selected.path) results = queryDocument(xpath);
+			} else {
+				results = [];
+			}
 			tracker.update();
 			return results;
 		}
 		
+		
 		rejected.groups = {};
+		rejected.selector_paths = {};
 		rejected._push = rejected.push;
+		var isPathInViolation = function(arr){
+			var result = queryDocument(array2XPath(arr));
+			for(var i=selected.length-1;i>=0;i--){
+				if(result.indexOf(selected[i]) >=0 ) return true;
+			} 
+			return false;
+		};
 		rejected.push = function(e){
 			if (contains(selected, e) || contains(rejected,e)) return;
+			
 			preprocessor(e);
 			var depth = e.getSelectorPath().length;
-			if(!rejected.groups[depth])	rejected.groups[depth] = new RejectTagArray();
-			if(rejected.groups[depth].push(e)) {
+			if(!rejected.groups[depth]){
+				rejected.groups[depth] = [e.getSelectorPath()];
+				rejected.selector_paths[depth] = e.getSelectorPath();
 				rejected._push(e);
-				rejected.results = rejected.getResults();
+			}	
+			else {
+				var temp = flatPathCompare(rejected.selector_paths[depth],e.getSelectorPath());
+				if(!isPathInViolation(temp)) {
+					rejected.groups[depth].push(e.getSelectorPath());
+					rejected.selector_paths[depth]
+					rejected._push(e);
+				}
 			}
+			//console.log(rejected.length);
+			//console.log(rejected.groups);
+			//console.log(rejected.selector_paths);
+			//console.log(rejected.getXPath());
 		};
 		rejected.remove = function(e){
 			var index;
 			if((index = rejected.indexOf(e)) >= 0) rejected.splice(index, 1);
 			else return;
+			
 			var depth = e.getSelectorPath().length;
-			rejected.groups[depth].remove(e);
-			rejected.results = rejected.getResults();
+			rejected.groups[depth].splice(rejected.groups[depth].indexOf(e),1);
+			if(rejected.groups[depth].length > 0) {
+				var temp = rejected.groups[depth][0];
+				for(var i=1;i<rejected.groups[depth].length;i++) temp = flatPathCompare(temp,rejected.groups[depth][1]);
+				rejected.selector_paths[depth] = temp;
+			} else {
+				delete rejected.groups[depth];
+				delete rejected.selector_paths[depth];
+			}
 		};
 		rejected.getXPath = function(){
-			var groups = rejected.groups;
+			var groups = rejected.selector_paths;
 			var resultXPath;
 			var temp;
 			for(var i in groups) {
-				if(groups[i] && groups[i].path) {
-					if(resultXPath) resultXPath = resultXPath + " | " + array2XPath(groups[i].path);
-					else resultXPath = array2XPath(groups[i].path);
+				if(groups[i]) {
+					if(resultXPath) resultXPath = resultXPath + " | " + array2XPath(groups[i]);
+					else resultXPath = array2XPath(groups[i]);
 				}
 			}
 			return resultXPath;
@@ -304,45 +348,10 @@
 			tracker.update();
 			return queryDocument(rejected.getXPath());
 		};
-		var RejectTagArray= function(){
-			var arr = [];
-			arr._push = arr.push;
-			arr.push = function(e){
-				var temp = arr.path;//save previous
-				if (!arr.path) arr.path = e;
-				else arr.path = flatPathCompare(arr.path,e);
-				if(arr.isPathInViolation()) {
-					arr.splice(arr.indexOf(e), 1);
-					arr.path = temp;
-					return false;
-				} else {
-					arr._push(e);
-				}
-				return true;
-			};
-			arr.isPathInViolation = function() {
-				var result = queryDocument(array2XPath(arr.path));
-				for(var i=selected.length-1;i>=0;i--){
-					if(result.indexOf(selected[i])>=0) return true;
-				}
-				return false;
-			}
-			arr.remove = function(e){
-				arr.splice(arr.indexOf(e), 1);
-				if(arr.length > 0) {
-					var temp = arr[0];
-					for(var j=1;j<arr.length;j++){
-						temp = flatPathCompare(temp,arr[j]);
-					}
-					arr.path = temp;	
-				} else delete arr.path;
-			}
-			return arr;
-		}
-		
+
 		this.selectElement = function(el) {
 			selected.push(el);
-			console.log(window.test = this);
+			//console.log(window.test = this);
 		};
 		this.selectedDelete = function(el) {
 			selected.remove(el)

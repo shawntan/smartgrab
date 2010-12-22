@@ -146,17 +146,11 @@
 				var parcels_action = this.parcels_action;
 				
 				clearAllInvolved();
-				
+				//console.log(this);
 				parcels_action(this);
 				//update textbox
 				pi.suggestor.xpath_field.value = pi.selector.tracker.xpath;
-				/**
-				var path = pi.selector.tracker.selected.path.path;
-				var temp = path[path.length-1].path;
-				delete path[path.length-1].path;
-				console.log(JSON.stringify(path));
-				path[path.length-1].path = temp;
-				**/
+
 				setElements(pi.selector.tracker.highlighted,styles.highlighted,parcels_actions.reject);
 				setElements(pi.selector.tracker.rejected,styles.rejected,parcels_actions.dereject);
 				setElements(pi.selector.tracker.selected,styles.selected,parcels_actions.deselect);

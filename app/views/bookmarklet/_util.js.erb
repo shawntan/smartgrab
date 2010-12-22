@@ -160,7 +160,7 @@
 	 * Element zhnging methods
 	 */
 	
-	Element.prototype.getIndex = function(){
+	HTMLElement.prototype.getIndex = function(){
 		var result = 1;
 		var temp = this;
 		var tagname = this.tagName;
@@ -168,7 +168,7 @@
 		return result;
 	};
 	
-	Element.prototype.isLast = function(){
+	HTMLElement.prototype.isLast = function(){
 		var last = this.parentNode.children[this.parentNode.children.length-1];
 		do{
 			if(last == this){
@@ -180,7 +180,7 @@
 		return false;
 	};
 	
-	Element.prototype.getClasses = function(){
+	HTMLElement.prototype.getClasses = function(){
 		var result; 
 		if(this.className) {
 			if(this.className.trim()=="") result = null;
