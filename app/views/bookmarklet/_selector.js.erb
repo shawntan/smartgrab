@@ -205,12 +205,19 @@
 		}
 		
 		//start exposed functions.
+		
 		this.tracker = {
 			selected: [],
 			rejected: [],
+			raw: {
+				select: null,
+				reject: null,
+			},
 			highlighted: null,
 			xpath: null,
 			update: function() {
+				tracker.raw.select = selected.path;
+				tracker.raw.reject = rejected.selector_paths;
 				tracker.xpath = tracker.getXPath();
 				if (!tracker.xpath) {
 					tracker.xpath = "";
