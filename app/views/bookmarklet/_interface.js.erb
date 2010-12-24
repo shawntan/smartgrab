@@ -150,12 +150,11 @@
 				parcels_action(this);
 				//update textbox
 				pi.suggestor.xpath_field.value = pi.selector.tracker.xpath;
-
+				pi.suggestor.raw_field.value = JSON.stringify(pi.selector.tracker.raw);
 				setElements(pi.selector.tracker.highlighted,styles.highlighted,parcels_actions.reject);
 				setElements(pi.selector.tracker.rejected,styles.rejected,parcels_actions.dereject);
 				setElements(pi.selector.tracker.selected,styles.selected,parcels_actions.deselect);
 				
-				console.log(JSON.stringify(pi.selector.tracker.raw));
 				return false;
 			},
 			onmouseover: function(e){

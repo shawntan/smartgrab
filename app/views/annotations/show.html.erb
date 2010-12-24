@@ -1,7 +1,18 @@
 <p>
-  <b>Css selector:</b>
+  <b>CSS selector:</b>
   <%=h @annotation.xpath %>
+  </p>
+ <p>
+  <b>Raw:</b>
+  <pre>
+  	  <script>
+  	 var string = '<%=@annotation.raw %>';
+  	var obj = eval('('+string+')');
+	document.write(JSON.stringify(obj, null, '  '));
+  </script>
+  </pre>
 </p>
+
 <p>
   <b>Label:</b>
   <%=h @annotation.label %>

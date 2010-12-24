@@ -64,8 +64,8 @@
 						result = result + '/';
 					}
 				} else {
-					result = result + '/' + selector(arr[i]); 
 					match_any = false;
+					result = result + '/' + selector(arr[i]); 
 				}
 			}
 			return "/html/body"+result;
@@ -196,10 +196,11 @@
 				for(var i=depth-1;i>=0;i--){
 					var el;
 					if(path1[i]==path2[i]) el  = path1[i];
-					else if(el = compareElements(path1[i],path2[i]));
+					else if(el = compareElements(path1[i],path2[i])) ;
 					else el = "*";
 					result.unshift(el);
 				}
+				console.log(result);
 				return result;
 			} else throw new Error("Different path length!");
 		}
@@ -215,32 +216,41 @@
 			},
 			highlighted: null,
 			xpath: null,
-			update: function() {
+		};
+		var tracker = this.tracker;
+		var selected = tracker.selected;		
+		var rejected = tracker.rejected;
+		
+		var update = function() {
 				tracker.raw.select = selected.path;
 				tracker.raw.reject = rejected.selector_paths;
-				tracker.xpath = tracker.getXPath();
+				tracker.xpath = getXPath();
+				console.log(tracker.xpath);
+
 				if (!tracker.xpath) {
 					tracker.xpath = "";
 					tracker.highlighted = [];
 				}
 				else {
-					tracker.highlighted = queryDocument(tracker.getXPath());
+					tracker.highlighted = queryDocument(tracker.xpath);
 				} 
 			}
-		};
-		var tracker = this.tracker;
-		tracker.getXPath = function() {
+		var getXPath = function() {
 			if(selected.length == 0) return;
 			var result = selected.getXPath();
+			console.log(result);
 			var rejectedXPath = rejected.getXPath();
 			if(rejectedXPath) result = "("+result+")" + "["+"not(.=("+rejectedXPath+"))"+"]";
 			return result;
 		}
 		
-		var selected = tracker.selected;		
-		var rejected = tracker.rejected;
+
 		
 		selected._push = selected.push;
+		/**
+		 * Adds a new element, recomputes selectorPath
+		 * UPDATES selected.path
+		 * */
 		selected.push = function(e){
 			if (contains(selected, e) || contains(rejected, e)) return;
 			else if(contains(rejected.results,e)) return;
@@ -256,9 +266,13 @@
 				}
 				//console.log(JSON.stringify(selected.path));
 				selected._push(e);
-				selected.results = selected.getResults();
 			}
 		};
+		/**
+		 * Removes existing element, recomputes EVERYTHING.
+		 * @param {Object} e
+		 * UPDATES selected.path
+		 */
 		selected.remove = function(e){
 			if (contains(selected, e)) selected.splice(selected.indexOf(e), 1);
 			else return;
@@ -270,27 +284,22 @@
 				selected.path = temp;
 			}
 			else delete selected.path;
-			selected.results = selected.getResults();
 		}
+		/**
+		 * @return XPath string if selected.path
+		 */
 		selected.getXPath = function(){
 			if(selected.path) return array2XPath(selected.path);
 		}
-		selected.getResults = function(){
-			var results;
-			if (selected.path) {
-				var xpath = array2XPath(selected.path);
-				//console.log("test");
-				//console.log(xpath);
-				if (selected.path) results = queryDocument(xpath);
-			} else {
-				results = [];
-			}
-			tracker.update();
-			return results;
-		}
+
 		
-		
+		/**
+		 * Sorted paths of individual elements according to depth
+		 */
 		rejected.groups = {};
+		/**
+		 * selectorPaths of elements according to depth
+		 */
 		rejected.selector_paths = {};
 		rejected._push = rejected.push;
 		var isPathInViolation = function(arr){
@@ -302,7 +311,6 @@
 		};
 		rejected.push = function(e){
 			if (contains(selected, e) || contains(rejected,e)) return;
-			
 			preprocessor(e);
 			var depth = e.getSelectorPath().length;
 			if(!rejected.groups[depth]){
@@ -314,20 +322,15 @@
 				var temp = flatPathCompare(rejected.selector_paths[depth],e.getSelectorPath());
 				if(!isPathInViolation(temp)) {
 					rejected.groups[depth].push(e.getSelectorPath());
-					rejected.selector_paths[depth]
+					rejected.selector_paths[depth] = temp;
 					rejected._push(e);
 				}
 			}
-			//console.log(rejected.length);
-			//console.log(rejected.groups);
-			//console.log(rejected.selector_paths);
-			//console.log(rejected.getXPath());
 		};
 		rejected.remove = function(e){
 			var index;
 			if((index = rejected.indexOf(e)) >= 0) rejected.splice(index, 1);
 			else return;
-			
 			var depth = e.getSelectorPath().length;
 			rejected.groups[depth].splice(rejected.groups[depth].indexOf(e),1);
 			if(rejected.groups[depth].length > 0) {
@@ -349,24 +352,25 @@
 					else resultXPath = array2XPath(groups[i]);
 				}
 			}
+			console.log(resultXPath);
 			return resultXPath;
 		}
-		rejected.getResults = function(){
-			tracker.update();
-			return queryDocument(rejected.getXPath());
-		};
+
 
 		this.selectElement = function(el) {
 			selected.push(el);
-			//console.log(window.test = this);
+			update();
 		};
 		this.selectedDelete = function(el) {
-			selected.remove(el)
+			selected.remove(el);
+			update();
 		};
 		this.rejectElement = function(el) {
 			rejected.push(el);
+			update();
 		};
 		this.rejectedDelete = function(el) {
 			rejected.remove(el);
+			update();
 		};
 	};
