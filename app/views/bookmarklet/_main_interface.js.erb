@@ -1,7 +1,7 @@
 	var createSuggestor = function(){//suggestor: this is the prompt at the top right hand corner that "suggests" the xpath
 		var list = $B("ul", {className: parcelsInterfaceStyle + " " + "xpath_list",});
 		var status = $B("div",{className:parcelsInterfaceStyle});
-		var page_id_field,xpath_field,label_field,raw_field;
+		var page_id_field,id_field,xpath_field,label_field,raw_field;
 		var workspace = $B("form",{
 			className: parcelsInterfaceStyle + " " + "workspace",
 			children:[
@@ -13,6 +13,7 @@
 				}),
 				xpath_field = $B("input",{type:"hidden",name:"xpath"}),
 				raw_field = $B("input",{type:"hidden",name:"raw"}),
+				id_field = $B("input",{type:"hidden",name:"id"}),
 				$B("input",{value:"Add Selection",type:"submit",exclude:true})
 			],
 			action: create_annotation,
@@ -30,6 +31,7 @@
 		s.xpath_field = xpath_field;
 		s.raw_field = raw_field;
 		s.label_field = label_field;
+		s.id_field = id_field;
 		s.list = list;
 	    return s;
 	}

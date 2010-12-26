@@ -1,21 +1,16 @@
 <p>
-  <b>CSS selector:</b>
-  <%=h @annotation.xpath %>
-  </p>
- <p>
-  <b>Raw:</b>
-  <pre>
-  	  <script>
-  	 var string = '<%=@annotation.raw %>';
-  	var obj = eval('('+string+')');
-	document.write(JSON.stringify(obj, null, '  '));
-  </script>
-  </pre>
+	<b>Label:</b>
+	<%=h @annotation.label %>
 </p>
-
 <p>
-  <b>Label:</b>
-  <%=h @annotation.label %>
+	<b>XPath selector:</b>
+	<%=h @annotation.xpath %>
+</p>
+<p>
+	<b>Raw:</b>
+	<pre><script>
+		document.write(JSON.stringify(<%=@annotation.raw %>, null, '  '));
+	</script></pre>
 </p>
 <p>
 	<b>Pages that also use this label:</b>

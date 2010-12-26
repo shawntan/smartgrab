@@ -21,7 +21,7 @@ development:
   database: parcels_development
   pool: 5
   username: root
-  password: 
+  password: stan1818
   host: localhost
   port: 3306
 
@@ -35,7 +35,7 @@ test:
   database: parcels_test
   pool: 5
   username: root
-  password:
+  password: stan1818
   socket: /var/run/mysqld/mysqld.sock
 
 production:

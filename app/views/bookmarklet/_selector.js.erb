@@ -222,8 +222,6 @@
 		var rejected = tracker.rejected;
 		
 		var update = function() {
-				tracker.raw.select = selected.path;
-				tracker.raw.reject = rejected.selector_paths;
 				tracker.xpath = getXPath();
 				console.log(tracker.xpath);
 
@@ -238,7 +236,7 @@
 		var getXPath = function() {
 			if(selected.length == 0) return;
 			var result = selected.getXPath();
-			console.log(result);
+			console.log(tracker);
 			var rejectedXPath = rejected.getXPath();
 			if(rejectedXPath) result = "("+result+")" + "["+"not(.=("+rejectedXPath+"))"+"]";
 			return result;
@@ -256,22 +254,22 @@
 			else if(contains(rejected.results,e)) return;
 			else {
 				preprocessor(e);
-				if (!selected.path) 
-					selected.path = e.getSelectorPath();
+				if (!tracker.raw.select) 
+					tracker.raw.select = e.getSelectorPath();
 				else {
 					//@@@@IMPORTANT@@@@
 					var pathArr = e.getSelectorPath();
-					selected.path = longestPathSubsequence(selected.path,pathArr);
+					tracker.raw.select = longestPathSubsequence(tracker.raw.select,pathArr);
 					//@@@@IMPORTANT@@@@
 				}
-				//console.log(JSON.stringify(selected.path));
+				//console.log(JSON.stringify(tracker.raw.select));
 				selected._push(e);
 			}
 		};
 		/**
 		 * Removes existing element, recomputes EVERYTHING.
 		 * @param {Object} e
-		 * UPDATES selected.path
+		 * UPDATES tracker.raw.select
 		 */
 		selected.remove = function(e){
 			if (contains(selected, e)) selected.splice(selected.indexOf(e), 1);
@@ -281,15 +279,15 @@
 				for(var j=1;j<selected.length;j++){
 					temp = longestPathSubsequence(selected[j].getSelectorPath(),temp);
 				}
-				selected.path = temp;
+				tracker.raw.select = temp;
 			}
-			else delete selected.path;
+			else delete tracker.raw.select;
 		}
 		/**
-		 * @return XPath string if selected.path
+		 * @return XPath string if tracker.raw.select
 		 */
 		selected.getXPath = function(){
-			if(selected.path) return array2XPath(selected.path);
+			if(tracker.raw.select) return array2XPath(tracker.raw.select);
 		}
 
 		
@@ -300,7 +298,7 @@
 		/**
 		 * selectorPaths of elements according to depth
 		 */
-		rejected.selector_paths = {};
+		tracker.raw.reject = {};
 		rejected._push = rejected.push;
 		var isPathInViolation = function(arr){
 			var result = queryDocument(array2XPath(arr));
@@ -315,35 +313,35 @@
 			var depth = e.getSelectorPath().length;
 			if(!rejected.groups[depth]){
 				rejected.groups[depth] = [e.getSelectorPath()];
-				rejected.selector_paths[depth] = e.getSelectorPath();
+				tracker.raw.reject[depth] = e.getSelectorPath();
 				rejected._push(e);
 			}	
 			else {
-				var temp = flatPathCompare(rejected.selector_paths[depth],e.getSelectorPath());
+				var temp = flatPathCompare(tracker.raw.reject[depth],e.getSelectorPath());
 				if(!isPathInViolation(temp)) {
 					rejected.groups[depth].push(e.getSelectorPath());
-					rejected.selector_paths[depth] = temp;
+					tracker.raw.reject[depth] = temp;
 					rejected._push(e);
 				}
 			}
 		};
 		rejected.remove = function(e){
 			var index;
-			if((index = rejected.indexOf(e)) >= 0) rejected.splice(index, 1);
+			if((index = rejected.indexOf(e.path)) >= 0) rejected.splice(index, 1);
 			else return;
-			var depth = e.getSelectorPath().length;
+			var depth = e.path.length;
 			rejected.groups[depth].splice(rejected.groups[depth].indexOf(e),1);
 			if(rejected.groups[depth].length > 0) {
 				var temp = rejected.groups[depth][0];
 				for(var i=1;i<rejected.groups[depth].length;i++) temp = flatPathCompare(temp,rejected.groups[depth][1]);
-				rejected.selector_paths[depth] = temp;
+				tracker.raw.reject[depth] = temp;
 			} else {
 				delete rejected.groups[depth];
-				delete rejected.selector_paths[depth];
+				delete tracker.raw.reject[depth];
 			}
 		};
 		rejected.getXPath = function(){
-			var groups = rejected.selector_paths;
+			var groups = tracker.raw.reject;
 			var resultXPath;
 			var temp;
 			for(var i in groups) {
@@ -356,7 +354,19 @@
 			return resultXPath;
 		}
 
-
+		this.loadRaw = function(raw) {
+			tracker.raw = raw;
+			console.log(raw);
+			if(raw.select) {
+				var placeholder = {};
+				placeholder.path = raw.select;
+				placeholder.model = raw.select[raw.select.length-1];
+				placeholder.getSelectorPath = function() {return placeholder.path};
+				selected.push(placeholder);
+				console.log(selected);
+			}
+			update();
+		};
 		this.selectElement = function(el) {
 			selected.push(el);
 			update();
