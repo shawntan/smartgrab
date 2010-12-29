@@ -3,4 +3,4 @@ log
 *.tmp
 *~
 /log
-config/database.yml
+/config/database.yml

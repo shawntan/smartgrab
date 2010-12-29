@@ -30,9 +30,14 @@ class BookmarkletController < ApplicationController
 		end
 	end
 	def annotate
-		page = current_user.pages.find(params[:page_id]); 
-		page.annotations.create(params[:annotation])
-		script = "#{params[:callback]}(#{@annotation.to_json});";
+		if(params[:annotation][:id]) 
+			@annotation = Annotation.find(params[:annotation][:id])
+      @annotation.update_attributes(params[:annotation])
+		else 
+			page = current_user.pages.find(params[:page_id]); 
+			page.annotations.create(params[:annotation])
+			script = "#{params[:callback]}(#{@annotation.to_json});";
+		end
 		respond_to do |format|
 			format.js {render(:js => script )}
 			format.html 

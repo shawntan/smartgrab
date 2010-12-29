@@ -13,8 +13,8 @@
 				}),
 				xpath_field = $B("input",{type:"hidden",name:"xpath"}),
 				raw_field = $B("input",{type:"hidden",name:"raw"}),
-				id_field = $B("input",{type:"hidden",name:"id"}),
-				$B("input",{value:"Add Selection",type:"submit",exclude:true})
+				id_field = $B("input",{type:"hidden",name:"id",disabled:true}),
+				$B("input",{value:"Save",type:"submit",exclude:true})
 			],
 			action: create_annotation,
 			method: "POST"

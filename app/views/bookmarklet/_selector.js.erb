@@ -26,6 +26,7 @@
 					tagName: e.tagName.toLowerCase(),
 					index: e.getIndex()
 				};
+				if(e.id) result.id = e.id;
 				var last = e.isLast();
 				if (last) result.last = last;
 				var classes = e.getClasses();
@@ -54,7 +55,7 @@
 		};
 		var array2XPath = function(arr) {
 			//console.log(arr);
-			var result = "";
+			var result = "/html/body";
 			var match_any = false;
 			for(var i=0;i<arr.length;i++){
 				if(arr[i]=='*') {
@@ -65,12 +66,25 @@
 					}
 				} else {
 					match_any = false;
-					result = result + '/' + selector(arr[i]); 
+					if (arr[i].id) {
+						result = '//' + arr[i].tagName + "[@id='" + arr[i].id + "']";
+					}
+					else {
+						console.log(arr[i]);
+						result = result + '/' + selector(arr[i]); 
+					} 
+						
 				}
 			}
-			return "/html/body"+result;
+			return result;
 		};
-		
+
+		var commonId = function(e1,e2,pseudo){
+			if(!e1.id || !e2.id) return; 
+			if (e1.id == e2.id) {
+				return pseudo.id = e1.id;
+			}
+		};
 		var commonTagName = function(e1,e2,pseudo){
 			if (e1.tagName == e2.tagName) {
 				return pseudo.tagName = e1.tagName;
@@ -105,7 +119,7 @@
 			}
 		};
 		
-		var comparators = [commonTagName,commonClasses,commonIndex,commonIsLast];
+		var comparators = [commonId,commonTagName,commonClasses,commonIndex,commonIsLast];
 		
 		//comparision methods
 		var score_zero = {score:0};
@@ -358,10 +372,12 @@
 			tracker.raw = raw;
 			console.log(raw);
 			if(raw.select) {
-				var placeholder = {};
-				placeholder.path = raw.select;
-				placeholder.model = raw.select[raw.select.length-1];
-				placeholder.getSelectorPath = function() {return placeholder.path};
+				var placeholder = {
+					path: raw.select,
+					model: raw.select[raw.select.length-1],
+					tagName: raw.select[raw.select.length-1].tagName,
+					getSelectorPath : function() {return placeholder.path}
+				};
 				selected.push(placeholder);
 				console.log(selected);
 			}

@@ -28,10 +28,9 @@
 							]
 						);
 					item.select = function(){
-						clearAllInvolvedAndSelector();
-						if(list.selected) list.selected.deselect();
-						
+						if(list.selected) list.selected.deselect();			
 						pi.suggestor.label_field.value = this.data.label;
+						pi.suggestor.id_field.disabled = false;
 						pi.suggestor.id_field.value = this.data.id;
 						pi.suggestor.label_field.readOnly = true;
 						
@@ -44,10 +43,11 @@
 						repaint();
 					};
 					item.deselect = function(){
+						clearAllInvolvedAndSelector();
 						pi.suggestor.id_field.value = "";
 						pi.suggestor.label_field.value = "";
 						pi.suggestor.label_field.readOnly = false;
-						
+						pi.suggestor.id_field.disabled = true;
 						this.style.background ="";
 						this.onclick = this.select;
 						list.selected = null;
@@ -113,6 +113,7 @@
 						"suggestAnnotations",
 						function(annotations){
 							var i = 0;
+							/**
 							while(i<annotations.length) {
 								var has_match = document.evaluate(
 									annotations[i].xpath,
@@ -123,7 +124,7 @@
 									console.log("no match");
 								}
 								else i++;
-							}
+							}**/
 							if(annotations.length>0) createAnnotationSuggest(annotations);
 						}
 					).request({domain:document.location.hostname})
@@ -167,7 +168,7 @@
 			onclick: function(e){
 				blockevent(e);
 				if(pi.selector.tracker.selected.length > 0 &&
-					pi.selector.tracker.selected[0].tagName != this.tagName) return false;
+					pi.selector.tracker.selected[0].tagName.toLowerCase() != this.tagName.toLowerCase()) return false;
 				if(!this.parcels_action) this.parcels_action = parcels_actions.select;
 				var parcels_action = this.parcels_action;
 				
@@ -183,8 +184,9 @@
 				return false;
 			},
 			onmouseover: function(e){
+				
 				if(pi.selector.tracker.selected.length > 0 &&
-					pi.selector.tracker.selected[0].tagName != this.tagName) return false;
+					pi.selector.tracker.selected[0].tagName.toLowerCase() != this.tagName.toLowerCase()) return false;
 				pi.box.setPosition(getPos(this), {
 					width: this.offsetWidth,
 					height: this.offsetHeight
