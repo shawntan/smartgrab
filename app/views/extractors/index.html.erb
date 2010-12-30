@@ -9,7 +9,7 @@
 <% @extractors.each do |extractor| %>
   <tr>
     <td><%=h extractor.domain %></td>
-    <td><%=h extractor.user_id %></td>
+    <td><%=h extractor.user.login %></td>
     <td><%= link_to 'Show', extractor %></td>
     <td><%= link_to 'Edit', edit_extractor_path(extractor) %></td>
     <td><%= link_to 'Destroy', extractor, :confirm => 'Are you sure?', :method => :delete %></td>

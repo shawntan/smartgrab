@@ -1,4 +1,5 @@
 class Annotation < ActiveRecord::Base
-	has_many :datas
 	belongs_to :extractor
+	
+	has_many :datas
 end

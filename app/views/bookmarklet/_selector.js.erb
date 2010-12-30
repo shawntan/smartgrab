@@ -232,7 +232,7 @@
 			xpath: null,
 		};
 		var tracker = this.tracker;
-		var selected = tracker.selected;		
+		var selected = tracker.selected;
 		var rejected = tracker.rejected;
 		
 		var update = function() {
@@ -376,9 +376,10 @@
 					path: raw.select,
 					model: raw.select[raw.select.length-1],
 					tagName: raw.select[raw.select.length-1].tagName,
-					getSelectorPath : function() {return placeholder.path}
+					getSelectorPath : function() {return placeholder.path},
+					className: ""
 				};
-				selected.push(placeholder);
+				selected._push(placeholder);
 				console.log(selected);
 			}
 			update();

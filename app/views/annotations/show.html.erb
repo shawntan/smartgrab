@@ -12,20 +12,6 @@
 		document.write(JSON.stringify(<%=@annotation.raw %>, null, '  '));
 	</script></pre>
 </p>
-<p>
-	<b>Pages that also use this label:</b>
-	<table>
-		<thead>
-			<th>URL</th>
-			<th></th>
-		</thead>
-		<%@annotation.pages.each do |page|%>
-		<tr>
-			<td><%=page.url%></td>
-			<td><%= link_to 'Show',page%></td>
-		</tr>
-		<%end%>
-	</table>
-</p>
+
 <%= link_to 'Edit', edit_annotation_path(@annotation) %> |
 <%= link_to 'Back', annotations_path %>

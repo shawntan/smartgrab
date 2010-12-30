@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   include Authentication::ByPassword
   include Authentication::ByCookieToken
 
-	has_many :pages
+	has_many :extractors
 	
   validates_presence_of     :login
   validates_length_of       :login,    :within => 3..40

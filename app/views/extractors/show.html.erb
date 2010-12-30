@@ -5,7 +5,41 @@
 
 <p>
   <b>User:</b>
-  <%=h @extractor.user_id %>
+  <%=h @extractor.user.login %>
+</p>
+<p>
+	<b>Labels:</b>
+	<table>
+		<tr>
+			<th>Label</th>
+			<th>XPath</th>
+		</tr>
+	<% @extractor.annotations.each do |annotation| %>
+		<tr>
+			<td><%=h annotation.label %></td>
+			<td><%=h annotation.xpath %></td>
+			<td><%= link_to 'Show', annotation %></td>
+			<td><%= link_to 'Edit', edit_annotation_path(annotation) %></td>
+			<td><%= link_to 'Destroy', annotation, :confirm => 'Are you sure?', :method => :delete %></td>
+		</tr>
+	<% end %>
+	</table>
+	<b>Pages:</b>
+	<table>
+		<tr>
+			<th>Title</th>
+			<th>Link</th>
+		</tr>
+		<% @extractor.pages.each do |page| %>
+		<tr>
+			<td><%=h page.title %></td>
+			<td><a href="<%=page.url%>">Go!</a></td>
+			<td><%= link_to 'Show', page %></td>
+			<td><%= link_to 'Edit', edit_page_path(page) %></td>
+			<td><%= link_to 'Destroy', page, :confirm => 'Are you sure?', :method => :delete %></td>
+		</tr>
+		<% end %>
+	</table>
 </p>
 
 

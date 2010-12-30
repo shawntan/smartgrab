@@ -1,10 +1,5 @@
 	var ParcelsInterface = (function(){
-		if(window.Prototype) {
-			delete Object.prototype.toJSON;
-			delete Array.prototype.toJSON;
-			delete Hash.prototype.toJSON;
-			delete String.prototype.toJSON;
-		}
+
 		var pi;
 		var iframe;
 		var allElements = document.body.getElementsByTagName("*");
@@ -28,26 +23,42 @@
 							]
 						);
 					item.select = function(){
-						if(list.selected) list.selected.deselect();			
+						if(list.selected) list.selected.deselect();
+						
 						pi.suggestor.label_field.value = this.data.label;
-						pi.suggestor.id_field.disabled = false;
 						pi.suggestor.id_field.value = this.data.id;
+						pi.suggestor.raw_field.value = this.data.raw;
+						pi.suggestor.xpath_field.value = this.data.xpath;
+						
+						pi.suggestor.id_field.disabled = false;
 						pi.suggestor.label_field.readOnly = true;
 						
 						this.style.background = "#FFFF00";
 						this.onclick = this.deselect;
 						list.selected = this;
 						
-						var raw = eval('('+ this.data.raw+')');
+						var raw;
+						if (this.data.raw_object) 
+							raw = this.data.raw_object;
+						else {
+							raw = eval('(' + this.data.raw + ')');
+							this.data.raw_object = raw;
+						}
 						pi.selector.loadRaw(raw);
+						
 						repaint();
 					};
 					item.deselect = function(){
 						clearAllInvolvedAndSelector();
-						pi.suggestor.id_field.value = "";
+
 						pi.suggestor.label_field.value = "";
+						pi.suggestor.id_field.value = "";
+						pi.suggestor.raw_field.value = "";
+						pi.suggestor.xpath_field.value = "";
+						
 						pi.suggestor.label_field.readOnly = false;
 						pi.suggestor.id_field.disabled = true;
+						
 						this.style.background ="";
 						this.onclick = this.select;
 						list.selected = null;
@@ -79,60 +90,18 @@
 			return list;
 		};
 		
-		var createAnnotationSuggest = function(annotations) {
-			var annotation_form = $B("form",{
-				action:set_annotations,
-				children:[
-					createSuggestedList(annotations),
-					$B("input",{name:"id",type:"hidden",value:pi.suggestor.page_id_field.value}),
-					$B("input",{type:"submit",value:"Add"})
-				]
-			});
-			var sugWindow = new ParcelsWindow(
-				[annotation_form],
-				"recommendations",
-				function() {
-					sugWindow.close();
-				},
-				{left:40,top:40}
-			);
-			Connection.MakeIframeTarget(annotation_form,false,function(){
-				loader.request({id:pi.suggestor.page_id_field.value});
-				sugWindow.close();
-				delete float_div;
-			});
-		}
+
 		//controllers
 		var loader = new Connection.JSONDataRequest(
 			load_annotations,
 			"requestPageData",
-			function(page,first){
+			function(extractor,first){
 				if(first) {
-					new Connection.JSONDataRequest(
-						suggest_annotations,
-						"suggestAnnotations",
-						function(annotations){
-							var i = 0;
-							/**
-							while(i<annotations.length) {
-								var has_match = document.evaluate(
-									annotations[i].xpath,
-									document, null, XPathResult.BOOLEAN_TYPE, null
-								).booleanValue
-								if(!has_match) {
-									annotations.splice(i,1);
-									console.log("no match");
-								}
-								else i++;
-							}**/
-							if(annotations.length>0) createAnnotationSuggest(annotations);
-						}
-					).request({domain:document.location.hostname})
+					//replace with new first code.
 				} else {
-					displayAnnotations(page.annotations);
+					displayAnnotations(extractor.annotations);
 				}
-				pi.suggestor.page_id_field.value = page.id;
-
+				pi.suggestor.extractor_id_field.value = extractor.id;
 			}
 		);
 
@@ -247,12 +216,17 @@
 		};
 		Connection.MakeIframeTarget(pi.suggestor.workspace,"annotation",function(){
 			clearAllInvolvedAndSelector();
-			loader.request({id:pi.suggestor.page_id_field.value});
+			loader.request({id:pi.suggestor.extractor_id_field.value});
 			pi.suggestor.label_field.value = "";
 			pi.suggestor.xpath_field.value = "";
 		});
-		
-		loader.request({page:{url:document.location.href,title:document.title}});
+		loader.request({
+			domain:	document.location.hostname,
+			page:{
+				url:	document.location.href,
+				title:	document.title
+			}
+		});
 		pi.suggestor.label_field.value = pi.suggestor.label_field.placeholder;
 		return pi;
 	})();

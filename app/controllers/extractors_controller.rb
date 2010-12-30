@@ -2,8 +2,7 @@ class ExtractorsController < ApplicationController
   # GET /extractors
   # GET /extractors.xml
   def index
-    @extractors = Extractor.all
-
+    @extractors = current_user.extractors
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @extractors }
