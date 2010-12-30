@@ -39,9 +39,9 @@
 		 * Lists priority in selector for XPath string.
 		 **/
 		var selector_priority = [
+			function(pe){if (pe.classes) return "contains(concat(' ',@class,' '),' " + pe.classes[0] + " ')"},
 			function(pe){if(pe.index) return pe.index},
 			function(pe){if(pe.last) return "last()"},
-			function(pe){if (pe.classes) return "contains(concat(' ',@class,' '),' " + pe.classes[0] + " ')"},
 		];
 		
 		var selector = function(e) {
