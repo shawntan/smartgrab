@@ -1,64 +1,57 @@
+require 'net/http'
+
+
 class BookmarkletController < ApplicationController
 	before_filter :login_required  
 	skip_before_filter :verify_authenticity_token
+
 	
+# View controllers.
 	def index
 		respond_to do |format|
 	      format.js 
 	      format.html
 		end
 	end
+	
 	def stylesheet
 		respond_to do |format|
 			format.css
 			format.html {redirect_back_or_default('/')}
 		end
 	end
-	def page
+	
+#Action controllers
+	def extractor
+		#Find, if have id, use id otherwise find using domain.
 		if(params[:id])
-			@page = current_user.pages.find(params[:id]);
+			@extractor = current_user.extractors.find(params[:id]); 
 		else
-			@page = current_user.pages.find_by_url(params[:page][:url] );
+			@extractor = current_user.extractors.find_or_create_by_domain(:domain => params[:domain])
 		end
-		if @page 
-			render :js => "#{params[:callback]}(#{@page.to_json(:include => [:annotations])});"
-		else
-			@page = current_user.pages.new(params[:page])
-			if @page.save
-				render :js => "#{params[:callback]}(#{@page.to_json},true);"
-			end
+		jsonstring = @extractor.to_json(:include => [:annotations])
+		#got new page.
+		if(params[:page] and !@extractor.pages.exists?(:url => params[:page][:url]))
+			@extractor.pages.create(params[:page])
+			@extractor.save
 		end
+		render :js => "#{params[:callback]}(#{jsonstring});"
 	end
+	
 	def annotate
-		page = current_user.pages.find(params[:page_id]); 
-		page.annotations.create(params[:annotation])
-		script = "#{params[:callback]}(#{@annotation.to_json});";
+		if(params[:annotation][:id]) 
+			@annotation = Annotation.find(params[:annotation][:id])
+      @annotation.update_attributes(params[:annotation])
+		else 
+			extractor = current_user.extractors.find(params[:extractor_id]); 
+			extractor.annotations.create(params[:annotation])
+			script = "#{params[:callback]}(#{extractor.to_json});";
+		end
 		respond_to do |format|
 			format.js {render(:js => script )}
 			format.html 
 		end
 	end
-
-	
-	def suggest
-		similar_annotations = Annotation.find(
-			:all,
-			:select => "DISTINCT annotations.*",
-			:joins => :pages,
-			:conditions => [ 
-				"(pages.url LIKE ?) AND (pages.user_id = ?)",
-				"%#{params[:domain]}%",
-				current_user.id
-			]
-		)
-		render :js => "#{params[:callback]}(#{similar_annotations.to_json});"
-	end
-	def save_suggestions
-		page = current_user.pages.find(params[:id]);
-		annotation_ids = params[:annotation_ids]
-		page.annotation_ids = annotation_ids
-	end
-	
 	
 	def access_denied
 		respond_to do |format|

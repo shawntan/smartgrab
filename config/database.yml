@@ -20,8 +20,8 @@ development:
   reconnect: false
   database: parcels_development
   pool: 5
-  username: shawntan
-  password: parcels
+ username: root
+  password: 
   host: localhost
   port: 3306
 
@@ -32,11 +32,11 @@ test:
   adapter: mysql
   encoding: utf8
   reconnect: false
-  database: parcels_test
+  database: parcels_development
   pool: 5
-  username: root
-  password:
-  socket: /var/run/mysqld/mysqld.sock
+  username: shawntan
+  password: parcels
+  port:3306
 
 production:
   adapter: mysql

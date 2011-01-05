@@ -1,58 +1,37 @@
-var createSuggestor = function(){//suggestor: this is the prompt at the top right hand corner that "suggests" the xpath
-	var header = $B("div", {
-		children: [$B('div', {
-			className: parcelsInterfaceStyle,
-        	innerHTML: "X",
-        	style: {
-            	'float': 'right',
-            	display: "block",
-				clear: "left"
-			},
-			onclick: function(){
-				exit(self);
+	var createSuggestor = function(){//suggestor: this is the prompt at the top right hand corner that "suggests" the xpath
+		var list = $B("ul", {className: parcelsInterfaceStyle + " " + "xpath_list",});
+		var status = $B("div",{className:parcelsInterfaceStyle});
+		var extractor_id_field,id_field,xpath_field,label_field,raw_field;
+		var workspace = $B("form",{
+			className: parcelsInterfaceStyle + " " + "workspace",
+			children:[
+				extractor_id_field = $B("input",{type:"hidden",name:"extractor_id",exclude:true,readOnly:true}),
+				label_field = $B("input",{
+					type: "text",
+					name: "label",
+					placeholder: "Label Name"
+				}),
+				xpath_field = $B("input",{type:"hidden",name:"xpath"}),
+				raw_field = $B("input",{type:"hidden",name:"raw"}),
+				id_field = $B("input",{type:"hidden",name:"id",disabled:true}),
+				$B("input",{value:"Save",type:"submit",exclude:true})
+			],
+			action: create_annotation,
+			method: "POST"
+		});
+		var s = new ParcelsWindow(
+			[list,workspace],
+			"suggestor",
+			function() {
+				exit();
 			}
-		})]
-	});
-	var list = $B("ul", {className: parcelsInterfaceStyle + " " + "xpath_list",});
-	var status = $B("div",{className:parcelsInterfaceStyle});
-	var page_id_field,xpath_field,label_field;
-	var workspace = $B("form",{
-		className: parcelsInterfaceStyle + " " + "workspace",
-		children:[
-			page_id_field = $B("input",{type:"text",name:"page_id",exclude:true}),
-			label_field = $B("input",{
-				type: "text",
-				name: "label",
-				placeholder: "Label Name"
-			}),
-			xpath_field = $B("input",{type:"hidden",name:"xpath"}),
-			$B("input",{value:"Add Selection",type:"submit",exclude:true})
-		],
-		action: create_annotation,
-		method: "POST"
-	});
-	
-
-	var main = $B("div", {
-		className: parcelsInterfaceStyle+" "+"main",
-		children: [list,workspace,status]
-	});
-	var s = $B("div", {
-		className: parcelsInterfaceStyle+" "+"suggestor"+" "+"dialog",
-        children: [header, main],
-        setText: function(){
-            if (s.selectedXPath) 
-                status.innerHTML = s.selectedXPath;
-			else status.innerHTML = "nothing selected";
-           // if (s.rejectedXPath) 
-           //     main.innerHTML += "Rejected: " + s.rejectedXPath + "<br/>";
-        }
-    });
-	s.workspace = workspace;
-	s.page_id_field = page_id_field;
-	s.xpath_field = xpath_field;
-	s.label_field = label_field;
-	s.list = list;
-    document.body.appendChild(s);
-    return s;
-}
+		);
+		s.workspace = workspace;
+		s.extractor_id_field = extractor_id_field;
+		s.xpath_field = xpath_field;
+		s.raw_field = raw_field;
+		s.label_field = label_field;
+		s.id_field = id_field;
+		s.list = list;
+	    return s;
+	}

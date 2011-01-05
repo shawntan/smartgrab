@@ -1,4 +1,8 @@
 class Annotation < ActiveRecord::Base
+	belongs_to :extractor
+	
 	has_many :datas
-	has_and_belongs_to_many :pages
+	
+	
+	
 end

@@ -1,0 +1,18 @@
+<h1>Listing scraped_values</h1>
+
+<table>
+  <tr>
+  </tr>
+
+<% @scraped_values.each do |scraped_value| %>
+  <tr>
+    <td><%= link_to 'Show', scraped_value %></td>
+    <td><%= link_to 'Edit', edit_scraped_value_path(scraped_value) %></td>
+    <td><%= link_to 'Destroy', scraped_value, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New scraped_value', new_scraped_value_path %>

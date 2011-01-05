@@ -1,196 +1,136 @@
 	var ParcelsSelector = function(){
-		var error = new Error("No match!");
-		var methods = {//special methods to zhng elements
-		//[this] refers to element!
-			getIndex: function(){
-				if (this.index) return this.index;
-				var result = 1;
-				var temp = this;
-				var tagname = this.tagName;
-				//end
-				while (temp = temp.previousSibling){
-					if (temp.tagName == tagname) result++;
-				} 
-				if (result > 0) {
-					this.index = result;
-					return result;
-				}
-			},
-			isLast: function() {
-				if(this.last != null) return this.last;
-				var tl = this.parentNode.children[this.parentNode.children.length-1];
+		
+		/**
+		 * special methods to zhng elements
+		 */
+		HTMLElement.prototype.getSelectorPath = function() {
+			var result;
+			if(this.path) {
+				result = this.path;
+			} else {
+				var curr = this;
+				result = [];
 				do {
-					if(tl==this) {
-						this.last = true;
-						return this.last;
-					}
-					tl = tl.previousSibling;
-				} while (tl.tagName!=this.tagName);
-				return false;
-			},
-			getClasses: function() {
-				if (this.classes) return this.classes;
-				if (this.className){
-					
-					if(this.className.trim() ="") result = [];
-					else {
-						var result = this.className.trim().split(/\s+/);
-						var index;
-						for(var i=classignorelist.length-1;i>=0;i--)
-							if((index = result.indexOf(classignorelist[i]))>=0)
-								result.splice(index, 1);
-					}
-					return this.classes = result;
-				}
-			},
-			getPath: function() {
-				if (this.path) return this.path;
-				else {
-					var curr = this;
-					var result = [];
-					do {
-						preprocessor(curr);
-						result.unshift(curr);
-						curr = curr.parentNode
-					} while ((curr != document.body));
-					this.path = result;
-					return result;
-				}
-			},
-			getSelector:  function(){
-				var result = this.tagName.toLowerCase();
-				var selector;
-				if(this.id){
-					selector=  "@id='"+this.id+"'";
-				} else selector = this.getIndex();
-				return result+'['+selector+']';
-			},
-			getXPath:function(){
-				if(this.id){
-					return "//"+this.getSelector();
-				} else if (this.parentNode == document.body){
-					return "/html/body/"+this.getSelector();
-				} else {
-					if(!this.parentNode.preprocessed) preprocessor(this.parentNode);
-					return this.parentNode.getXPath()+"/"+this.getSelector();
-				}
-				
+					preprocessor(curr);
+					result.unshift(curr.model);
+					curr = curr.parentNode
+				} while ((curr != document.body));
+				this.path = result;
+			}
+			return result;
+		};
+		var preprocessor = function(e) {
+			if (e.model) return;
+			else {
+				var result = {
+					tagName: e.tagName.toLowerCase(),
+					index: e.getIndex()
+				};
+				if(e.id) result.id = e.id;
+				var last = e.isLast();
+				if (last) result.last = last;
+				var classes = e.getClasses();
+				if (classes) result.classes = classes;
+				e.model = result;
 			}
 		};
-		var PseudoElement = function(){
-		};
+
+		/**
+		 * Lists priority in selector for XPath string.
+		 **/
 		var selector_priority = [
 			function(pe){if(pe.index) return pe.index},
 			function(pe){if(pe.last) return "last()"},
-			function(pe){if (pe.classes) return "contains(concat(' ',@class,' '),' " + pe.classes[0] + " ')"}
+			function(pe){if (pe.classes) return "contains(concat(' ',@class,' '),' " + pe.classes[0] + " ')"},
 		];
-		PseudoElement.prototype = {
-			preprocessed: true,
-			getIndex: function(){
-				if(this.index) return this.index;
-				else throw error;
-			},
-			isLast: function(){
-				if(this.last != null) return this.last;
-				else throw error;
-			},
-			getClasses: function(){
-				if(this.classes) return this.classes;
-				else throw error;
-			},
-			getPath: function(){
-				if(this.path) return this.path;
-				else throw error;
-			},
-			getSelector: function(){
-				var result;
-				if(this.tagName)result = this.tagName.toLowerCase();
-				else result = "*";
-				var selector;
-				for(var i=0;i<selector_priority.length;i++){
-					selector = selector_priority[i](this);
-					if(selector) break;
-				}
-				return result + (selector?'['+selector+']':"");
-			},
-			getXPath: function(){
-				if(this.path) {
-					var path = this.path;
-					var result = this.getSelector();
-					var match_any = false;
-					for(var i=path.length-2;i>=0;i--){
-						var temp;
-						if(path[i].getXPath && (temp=path[i].getXPath())){
-							return temp+'/'+result;
-						} else if(path[i]=='*'){
-							if(match_any) continue;
-							else {
-								result = "/"+result;
-								match_any = true;
-							}
-						}
-						else {
-							match_any = false;
-							result = path[i].getSelector()+'/'+result;
-						}
+		
+		var selector = function(e) {
+			var tagName = e.tagName;
+			var selector;
+			for(var i=0;i<selector_priority.length;i++){
+				selector = selector_priority[i](e);
+				if(selector) break;
+			}
+			return tagName + (selector?'['+selector+']':"");
+		};
+		var array2XPath = function(arr) {
+			//console.log(arr);
+			var result = "/html/body";
+			var match_any = false;
+			for(var i=0;i<arr.length;i++){
+				if(arr[i]=='*') {
+					if(match_any) continue;
+					else {
+						match_any = true;
+						result = result + '/';
 					}
-					return "/html/body/"+result;
+				} else {
+					match_any = false;
+					if (arr[i].id) {
+						result = '//' + arr[i].tagName + "[@id='" + arr[i].id + "']";
+					}
+					else {
+						console.log(arr[i]);
+						result = result + '/' + selector(arr[i]); 
+					} 
+						
 				}
 			}
+			return result;
 		};
-		
-		var preprocessor = function(e) {
-			if(e.preprocessed) return;
-			bindAllMethods(e,methods);
-			e.preprocessed = true;
-		}
+
+		var commonId = function(e1,e2,pseudo){
+			if(!e1.id || !e2.id) return; 
+			if (e1.id == e2.id) {
+				return pseudo.id = e1.id;
+			}
+		};
 		var commonTagName = function(e1,e2,pseudo){
 			if (e1.tagName == e2.tagName) {
 				return pseudo.tagName = e1.tagName;
 			}
 		};
-		var commonClasses = function(e1,e2,pseudo) {
-			var classes1 = e1.getClasses();
-			var classes2 = e2.getClasses();
+		var commonClasses = function(e1,e2,pseudo){
+			var classes1 = e1.classes;
+			var classes2 = e2.classes;
 			if(classes1.length==0||classes2.length==0) return;
 			var results = [];
 			var i = classes1.length;
 			while (i--) {
 				if(classes1[i] == "parcels_selected") continue;
 				else if(classes1[i] == "parcels_highlight") continue;
-				else if (classes2.indexOf(classes1[i]) >= 0) results.unshift(classes1[i]);
+				else if(classes2.indexOf(classes1[i]) >= 0) results.unshift(classes1[i]);
 			}
 			if(results.length > 0) return pseudo.classes = results;
 		};
 		var commonIndex   = function(e1,e2,pseudo){
 			if(pseudo.tagName|| e1.tagName==e2.tagName) {
-				if(e1.getIndex() == e2.getIndex()) {
-					pseudo.index = e1.getIndex();
+				if(e1.index==e2.index) {
+					pseudo.index = e1.index;
 				}
 			}
 
 		};
-		var commonIsLast  = function(e1,e2,pseudo) {
+		var commonIsLast  = function(e1,e2,pseudo){
 			if (pseudo.tagName || e1.tagName == e2.tagName) {
-				if (e1.isLast() && e2.isLast()) {
+				if (e1.last && e2.last) {
 					return pseudo.last = true;
 				}
 			}
 		};
-		var comparators = [commonTagName,commonClasses,commonIndex,commonIsLast];
+		
+		var comparators = [commonId,commonTagName,commonClasses,commonIndex,commonIsLast];
+		
 		//comparision methods
+		var score_zero = {score:0};
 		var compareElements = function(e1,e2) {
-			preprocessor(e1);
-			preprocessor(e2);
-			if (e1 == e2) {
+			if (e1 == e2 && e1=='*') {
 				e1.hasCommon = true;
 				return e1;
-			}
-			else if(e1=='*'||e2=='*'){
+			} else if(e1=='*'||e2=='*') {
 				return null;
-			}
-			else {
-				var pseudo = new PseudoElement();
+			} else {
+				var pseudo = {};
 				for (var i = 0; i < comparators.length; i++) {
 					var result;
 					try {
@@ -202,17 +142,19 @@
 					}
 				}
 				if (pseudo.hasCommon) {
-					pseudo.parents = [e1,e2];
+					//pseudo.parents = [e1,e2];
 					return pseudo;
-				}
-				else 
-					delete pseudo;
+				} else delete pseudo;
 			}
 		};
-		var score_zero = {score:0};
-		var longestPathSubsequence = function(e1,e2) {
-			var p1 = e1.getPath();
-			var p2 = e2.getPath();
+		
+		/**
+		 * Important part!
+		 * */
+		var longestPathSubsequence = function(p1,p2) {
+			//console.log("LCS time!");
+			//console.log(p1);
+			//console.log(p2);
 			var table = new Array(p1.length + 1);
 			for (var i = 0; i < table.length; i++) {//i(1st path),j(2nd path) are row and column
 				table[i] = new Array(p2.length + 1);
@@ -240,6 +182,8 @@
 				if (i == 0 || j == 0) return [];
 				else if (table[i][j].hasCommon) {
 					r = recon(i - 1, j - 1);
+					delete table[i][j].score;
+					delete table[i][j].hasCommon;
 					r.push(table[i][j]);
 				}
 				else if (table[i - 1][j].score > table[i][j - 1].score) {
@@ -254,174 +198,206 @@
 			}
 			var path = recon(p1.length, p2.length);
 			delete table;
-			path[path.length-1].path = path;
-			return path[path.length-1];
-		}	
+			return path;
+		};
+
 		var flatPathCompare = function(e1,e2){
-			var path1 = e1.getPath();
-			var path2 = e2.getPath();
+			var path1 = e1;
+			var path2 = e2;
 			if(path1.length == path2.length) {
 				var result = [];
-				var depth = e1.getPath().length;
+				var depth = path1.length;
 				for(var i=depth-1;i>=0;i--){
 					var el;
 					if(path1[i]==path2[i]) el  = path1[i];
-					else if(el = compareElements(path1[i],path2[i]));
+					else if(el = compareElements(path1[i],path2[i])) ;
 					else el = "*";
 					result.unshift(el);
 				}
-				result[result.length-1].path =result;
-				return result[result.length-1];
+				console.log(result);
+				return result;
 			} else throw new Error("Different path length!");
 		}
 		
 		//start exposed functions.
+		
 		this.tracker = {
 			selected: [],
 			rejected: [],
+			raw: {
+				select: null,
+				reject: null,
+			},
 			highlighted: null,
-			update: function() {
-				tracker.xpath = tracker.getXPath();
+			xpath: null,
+		};
+		var tracker = this.tracker;
+		var selected = tracker.selected;
+		var rejected = tracker.rejected;
+		
+		var update = function() {
+				tracker.xpath = getXPath();
+				console.log(tracker.xpath);
+
 				if (!tracker.xpath) {
 					tracker.xpath = "";
 					tracker.highlighted = [];
 				}
 				else {
-					tracker.highlighted = queryDocument(tracker.getXPath());
+					tracker.highlighted = queryDocument(tracker.xpath);
 				} 
-				
 			}
-		};
-		var tracker = this.tracker;
-		tracker.getXPath = function() {
+		var getXPath = function() {
 			if(selected.length == 0) return;
 			var result = selected.getXPath();
+			console.log(tracker);
 			var rejectedXPath = rejected.getXPath();
-			if(rejectedXPath) result = "("+result+")" + "["+"not(.=("+rejected.getXPath()+"))"+"]";
+			if(rejectedXPath) result = "("+result+")" + "["+"not(.=("+rejectedXPath+"))"+"]";
 			return result;
 		}
-		var selected = tracker.selected;		
-		var rejected = tracker.rejected;
+		
+
+		
 		selected._push = selected.push;
+		/**
+		 * Adds a new element, recomputes selectorPath
+		 * UPDATES selected.path
+		 * */
 		selected.push = function(e){
 			if (contains(selected, e) || contains(rejected, e)) return;
 			else if(contains(rejected.results,e)) return;
 			else {
 				preprocessor(e);
-				if (!selected.path) 
-					selected.path = e;
+				if (!tracker.raw.select) 
+					tracker.raw.select = e.getSelectorPath();
 				else {
-					selected.path = longestPathSubsequence(selected.path, e);
+					//@@@@IMPORTANT@@@@
+					var pathArr = e.getSelectorPath();
+					tracker.raw.select = longestPathSubsequence(tracker.raw.select,pathArr);
+					//@@@@IMPORTANT@@@@
 				}
+				//console.log(JSON.stringify(tracker.raw.select));
 				selected._push(e);
-				selected.results = selected.getResults();
 			}
-			tracker.getXPath();//TODO:REMOVE!!
 		};
+		/**
+		 * Removes existing element, recomputes EVERYTHING.
+		 * @param {Object} e
+		 * UPDATES tracker.raw.select
+		 */
 		selected.remove = function(e){
 			if (contains(selected, e)) selected.splice(selected.indexOf(e), 1);
 			else return;
 			if (selected.length > 0) {
-				var temp = selected[0];
+				var temp = selected[0].getSelectorPath();
 				for(var j=1;j<selected.length;j++){
-					temp = longestPathSubsequence(selected[j],temp);
+					temp = longestPathSubsequence(selected[j].getSelectorPath(),temp);
 				}
-				selected.path = temp;
+				tracker.raw.select = temp;
 			}
-			else delete selected.path;
-			selected.results = selected.getResults();
+			else delete tracker.raw.select;
 		}
+		/**
+		 * @return XPath string if tracker.raw.select
+		 */
 		selected.getXPath = function(){
-			if(selected.path) return selected.path.getXPath();
+			if(tracker.raw.select) return array2XPath(tracker.raw.select);
 		}
-		selected.getResults = function(){
-			var results
-			if(selected.path) results = queryDocument(selected.path.getXPath());
-			tracker.update();
-			return results;
-		}
+
+		
+		/**
+		 * Sorted paths of individual elements according to depth
+		 */
 		rejected.groups = {};
+		/**
+		 * selectorPaths of elements according to depth
+		 */
+		tracker.raw.reject = {};
 		rejected._push = rejected.push;
+		var isPathInViolation = function(arr){
+			var result = queryDocument(array2XPath(arr));
+			for(var i=selected.length-1;i>=0;i--){
+				if(result.indexOf(selected[i]) >=0 ) return true;
+			} 
+			return false;
+		};
 		rejected.push = function(e){
 			if (contains(selected, e) || contains(rejected,e)) return;
 			preprocessor(e);
-			var depth = e.getPath().length;
-			if(!rejected.groups[depth])	rejected.groups[depth] = new RejectTagArray();
-			if(rejected.groups[depth].push(e)) {
+			var depth = e.getSelectorPath().length;
+			if(!rejected.groups[depth]){
+				rejected.groups[depth] = [e.getSelectorPath()];
+				tracker.raw.reject[depth] = e.getSelectorPath();
 				rejected._push(e);
-				rejected.results = rejected.getResults();
+			}	
+			else {
+				var temp = flatPathCompare(tracker.raw.reject[depth],e.getSelectorPath());
+				if(!isPathInViolation(temp)) {
+					rejected.groups[depth].push(e.getSelectorPath());
+					tracker.raw.reject[depth] = temp;
+					rejected._push(e);
+				}
 			}
 		};
 		rejected.remove = function(e){
 			var index;
-			if((index = rejected.indexOf(e)) >= 0) rejected.splice(index, 1);
+			if((index = rejected.indexOf(e.path)) >= 0) rejected.splice(index, 1);
 			else return;
-			var depth = e.getPath().length;
-			rejected.groups[depth].remove(e);
-			rejected.results = rejected.getResults();
+			var depth = e.path.length;
+			rejected.groups[depth].splice(rejected.groups[depth].indexOf(e),1);
+			if(rejected.groups[depth].length > 0) {
+				var temp = rejected.groups[depth][0];
+				for(var i=1;i<rejected.groups[depth].length;i++) temp = flatPathCompare(temp,rejected.groups[depth][1]);
+				tracker.raw.reject[depth] = temp;
+			} else {
+				delete rejected.groups[depth];
+				delete tracker.raw.reject[depth];
+			}
 		};
 		rejected.getXPath = function(){
-			var groups = rejected.groups;
+			var groups = tracker.raw.reject;
 			var resultXPath;
 			var temp;
 			for(var i in groups) {
-				if(groups[i] && groups[i].path) {
-					if(resultXPath) resultXPath = resultXPath + " | " + groups[i].path.getXPath();
-					else resultXPath = groups[i].path.getXPath();
+				if(groups[i]) {
+					if(resultXPath) resultXPath = resultXPath + " | " + array2XPath(groups[i]);
+					else resultXPath = array2XPath(groups[i]);
 				}
 			}
+			console.log(resultXPath);
 			return resultXPath;
 		}
-		rejected.getResults = function() {
-			tracker.update();
-			return queryDocument(rejected.getXPath());
+
+		this.loadRaw = function(raw) {
+			tracker.raw = raw;
+			console.log(raw);
+			if(raw.select) {
+				var placeholder = {
+					path: raw.select,
+					model: raw.select[raw.select.length-1],
+					tagName: raw.select[raw.select.length-1].tagName,
+					getSelectorPath : function() {return placeholder.path},
+					className: ""
+				};
+				selected._push(placeholder);
+				console.log(selected);
+			}
+			update();
 		};
-		var RejectTagArray= function(){
-			var arr = [];
-			arr._push = arr.push;
-			arr.push = function(e){
-				var temp = arr.path;//save previous
-				if (!arr.path) arr.path = e;
-				else arr.path = flatPathCompare(arr.path,e);
-				if(arr.isPathInViolation()) {
-					arr.splice(arr.indexOf(e), 1);
-					arr.path = temp;
-					return false;
-				} else {
-					arr._push(e);
-				}
-				return true;
-			};
-			arr.isPathInViolation = function() {
-				var result = queryDocument(arr.path.getXPath());
-				for(var i=selected.length-1;i>=0;i--){
-					if(result.indexOf(selected[i])>=0) return true;
-				}
-				return false;
-			}
-			arr.remove = function(e){
-				arr.splice(arr.indexOf(e), 1);
-				if(arr.length > 0) {
-					var temp = arr[0];
-					for(var j=1;j<arr.length;j++){
-						temp = flatPathCompare(temp,arr[j]);
-					}
-					arr.path = temp;	
-				} else delete arr.path;
-			}
-			return arr;
-		}
-		
 		this.selectElement = function(el) {
 			selected.push(el);
+			update();
 		};
 		this.selectedDelete = function(el) {
-			selected.remove(el)
+			selected.remove(el);
+			update();
 		};
 		this.rejectElement = function(el) {
 			rejected.push(el);
+			update();
 		};
 		this.rejectedDelete = function(el) {
 			rejected.remove(el);
+			update();
 		};
 	};

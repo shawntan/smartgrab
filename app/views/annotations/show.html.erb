@@ -1,25 +1,17 @@
 <p>
-  <b>Css selector:</b>
-  <%=h @annotation.xpath %>
+	<b>Label:</b>
+	<%=h @annotation.label %>
 </p>
 <p>
-  <b>Label:</b>
-  <%=h @annotation.label %>
+	<b>XPath selector:</b>
+	<%=h @annotation.xpath %>
 </p>
 <p>
-	<b>Pages that also use this label:</b>
-	<table>
-		<thead>
-			<th>URL</th>
-			<th></th>
-		</thead>
-		<%@annotation.pages.each do |page|%>
-		<tr>
-			<td><%=page.url%></td>
-			<td><%= link_to 'Show',page%></td>
-		</tr>
-		<%end%>
-	</table>
+	<b>Raw:</b>
+	<pre><script>
+		document.write(JSON.stringify(<%=@annotation.raw %>, null, '  '));
+	</script></pre>
 </p>
+
 <%= link_to 'Edit', edit_annotation_path(@annotation) %> |
 <%= link_to 'Back', annotations_path %>

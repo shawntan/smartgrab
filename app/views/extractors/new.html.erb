@@ -1,0 +1,19 @@
+<h1>New extractor</h1>
+
+<% form_for(@extractor) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :domain %><br />
+    <%= f.text_field :domain %>
+  </p>
+  <p>
+    <%= f.label :user_id %><br />
+    <%= f.text_field :user_id %>
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', extractors_path %>

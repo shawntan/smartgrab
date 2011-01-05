@@ -1,4 +1,5 @@
 	var ParcelsInterface = (function(){
+
 		var pi;
 		var iframe;
 		var allElements = document.body.getElementsByTagName("*");
@@ -6,32 +7,69 @@
 		var createAnnotationListItem = function(list,annotation,children){
 			return $B("li", {
 				children: children,
-				data: annotation,
-				onmouseover: function(){
-					clearAllInvolvedAndSelector();
-					list.highlighted = queryDocument(this.data.xpath);
-					setElements(list.highlighted,"parcels_listshow",null);
-				},
-				onmouseout: function() {
-					clearElements(list.highlighted,"parcels_listshow");
-				}
+				data: annotation
 			});
 		}
 		var displayAnnotations = function(annotations) {
 			var list = pi.suggestor.list;
 			removeAllChildren(list);
+			list.selected = null;
 			if (annotations) {
 				for (var i = 0; i < annotations.length; i++) {
-					list.appendChild(
-						createAnnotationListItem(list,annotations[i],[$B("span",{
-							innerHTML: annotations[i].label
-						})])
-					);
+					var item = createAnnotationListItem(
+							list,
+							annotations[i],[
+								$B("span",{innerHTML: annotations[i].label})
+							]
+						);
+					item.select = function(){
+						if(list.selected) list.selected.deselect();
+						
+						pi.suggestor.label_field.value = this.data.label;
+						pi.suggestor.id_field.value = this.data.id;
+						pi.suggestor.raw_field.value = this.data.raw;
+						pi.suggestor.xpath_field.value = this.data.xpath;
+						
+						pi.suggestor.id_field.disabled = false;
+						pi.suggestor.label_field.readOnly = true;
+						
+						this.style.background = "#FFFF00";
+						this.onclick = this.deselect;
+						list.selected = this;
+						
+						var raw;
+						if (this.data.raw_object) 
+							raw = this.data.raw_object;
+						else {
+							raw = eval('(' + this.data.raw + ')');
+							this.data.raw_object = raw;
+						}
+						pi.selector.loadRaw(raw);
+						
+						repaint();
+					};
+					item.deselect = function(){
+						clearAllInvolvedAndSelector();
+
+						pi.suggestor.label_field.value = "";
+						pi.suggestor.id_field.value = "";
+						pi.suggestor.raw_field.value = "";
+						pi.suggestor.xpath_field.value = "";
+						
+						pi.suggestor.label_field.readOnly = false;
+						pi.suggestor.id_field.disabled = true;
+						
+						this.style.background ="";
+						this.onclick = this.select;
+						list.selected = null;
+					};
+					item.onclick = item.select;
+					list.appendChild(item);
 				}
 			}
 			list.scrollTop = list.scrollHeight;
 		};
-		var createSuggestedAnnotations = function(annotations){//returns a ul of list.
+		var createSuggestedList = function(annotations){//returns a ul of list.
 			var list = $B("ul",{
 				className: parcelsInterfaceStyle+" xpath_list"
 			});
@@ -52,62 +90,14 @@
 			return list;
 		};
 		
-		var createAnnotationSuggest = function(annotations) {
-			var annotation_form = $B("form",{
-				action:set_annotations,
-				children:[
-					createSuggestedAnnotations(annotations),
-					$B("input",{name:"id",type:"hidden",value:pi.suggestor.page_id_field.value}),
-					$B("input",{type:"submit",value:"Add"})
-				]
-			});
-			var float_div = $B("div",{
-				className: parcelsInterfaceStyle+" dialog",
-				children: [
-					annotation_form
-				],
-				style:{
-					top:"40px",
-					left:"40px"
-				}
-			});
-			Connection.MakeIframeTarget(annotation_form,false,function(){
-				loader.request({id:pi.suggestor.page_id_field.value});
-				float_div.parentNode.removeChild(float_div);
-				delete float_div;
-			});
-			document.body.appendChild(float_div);
-		}
+
 		//controllers
 		var loader = new Connection.JSONDataRequest(
 			load_annotations,
 			"requestPageData",
-			function(page,first){
-				if(first) {
-					new Connection.JSONDataRequest(
-						suggest_annotations,
-						"suggestAnnotations",
-						function(annotations){
-							var i = 0;
-							while(i<annotations.length) {
-								var has_match = document.evaluate(
-									annotations[i].xpath,
-									document, null, XPathResult.BOOLEAN_TYPE, null
-								).booleanValue
-								if(!has_match) {
-									annotations.splice(i,1);
-									console.log("no match");
-								}
-								else i++;
-							}
-							if(annotations.length>0) createAnnotationSuggest(annotations);
-						}
-					).request({domain:document.location.hostname})
-				} else {
-					displayAnnotations(page.annotations);
-				}
-				pi.suggestor.page_id_field.value = page.id;
-
+			function(extractor){
+				displayAnnotations(extractor.annotations);
+				pi.suggestor.extractor_id_field.value = extractor.id;
 			}
 		);
 
@@ -143,24 +133,25 @@
 			onclick: function(e){
 				blockevent(e);
 				if(pi.selector.tracker.selected.length > 0 &&
-					pi.selector.tracker.selected[0].tagName != this.tagName) return false;
+					pi.selector.tracker.selected[0].tagName.toLowerCase() != this.tagName.toLowerCase()) return false;
 				if(!this.parcels_action) this.parcels_action = parcels_actions.select;
 				var parcels_action = this.parcels_action;
 				
 				clearAllInvolved();
-				
+				//console.log(this);
 				parcels_action(this);
+				//update textbox
 				pi.suggestor.xpath_field.value = pi.selector.tracker.xpath;
+				pi.suggestor.raw_field.value = JSON.stringify(pi.selector.tracker.raw);
 				
-				setElements(pi.selector.tracker.highlighted,styles.highlighted,parcels_actions.reject);
-				setElements(pi.selector.tracker.rejected,styles.rejected,parcels_actions.dereject);
-				setElements(pi.selector.tracker.selected,styles.selected,parcels_actions.deselect);
+				repaint();
 				
 				return false;
 			},
 			onmouseover: function(e){
+				
 				if(pi.selector.tracker.selected.length > 0 &&
-					pi.selector.tracker.selected[0].tagName != this.tagName) return false;
+					pi.selector.tracker.selected[0].tagName.toLowerCase() != this.tagName.toLowerCase()) return false;
 				pi.box.setPosition(getPos(this), {
 					width: this.offsetWidth,
 					height: this.offsetHeight
@@ -177,6 +168,11 @@
 				this.style.zIndex = this.parcels_temp_zIndex; 
 				return false;
 			}
+		};
+		var repaint = function(){
+			setElements(pi.selector.tracker.highlighted,styles.highlighted,parcels_actions.reject);
+			setElements(pi.selector.tracker.rejected,styles.rejected,parcels_actions.dereject);
+			setElements(pi.selector.tracker.selected,styles.selected,parcels_actions.deselect);
 		};
 		var parcels_actions = {
 			select: function(e){//change to green
@@ -216,12 +212,17 @@
 		};
 		Connection.MakeIframeTarget(pi.suggestor.workspace,"annotation",function(){
 			clearAllInvolvedAndSelector();
-			loader.request({id:pi.suggestor.page_id_field.value});
+			loader.request({id:pi.suggestor.extractor_id_field.value});
 			pi.suggestor.label_field.value = "";
 			pi.suggestor.xpath_field.value = "";
 		});
-		
-		loader.request({page:{url:document.location.href,title:document.title}});
+		loader.request({
+			domain:	document.location.hostname,
+			page:{
+				url:	document.location.href,
+				title:	document.title
+			}
+		});
 		pi.suggestor.label_field.value = pi.suggestor.label_field.placeholder;
 		return pi;
 	})();
