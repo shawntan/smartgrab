@@ -1,7 +1,11 @@
+require 'net/http'
+
+
 class BookmarkletController < ApplicationController
 	before_filter :login_required  
 	skip_before_filter :verify_authenticity_token
 
+	
 # View controllers.
 	def index
 		respond_to do |format|
@@ -23,21 +27,15 @@ class BookmarkletController < ApplicationController
 		if(params[:id])
 			@extractor = current_user.extractors.find(params[:id]); 
 		else
-			@extractor = current_user.extractors.find_by_domain(params[:domain] );
+			@extractor = current_user.extractors.find_or_create_by_domain(:domain => params[:domain])
 		end
-		
 		jsonstring = @extractor.to_json(:include => [:annotations])
-		if @extractor
-			render :js => "#{params[:callback]}(#{jsonstring});"
-		else
-			@extractor = current_user.extractors.new(:domain => params[:domain])			
-			if @extractor.save
-				render :js => "#{params[:callback]}(#{jsonstring},true);"
-			end
-		end
+		#got new page.
 		if(params[:page] and !@extractor.pages.exists?(:url => params[:page][:url]))
 			@extractor.pages.create(params[:page])
+			@extractor.save
 		end
+		render :js => "#{params[:callback]}(#{jsonstring});"
 	end
 	
 	def annotate

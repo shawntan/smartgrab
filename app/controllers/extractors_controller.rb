@@ -13,7 +13,13 @@ class ExtractorsController < ApplicationController
   # GET /extractors/1.xml
   def show
     @extractor = Extractor.find(params[:id])
-
+    @latest_revision = @extractor.revisions.first(:order => "created_at DESC")
+    if(@latest_revision) 
+	    @latest_scraped_values = ScrapedValue.find_all_by_revision_id(
+	    	@latest_revision.id,
+	    	:include => [:annotation]
+	    )
+    end
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @extractor }
@@ -73,7 +79,6 @@ class ExtractorsController < ApplicationController
   def destroy
     @extractor = Extractor.find(params[:id])
     @extractor.destroy
-
     respond_to do |format|
       format.html { redirect_to(extractors_url) }
       format.xml  { head :ok }

@@ -5,15 +5,15 @@
 		var workspace = $B("form",{
 			className: parcelsInterfaceStyle + " " + "workspace",
 			children:[
-				extractor_id_field = $B("input",{type:"text",name:"extractor_id",exclude:true}),
+				extractor_id_field = $B("input",{type:"hidden",name:"extractor_id",exclude:true,readOnly:true}),
 				label_field = $B("input",{
 					type: "text",
 					name: "label",
 					placeholder: "Label Name"
 				}),
-				xpath_field = $B("input",{type:"text",name:"xpath"}),
-				raw_field = $B("input",{type:"text",name:"raw"}),
-				id_field = $B("input",{type:"text",name:"id",disabled:true}),
+				xpath_field = $B("input",{type:"hidden",name:"xpath"}),
+				raw_field = $B("input",{type:"hidden",name:"raw"}),
+				id_field = $B("input",{type:"hidden",name:"id",disabled:true}),
 				$B("input",{value:"Save",type:"submit",exclude:true})
 			],
 			action: create_annotation,

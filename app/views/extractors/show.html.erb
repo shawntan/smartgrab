@@ -41,7 +41,23 @@
 		<% end %>
 	</table>
 </p>
+<%if (@latest_revision)%>
+<p>
+	<b>Latest revision:</b> <%=h @latest_revision.created_at %>
+	<table>
+		<tr>
+			<th>Label</th>
+			<th>Value</th>
+		</tr>
+		<%@latest_scraped_values.each do |scraped_value|%>
+		<tr>
+			<td><%= scraped_value.annotation.label %></th>
+			<td><%= scraped_value.value %></th>
+		</tr
+		<%end%>
+	</table>
+</p>
 
-
+<%end%>
 <%= link_to 'Edit', edit_extractor_path(@extractor) %> |
 <%= link_to 'Back', extractors_path %>

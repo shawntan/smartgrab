@@ -95,12 +95,8 @@
 		var loader = new Connection.JSONDataRequest(
 			load_annotations,
 			"requestPageData",
-			function(extractor,first){
-				if(first) {
-					//replace with new first code.
-				} else {
-					displayAnnotations(extractor.annotations);
-				}
+			function(extractor){
+				displayAnnotations(extractor.annotations);
 				pi.suggestor.extractor_id_field.value = extractor.id;
 			}
 		);

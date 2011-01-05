@@ -1,0 +1,12 @@
+<h1>Editing scraped_value</h1>
+
+<% form_for(@scraped_value) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @scraped_value %> |
+<%= link_to 'Back', scraped_values_path %>
