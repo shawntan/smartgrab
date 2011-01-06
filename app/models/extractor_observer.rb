@@ -12,10 +12,12 @@ class ExtractorObserver < ActiveRecord::Observer
 		if(latest_revision and (Time.now - latest_revision.created_at) > 5.minutes)
 			begin
 				Net::HTTP.start(@@url.host, @@url.port) {|http|
-					http.get("/extract/extract?id=#{@extractor.id}")
+					http.get("/extract/extract?id=#{extractor.id}")
 				}
 			rescue Exception => e
 				extractor.logger.debug('----------------------')
+				extractor.logger.debug(extractor)
+				extractor.logger.debug(extractor.id)
 				extractor.logger.debug(e)
 				extractor.logger.debug('----------------------')
 			end
