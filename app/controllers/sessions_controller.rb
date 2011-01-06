@@ -32,7 +32,7 @@ class SessionsController < ApplicationController
   def destroy
     logout_killing_session!
     flash[:notice] = "You have been logged out."
-    redirect_back_or_default :controller => :sessions, :action => :create
+    redirect_back_or_default :controller => :extractors,:action => 'index'
   end
 
 protected
