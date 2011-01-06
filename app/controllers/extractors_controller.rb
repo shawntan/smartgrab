@@ -1,4 +1,5 @@
 class ExtractorsController < ApplicationController
+	before_filter :login_required	
   # GET /extractors
   # GET /extractors.xml
   def index

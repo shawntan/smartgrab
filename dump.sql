@@ -60,7 +60,7 @@ CREATE TABLE `extractors` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user` (`user_id`),
-  CONSTRAINT `user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -70,7 +70,6 @@ CREATE TABLE `extractors` (
 
 LOCK TABLES `extractors` WRITE;
 /*!40000 ALTER TABLE `extractors` DISABLE KEYS */;
-INSERT INTO `extractors` VALUES (1,2,'www.terminally-incoherent.com','0000-00-00 00:00:00','0000-00-00 00:00:00'),(8,2,'localhost','0000-00-00 00:00:00','0000-00-00 00:00:00'),(9,2,'www.google.com.sg','0000-00-00 00:00:00','0000-00-00 00:00:00'),(11,2,'www.velocityreviews.com','0000-00-00 00:00:00','0000-00-00 00:00:00'),(12,2,'news.ycombinator.com','0000-00-00 00:00:00','0000-00-00 00:00:00'),(13,2,'www.reddit.com','0000-00-00 00:00:00','0000-00-00 00:00:00'),(14,2,'chronicle.com','0000-00-00 00:00:00','0000-00-00 00:00:00'),(15,2,'slashdot.org','0000-00-00 00:00:00','0000-00-00 00:00:00'),(16,2,'www.tonyspencer.com','0000-00-00 00:00:00','0000-00-00 00:00:00'),(18,2,'api.rubyonrails.org','0000-00-00 00:00:00','0000-00-00 00:00:00'),(19,2,'ar.rubyonrails.org','0000-00-00 00:00:00','0000-00-00 00:00:00'),(20,2,'www.rubyist.net','0000-00-00 00:00:00','0000-00-00 00:00:00'),(21,2,'ruby-doc.org','0000-00-00 00:00:00','0000-00-00 00:00:00'),(23,2,'www.amazon.com','0000-00-00 00:00:00','0000-00-00 00:00:00'),(27,2,'groups.google.com','2011-01-05 05:39:29','2011-01-05 05:39:29');
 /*!40000 ALTER TABLE `extractors` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -91,8 +90,8 @@ CREATE TABLE `pages` (
   `extractor_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `extractor` (`extractor_id`),
-  CONSTRAINT `extractor` FOREIGN KEY (`extractor_id`) REFERENCES `extractors` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=233 DEFAULT CHARSET=utf8;
+  CONSTRAINT `extractor` FOREIGN KEY (`extractor_id`) REFERENCES `extractors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=235 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +100,6 @@ CREATE TABLE `pages` (
 
 LOCK TABLES `pages` WRITE;
 /*!40000 ALTER TABLE `pages` DISABLE KEYS */;
-INSERT INTO `pages` VALUES (202,'Computer Science: Theory and Application','http://www.reddit.com/r/compsci/?count=100&after=t3_eac6o','2010-12-31 09:43:29','2010-12-31 09:43:29',NULL,13),(203,'reddit: the voice of the internet -- news before it happens','http://www.reddit.com/?count=25&after=t3_etyb2','2010-12-31 09:47:23','2010-12-31 09:47:23',NULL,13),(204,'reddit: the voice of the internet -- news before it happens','http://www.reddit.com/?count=50&after=t3_etwe2','2010-12-31 09:47:52','2010-12-31 09:47:52',NULL,13),(205,'Computer Science: Theory and Application','http://www.reddit.com/r/compsci/?count=125&after=t3_e6ey8','2010-12-31 10:40:28','2010-12-31 10:40:28',NULL,13),(206,'reddit: the voice of the internet -- news before it happens','http://www.reddit.com/?count=75&after=t3_eu2dc','2010-12-31 10:41:11','2010-12-31 10:41:11',NULL,13),(207,'reddit: the voice of the internet -- news before it happens','http://www.reddit.com/?count=100&after=t3_eu124','2010-12-31 10:43:49','2010-12-31 10:43:49',NULL,13),(208,'The Shadow Scholar - The Chronicle Review - The Chronicle of Higher Education','http://chronicle.com/article/The-Shadow-Scholar/125329/','2011-01-01 08:11:49','2011-01-01 08:11:49',NULL,14),(209,'Slashdot: News for nerds, stuff that matters','http://slashdot.org/','2011-01-01 08:23:04','2011-01-01 08:23:04',NULL,15),(210,'Ruby’s try{ catch } block','http://www.tonyspencer.com/2007/10/16/rubys-try-catch-block/','2011-01-01 08:37:42','2011-01-01 08:37:42',NULL,16),(212,'Class: ActiveRecord::Base','http://api.rubyonrails.org/classes/ActiveRecord/Base.html','2011-01-01 08:49:25','2011-01-01 08:49:25',NULL,18),(213,'Class: ActiveRecord::Base','http://ar.rubyonrails.org/classes/ActiveRecord/Base.html','2011-01-01 08:52:03','2011-01-01 08:52:03',NULL,19),(214,'Strings','http://www.rubyist.net/~slagell/ruby/strings.html','2011-01-01 08:59:24','2011-01-01 08:59:24',NULL,20),(215,'Class: Net::HTTP','http://ruby-doc.org/stdlib/libdoc/net/http/rdoc/classes/Net/HTTP.html','2011-01-01 09:07:15','2011-01-01 09:07:15',NULL,21),(216,'htmlunit - Google Search','http://www.google.com.sg/search?q=htmlunit&ie=utf-8&oe=utf-8&aq=t&rls=org.mozilla:en-US:official&client=firefox-a','2011-01-01 14:51:59','2011-01-01 14:51:59',NULL,9),(219,'Amazon.com: mathematics','http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=mathematics&x=0&y=0','2011-01-04 07:44:58','2011-01-04 07:44:58',NULL,23),(220,'Amazon.com: mathematics','http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=mathematics&x=0&y=0#/ref=sr_pg_2?rh=i%3Aaps%2Ck%3Amathematics&page=2&d=1&keywords=mathematics&ie=UTF8&qid=1294145928','2011-01-04 12:59:28','2011-01-04 12:59:28',NULL,23),(224,'Class: ActiveRecord::Observer','http://api.rubyonrails.org/classes/ActiveRecord/Observer.html','2011-01-05 04:04:36','2011-01-05 04:04:36',NULL,18),(225,'Amazon.com: mathematics','http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=mathematics&x=0&y=0#/ref=sr_pg_3?rh=i%3Aaps%2Ck%3Amathematics&page=3&d=1&keywords=mathematics&ie=UTF8&qid=1294201258','2011-01-05 04:36:55','2011-01-05 04:36:55',NULL,23),(226,'Amazon.com: mathematics','http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=mathematics&x=0&y=0#/ref=sr_pg_4?rh=i%3Aaps%2Ck%3Amathematics&page=4&d=1&keywords=mathematics&ie=UTF8&qid=1294202358','2011-01-05 04:45:41','2011-01-05 04:45:41',NULL,23),(227,'Amazon.com: mathematics','http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=mathematics&x=0&y=0#/ref=sr_pg_1?rh=i%3Aaps%2Ck%3Amathematics&keywords=mathematics&ie=UTF8&qid=1294202825','2011-01-05 04:48:10','2011-01-05 04:48:10',NULL,23),(228,'Amazon.com: mathematics','http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=mathematics&x=0&y=0#/ref=sr_pg_2?rh=i%3Aaps%2Ck%3Amathematics&page=2&d=1&keywords=mathematics&ie=UTF8&qid=1294202877','2011-01-05 04:49:46','2011-01-05 04:49:46',NULL,23),(229,'Difference in minutes betwen two Datetime - Ruby on Rails: Talk | Google Groups','http://groups.google.com/group/rubyonrails-talk/browse_thread/thread/a92c6795d0505f6e?pli=1','2011-01-05 05:39:29','2011-01-05 05:39:29',NULL,27),(230,'Hacker News','http://news.ycombinator.com/x?fnid=oZkPv4xck9','2011-01-05 05:51:53','2011-01-05 05:51:53',NULL,12),(231,'Hacker News','http://news.ycombinator.com/x?fnid=dq938phQtl','2011-01-05 05:54:16','2011-01-05 05:54:16',NULL,12),(232,'rails difference in minutes - Google Search','http://www.google.com.sg/search?q=rails+difference+in+minutes&ie=utf-8&oe=utf-8&aq=t&rls=org.mozilla:en-US:official&client=firefox-a','2011-01-05 05:56:00','2011-01-05 05:56:00',NULL,9);
 /*!40000 ALTER TABLE `pages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,8 +117,8 @@ CREATE TABLE `revisions` (
   `extractor_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `page_id` (`extractor_id`),
-  CONSTRAINT `extractor_id` FOREIGN KEY (`extractor_id`) REFERENCES `extractors` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+  CONSTRAINT `extractor_id` FOREIGN KEY (`extractor_id`) REFERENCES `extractors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -129,7 +127,6 @@ CREATE TABLE `revisions` (
 
 LOCK TABLES `revisions` WRITE;
 /*!40000 ALTER TABLE `revisions` DISABLE KEYS */;
-INSERT INTO `revisions` VALUES (1,'2010-12-31 13:58:37','2010-12-31 13:58:37',9),(2,'2010-12-31 13:59:09','2010-12-31 13:59:09',9),(3,'2010-12-31 13:59:20','2010-12-31 13:59:20',9),(4,'2010-12-31 14:00:08','2010-12-31 14:00:08',9),(5,'2010-12-31 15:00:16','2010-12-31 15:00:16',12),(6,'2010-12-31 15:03:13','2010-12-31 15:03:13',12),(7,'2010-12-31 15:34:53','2010-12-31 15:34:53',12),(8,'2010-12-31 16:27:43','2010-12-31 16:27:43',9),(9,'2010-12-31 16:37:29','2010-12-31 16:37:29',9),(10,'2010-12-31 18:43:49','2010-12-31 18:43:49',13),(11,'2011-01-04 15:47:50','2011-01-04 15:47:50',23),(12,'2011-01-04 20:59:28','2011-01-04 20:59:28',23);
 /*!40000 ALTER TABLE `revisions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -175,7 +172,7 @@ CREATE TABLE `scraped_values` (
   KEY `fk_datas_revisions1` (`revision_id`),
   CONSTRAINT `annotation_id` FOREIGN KEY (`annotation_id`) REFERENCES `annotations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_datas_revisions1` FOREIGN KEY (`revision_id`) REFERENCES `revisions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3719 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,7 +213,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (2,'shawntan','','shawn@wtf.sg','e50d0e82383f15d20b78f585c9c4d71bb4790d05','913c839a3bb316943be178424f376e55df7bf1c1','2010-12-30 03:31:18','2010-12-30 03:31:18',NULL,NULL);
+INSERT INTO `users` VALUES (2,'shawntan','','shawn@wtf.sg','e50d0e82383f15d20b78f585c9c4d71bb4790d05','913c839a3bb316943be178424f376e55df7bf1c1','2010-12-30 03:31:18','2011-01-06 09:08:21','299a8d2bf496e8c53c7fb8619f7fbd81f8ace7d0','2011-01-20 09:08:21');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -229,4 +226,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-01-05 14:25:57
+-- Dump completed on 2011-01-06 17:15:20
