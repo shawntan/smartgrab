@@ -23,7 +23,7 @@ class ExtractorsController < ApplicationController
     end
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @extractor }
+      format.rss  { render :layout => false }
     end
   end
 
