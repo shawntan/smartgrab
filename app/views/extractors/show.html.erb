@@ -9,6 +9,15 @@
   <b>User:</b>
   <%=h @extractor.user.login %>
 </p>
+
+<p>
+	<b>Update Time:</b>
+	<% form_for(@extractor) do |f| %>
+		<%= time_select :extractor, :update_time %>
+		<%= f.submit 'Update' %>
+	<%end%>
+</p>
+
 <p>
 	<b>Labels:</b>
 	<table>
