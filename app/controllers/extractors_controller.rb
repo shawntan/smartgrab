@@ -63,7 +63,6 @@ class ExtractorsController < ApplicationController
   # PUT /extractors/1.xml
   def update
     @extractor = Extractor.find(params[:id])
-
     respond_to do |format|
       if @extractor.update_attributes(params[:extractor])
         format.html { redirect_to(@extractor, :notice => 'Extractor was successfully updated.') }
