@@ -58,7 +58,7 @@ CREATE TABLE `extractors` (
   `domain` varchar(45) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  `update_time` time NOT NULL,
+  `update_time` time DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user` (`user_id`),
   CONSTRAINT `user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -71,7 +71,7 @@ CREATE TABLE `extractors` (
 
 LOCK TABLES `extractors` WRITE;
 /*!40000 ALTER TABLE `extractors` DISABLE KEYS */;
-INSERT INTO `extractors` VALUES (1,2,'www.google.com.sg','2011-01-07 07:16:33','2011-01-09 09:22:11','17:23:00'),(2,2,'news.ycombinator.com','2011-01-07 07:25:37','2011-01-09 07:42:59','19:01:00');
+INSERT INTO `extractors` VALUES (1,2,'www.google.com.sg','2011-01-07 07:16:33','2011-01-10 07:46:24','17:00:00'),(2,2,'news.ycombinator.com','2011-01-07 07:25:37','2011-01-09 07:42:59','19:01:00');
 /*!40000 ALTER TABLE `extractors` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -218,7 +218,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (2,'shawntan','','shawn@wtf.sg','e50d0e82383f15d20b78f585c9c4d71bb4790d05','913c839a3bb316943be178424f376e55df7bf1c1','2010-12-30 03:31:18','2011-01-09 06:46:15','5ec7653fa8b8d28591ec36f1d30d5a643ee69b58','2011-01-23 06:46:15');
+INSERT INTO `users` VALUES (2,'shawntan','','shawn@wtf.sg','e50d0e82383f15d20b78f585c9c4d71bb4790d05','913c839a3bb316943be178424f376e55df7bf1c1','2010-12-30 03:31:18','2011-01-10 07:35:42','38ec6db7b915765295ec1c1e59bc94e51d03db94','2011-01-24 07:35:42');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -231,4 +231,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-01-09 20:17:49
+-- Dump completed on 2011-01-10 16:33:52
