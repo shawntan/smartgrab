@@ -2,6 +2,7 @@ class ExtractorsController < ApplicationController
 	before_filter :login_required	
   # GET /extractors
   # GET /extractors.xml
+  @@url = URI.parse('http://localhost:10600/')
   def index
     @extractors = current_user.extractors
     respond_to do |format|
@@ -65,6 +66,7 @@ class ExtractorsController < ApplicationController
     @extractor = Extractor.find(params[:id])
     respond_to do |format|
       if @extractor.update_attributes(params[:extractor])
+      	update_server(@extractor.id)
         format.html { redirect_to(@extractor, :notice => 'Extractor was successfully updated.') }
         format.xml  { head :ok }
       else
@@ -84,4 +86,19 @@ class ExtractorsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+private
+	def update_server(id)
+			begin
+				Net::HTTP.start(@@url.host, @@url.port) {|http|
+					http.get("/extract/extract?id=#{id}")
+				}
+			rescue Exception => e
+				extractor.logger.debug('----------------------')
+				extractor.logger.debug(extractor)
+				extractor.logger.debug(extractor.id)
+				extractor.logger.debug(e)
+				extractor.logger.debug('----------------------')
+			end
+	end
+  
 end
