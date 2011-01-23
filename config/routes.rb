@@ -1,7 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :scraped_values
 
-  map.resources :extractors
 
   map.logout '/logout', :controller => 'sessions', :action => 'destroy'
   map.login '/login', :controller => 'sessions', :action => 'new'
@@ -12,6 +10,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resource  :session
   map.resources :pages
   map.resources :annotations
+  map.resources :scraped_values
+  map.resources :extractors
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
@@ -55,8 +55,8 @@ ActionController::Routing::Routes.draw do |map|
   
 
  
-  map.connect ':controller.:format'
-  map.connect ':controller/:action.:format'
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
+  map.connect ':controller/:action.:format'
+  map.connect ':controller.:format'
 end

@@ -75,6 +75,11 @@ class ExtractorsController < ApplicationController
       end
     end
   end
+  def extract
+  	@extractor = Extractor.find(params[:id])
+  	extract_now(@extractor.id)
+  	redirect_to(@extractor, :notice => 'Please wait while the latest version of the site is being extracted.')
+	end
 
   # DELETE /extractors/1
   # DELETE /extractors/1.xml
@@ -86,6 +91,10 @@ class ExtractorsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+	
+  
+
 private
 	def update_server(id)
 			begin
@@ -100,5 +109,15 @@ private
 				extractor.logger.debug('----------------------')
 			end
 	end
-  
+  def extract_now(id)
+  		begin
+				Net::HTTP.start(@@url.host, @@url.port) {|http|
+					http.get("/extract/extractnow?id=#{id}")
+				}
+			rescue Exception => e
+				logger.debug('----------------------')
+				logger.debug(e)
+				logger.debug('----------------------')
+			end
+  end
 end

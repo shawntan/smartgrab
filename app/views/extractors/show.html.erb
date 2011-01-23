@@ -15,7 +15,8 @@
 	<% form_for(@extractor) do |f| %>
 		<%= time_select :extractor, :update_time %>
 		<%= f.submit 'Update' %>
-	<%end%>
+<%end%>
+	<%=link_to 'Extract Now!', :action => :extract, :id => @extractor %>
 </p>
 
 <p>
@@ -64,7 +65,7 @@
 		<tr>
 			<td><%= scraped_value.annotation.label %></th>
 			<td><%= scraped_value.value %></th>
-		</tr
+		</tr>
 		<%end%>
 	</table>
 </p>
