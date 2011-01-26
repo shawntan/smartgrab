@@ -1,4 +1,16 @@
-
-<a href="javascript:(function(){a=document.body.appendChild(document.createElement('script'));a.src='<%= url_for(:action => 'index', :controller => 'bookmarklet',:format => :js, :only_path => false) %>?s='+Math.floor(Math.random()*1000);a.type='text/javascript'})();">
+<%test = <<-eos
+	(function(){
+		var ca = function(t){return document.body.appendChild(document.createElement(t));};
+		t=ca('h1');
+		t.innerHTML='Loading...';
+		t.style.prototype={backgroundColor:'#fff',color:'#333',position:'absolute',zIndex:'9999',top:'50px',right:'50px'};
+		a=ca('script');
+		a.src='#{url_for(:action => 'index', :controller => 'bookmarklet',:format => :js, :only_path => false)}&s='+Math.floor(Math.random()*1000);
+		a.type='text/javascript';
+		a.onload=function(){t.parentNode.removeChild(t)};
+	})();
+eos
+%>
+<a href="javascript:<%=test.gsub(/[\n\t]/,'')%>">
 Parcelize
 </a>
