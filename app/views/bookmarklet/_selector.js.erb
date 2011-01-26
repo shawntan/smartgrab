@@ -70,7 +70,7 @@
 						result = '//' + arr[i].tagName + "[@id='" + arr[i].id + "']";
 					}
 					else {
-						console.log(arr[i]);
+						//console.log(arr[i]);
 						result = result + '/' + selector(arr[i]); 
 					} 
 						
@@ -214,7 +214,7 @@
 					else el = "*";
 					result.unshift(el);
 				}
-				console.log(result);
+				//console.log(result);
 				return result;
 			} else throw new Error("Different path length!");
 		}
@@ -237,7 +237,7 @@
 		
 		var update = function() {
 				tracker.xpath = getXPath();
-				console.log(tracker.xpath);
+				//console.log(tracker.xpath);
 
 				if (!tracker.xpath) {
 					tracker.xpath = "";
@@ -250,7 +250,7 @@
 		var getXPath = function() {
 			if(selected.length == 0) return;
 			var result = selected.getXPath();
-			console.log(tracker);
+			//console.log(tracker);
 			var rejectedXPath = rejected.getXPath();
 			if(rejectedXPath) result = "("+result+")" + "["+"not(.=("+rejectedXPath+"))"+"]";
 			return result;
@@ -364,13 +364,13 @@
 					else resultXPath = array2XPath(groups[i]);
 				}
 			}
-			console.log(resultXPath);
+			//console.log(resultXPath);
 			return resultXPath;
 		}
 
 		this.loadRaw = function(raw) {
 			tracker.raw = raw;
-			console.log(raw);
+			//console.log(raw);
 			if(raw.select) {
 				var placeholder = {
 					path: raw.select,
@@ -380,7 +380,7 @@
 					className: ""
 				};
 				selected._push(placeholder);
-				console.log(selected);
+				//console.log(selected);
 			}
 			update();
 		};

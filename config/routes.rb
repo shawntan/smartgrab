@@ -6,12 +6,15 @@ ActionController::Routing::Routes.draw do |map|
   map.register '/register', :controller => 'users', :action => 'create'
   map.signup '/signup', :controller => 'users', :action => 'new'
   
+  map.connect "extractors/:action", :controller => 'extractors', :action => /[a-z]+/i
+  map.resources :extractors
   map.resources :users
   map.resource  :session
   map.resources :pages
   map.resources :annotations
   map.resources :scraped_values
-  map.resources :extractors
+  
+  
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
@@ -53,10 +56,11 @@ ActionController::Routing::Routes.draw do |map|
   # Note: These default routes make all actions in every controller accessible via GET requests. You should
   # consider removing or commenting them out if you're using named routes and resources.
   
-
- 
-  map.connect ':controller/:action/:id'
+	map.connect ':controller.:format'
+	map.connect ':controller/:action.:format'
+	map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
-  map.connect ':controller/:action.:format'
-  map.connect ':controller.:format'
+  
+
+  
 end
