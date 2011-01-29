@@ -1,0 +1,46 @@
+var strictCompare = {
+	score: function(value1,value2){
+		if(value1==value2) return 1;
+		else return 0;
+	},
+	value: function(value1, value2) {
+		if(value1==value2) return value1;
+		else return null;
+	}
+};
+
+var listCompare = {
+	score: function(list1,list2){
+		var score=0;
+		for(var i=list1.length-1,i>=0,i--) {
+			if(list2.indexOf(list1[i])>=0) score++;
+		}
+		return score;
+	},
+	value: function(list1,list2) {
+		var hasCommon = false;
+		var common = null;
+		for(var i=list1.length-1;i>=0;i--) {
+			if(list2.indexOf(list1[i])>=0){
+				if(common == null) common = [];
+				common.push(list1[i]);
+				hasCommon = true;
+			}
+		}
+		if(hasCommon) return common;
+		else return null;	
+	}
+};
+
+var Features = {
+	tagName: {
+		extract: function(element) {
+			return element.tagName;			  
+		},
+		compare: strictCompare,
+	},
+	index: {
+	},
+	classes: null,
+	last: null
+};
