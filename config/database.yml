@@ -20,10 +20,10 @@ development:
   reconnect: false
   database: parcels_development
   pool: 5
- username: root
-  password: 
-  host: localhost
+  username: shawntan
+  password: stan1818
   port: 3306
+  host: mce.ddns.comp.nus.edu.sg
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -35,8 +35,9 @@ test:
   database: parcels_development
   pool: 5
   username: shawntan
-  password: parcels
-  port:3306
+  password: stan1818
+  port: 3306
+  host: mce.ddns.comp.nus.edu.sg
 
 production:
   adapter: mysql
@@ -45,8 +46,7 @@ production:
   database: parcels_development
   pool: 5
   username: shawntan
-  password: parcels
-  host: localhost
+  password: stan1818
   port: 3306
-
+  host: mce.ddns.comp.nus.edu.sg
 
