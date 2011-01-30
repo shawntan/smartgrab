@@ -20,7 +20,7 @@
 		<th colspan="2"></th>
 	</tr>
 	<% @extractor.annotations.each do |annotation| %>
-		<tr>
+		<tr class="<%= cycle('odd','even') %>" >
 			<td><%=h annotation.label %></td>
 			<td><%=h annotation.xpath %></td>
 			<td class="action"><%= link_to 'Show', annotation %></td>
@@ -30,33 +30,49 @@
 </table>
 <h3>Pages</h3>
 <table>
-	<tr>
-		<th>Title</th>
-		<th>Link</th>
-		<th></th>
-	</tr>
-	<% @extractor.pages.each do |page| %>
+	<thead>
 		<tr>
-			<td><%=h page.title %></td>
-			<td><a href="<%=page.url%>">Go!</a></td>
-			<td class="action"><%= link_to 'Destroy', page, :confirm => 'Are you sure?', :method => :delete %></td>
+			<th>Title</th>
+			<th>Link</th>
+			<th></th>
 		</tr>
-	<% end %>
+	</thead>
+	<tbody>
+		<% @extractor.pages.each do |page| %>
+			<tr class="<%= cycle('odd','even') %>">
+				<td><%=h page.title %></td>
+				<td><a href="<%=page.url%>">Go!</a></td>
+				<td class="action"><%= link_to 'Destroy', page, :confirm => 'Are you sure?', :method => :delete %></td>
+			</tr>
+		<% end %>
+	</tbody>
 </table>
 </p>
 <%if (@latest_revision)%>
 	<p>
-	<b>Latest revision:</b> <%=h @latest_revision.created_at %>
-	<table>
-		<tr>
-			<th>Label</th>
-			<th>Value</th>
-		</tr>
-		<%@latest_scraped_values.each do |scraped_value|%>
+	<div class="datetime">
+		<span class="day"><%=@latest_revision.created_at.day%></span>
+		<div>
+			<span class="month"><%=@latest_revision.created_at.strftime('%B')%></span>
+			<span class="time"><%=@latest_revision.created_at.strftime('%H:%m')%></span>
+		</div>
+	</div>
+
+	<h2>Latest revision</h2>
+		<table>
+		<thead>
 			<tr>
-				<td><%= scraped_value.annotation.label %></th>
-				<td><%= scraped_value.value %></th>
+				<th>Label</th>
+				<th>Value</th>
 			</tr>
+		</thead>
+		<%@latest_scraped_values.each do |scraped_value|%>
+			<tbody>
+				<tr class="<%= cycle('odd','even') %>" >
+					<td><%= scraped_value.annotation.label %></th>
+					<td><%= scraped_value.value %></th>
+				</tr>
+			</tbody>
 		<%end%>
 	</table>
 	</p>
