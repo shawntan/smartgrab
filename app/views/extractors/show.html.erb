@@ -1,75 +1,81 @@
 <link rel="alternate" type="application/rss+xml" href="<%=@extractor.id%>.rss"></link>
 
-<p>
-  <b>Domain:</b>
-  <%=h @extractor.domain %>
-</p>
-
-<p>
-  <b>User:</b>
-  <%=h @extractor.user.login %>
-</p>
-
-<p>
-	<b>Update Time:</b>
+<h2><%=h @extractor.name%> <em> - extracting from </em> <%=h @extractor.domain%></h2>
+<div class="important">
 	<% form_for(@extractor) do |f| %>
-		<%= time_select :extractor, :update_time %>
-		<%= f.submit 'Update' %>
-<%end%>
-	<%=link_to 'Extract Now!', :action => :extract, :id => @extractor %>
-</p>
-
+		<p class="big">
+		Updates daily at <%= time_select :extractor, :update_time %>
+		<%= f.submit 'Change' %>
+	<%end%>
+	<p class="big">
+	Click here to <%=link_to 'extract now', :action => :extract, :id => @extractor %>.
+	</p>
+</div>
 <p>
-	<b>Labels:</b>
-	<table>
-		<tr>
-			<th>Label</th>
-			<th>XPath</th>
-		</tr>
+<h3>Labels</h3>
+<table>
+	<tr>
+		<th>Label</th>
+		<th>XPath</th>
+		<th colspan="2"></th>
+	</tr>
 	<% @extractor.annotations.each do |annotation| %>
-		<tr>
+		<tr class="<%= cycle('odd','even') %>" >
 			<td><%=h annotation.label %></td>
 			<td><%=h annotation.xpath %></td>
-			<td><%= link_to 'Show', annotation %></td>
-			<td><%= link_to 'Edit', edit_annotation_path(annotation) %></td>
-			<td><%= link_to 'Destroy', annotation, :confirm => 'Are you sure?', :method => :delete %></td>
+			<td class="action"><%= link_to 'Show', annotation %></td>
+			<td class="action"><%= link_to 'Destroy', annotation, :confirm => 'Are you sure?', :method => :delete %></td>
 		</tr>
 	<% end %>
-	</table>
-	<b>Pages:</b>
-	<table>
+</table>
+<h3>Pages</h3>
+<table>
+	<thead>
 		<tr>
 			<th>Title</th>
 			<th>Link</th>
+			<th></th>
 		</tr>
+	</thead>
+	<tbody>
 		<% @extractor.pages.each do |page| %>
-		<tr>
-			<td><%=h page.title %></td>
-			<td><a href="<%=page.url%>">Go!</a></td>
-			<td><%= link_to 'Show', page %></td>
-			<td><%= link_to 'Edit', edit_page_path(page) %></td>
-			<td><%= link_to 'Destroy', page, :confirm => 'Are you sure?', :method => :delete %></td>
-		</tr>
+			<tr class="<%= cycle('odd','even') %>">
+				<td><%=h page.title %></td>
+				<td><a href="<%=page.url%>">Go!</a></td>
+				<td class="action"><%= link_to 'Destroy', page, :confirm => 'Are you sure?', :method => :delete %></td>
+			</tr>
 		<% end %>
-	</table>
+	</tbody>
+</table>
 </p>
 <%if (@latest_revision)%>
-<p>
-	<b>Latest revision:</b> <%=h @latest_revision.created_at %>
-	<table>
-		<tr>
-			<th>Label</th>
-			<th>Value</th>
-		</tr>
+	<p>
+	<div class="datetime">
+		<span class="day"><%=@latest_revision.created_at.day%></span>
+		<div>
+			<span class="month"><%=@latest_revision.created_at.strftime('%B')%></span>
+			<span class="time"><%=@latest_revision.created_at.strftime('%H:%m')%></span>
+		</div>
+	</div>
+
+	<h2>Latest revision</h2>
+		<table>
+		<thead>
+			<tr>
+				<th>Label</th>
+				<th>Value</th>
+			</tr>
+		</thead>
 		<%@latest_scraped_values.each do |scraped_value|%>
-		<tr>
-			<td><%= scraped_value.annotation.label %></th>
-			<td><%= scraped_value.value %></th>
-		</tr>
+			<tbody>
+				<tr class="<%= cycle('odd','even') %>" >
+					<td><%= scraped_value.annotation.label %></th>
+					<td><%= scraped_value.value %></th>
+				</tr>
+			</tbody>
 		<%end%>
 	</table>
-</p>
+	</p>
 
 <%end%>
-<%= link_to 'Edit', edit_extractor_path(@extractor) %> |
 <%= link_to 'Back', extractors_path %>

@@ -1,0 +1,166 @@
+
+body { background-color: #fff; color: #333; }
+
+body, p {
+	font-family: Garamond,Georgia,'Times New Roman';
+	font-size:   15px;
+	line-height: 18px;
+}
+
+pre {
+	background-color: #eee;
+	padding: 10px;
+	font-size: 11px;
+}
+
+a { color: #000; }
+a:visited { color: #666; }
+a:hover { color: #FF7700; }
+
+.big {
+	font-size: 18px;
+	font-weight: 300;
+}
+
+div#header {
+	width:	800px; 
+	margin-left:auto;
+	margin-right:auto;
+}
+div#user-bar-greeting {
+	float:right;
+}
+ul#menu {
+	background-color: #333;
+	color: #FFF;
+	list-style:none;
+	padding: 2px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	margin-left: auto;
+}
+
+ul#menu li {
+	font-family: verdana, arial, helvetica, sans-serif;
+	font-size: 12px;
+	list-style: none;
+	display: inline;
+	padding: 8px;
+}
+ul#menu li a,#menu li a:hover {
+	color: #FFF;
+	text-decoration: none;
+}
+
+ul#menu li a:hover { 
+	color: #FF7700; 
+}
+
+#menu li a:hover {
+	background-color:none;
+
+}	
+
+h1#title {
+	font-family: Georgia,'Times New Roman';
+	font-weight: 400;
+	font-size: 	70px;
+}
+#title em, #main h2 em {
+	color: #77CC77;
+}
+#main {
+	width:800px;
+	margin-left:auto;
+	margin-right:auto;
+	border:1px solid #AAAAAA;
+	padding:20px 40px;
+}
+
+#main h2 {
+	font-weight: 320;
+	font-size: 20px;
+	border-bottom: 2px solid #99EE99;
+	padding: 10px;
+}
+table {
+	width:100%;
+	border-collapse: collapse;
+}
+tr.odd	{ background-color: #FFFFFF; }
+tr.even	{ background-color: #F7F7FA; }
+th { background-color: #BBFFBB; }
+td {
+	font-family: verdana, arial, helvetica, sans-serif;
+	font-size: 12px;
+	padding: 5px;
+}
+td.action {
+	width:50px;
+}
+div.important {
+	padding: 20px;
+	background-color: #DDFFDF;
+}
+div.datetime {
+	font-family: Georgia,'Times New Roman';
+	width: 100px;
+	float: right;
+}
+div.datetime .day {
+	width: 35px;
+	float: left;
+	font-size: 40px;
+	display: inline;
+}
+div.datetime div {
+	float: left;
+	width: 55px;
+	margin-left: 10px;
+	display: inline;
+}
+div.datetime .month{
+	font-size: 20px;
+}
+
+input.login {
+	border: 1px solid #AACCAC;
+	font-size: 20px;
+	margin-top: 15px;
+}
+
+.fieldWithErrors {
+	padding: 2px;
+	background-color: red;
+	display: table;
+}
+
+#errorExplanation {
+	width: 400px;
+	border: 2px solid red;
+	padding: 7px;
+	padding-bottom: 12px;
+	margin-bottom: 20px;
+	background-color: #f0f0f0;
+}
+
+#errorExplanation h2 {
+	text-align: left;
+	font-weight: bold;
+	padding: 5px 5px 5px 15px;
+	font-size: 12px;
+	margin: -7px;
+	background-color: #c00;
+	color: #fff;
+}
+
+#errorExplanation p {
+	color: #333;
+	margin-bottom: 0;
+	padding: 5px;
+}
+
+#errorExplanation ul li {
+	font-size: 12px;
+	list-style: square;
+}
