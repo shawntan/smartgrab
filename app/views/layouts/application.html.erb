@@ -5,12 +5,15 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 		<title>GrabSmart</title>
-
 		<%= stylesheet_link_tag 'style' %>
-
 	</head>
 	<body>
 		<div id="header">
+			<% if logged_in?%>
+			<div style="float:right;margin-top: 25px" class="big">
+				<em>Drag me to your toolbar:</em> <%= render :partial => 'bookmarklet/button'%>
+			</div>
+			<%end%>
 			<h1 id="title">grab<em>smart</em></h1>
 			<%= render :partial => 'users/user_bar' %>
 		</div>
