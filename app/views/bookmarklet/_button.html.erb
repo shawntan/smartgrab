@@ -1,0 +1,22 @@
+<%test = <<-eos
+	(function(){
+		var ca = function(t){return document.body.appendChild(document.createElement(t));};
+		t=ca('h1');
+		t.innerHTML='Loading...';
+		s=t.style;
+		s.backgroundColor='#fff';
+		s.color='#333';
+		s.position='absolute';
+		s.zIndex='9999';
+		s.top='50px';
+		s.right='50px';
+		a=ca('script');
+		a.src='#{url_for(:action => 'index', :controller => 'bookmarklet',:format => :js, :only_path => false)}?s='+Math.floor(Math.random()*1000);
+		a.type='text/javascript';
+		a.onload=function(){t.parentNode.removeChild(t)};
+	})();
+eos
+%>
+<a class="bookmarklet" href="javascript:<%=test.gsub(/[\n\t]/,'')%>">
+	Grab It!
+</a>
