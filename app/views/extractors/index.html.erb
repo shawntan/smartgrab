@@ -1,19 +1,23 @@
-<h1>My extractors</h1>
+<h2>My extractors</h2>
+<p>
+	This page lists the extractors that you have created. Click <em>View</em> in order to see the details of each of the extractors and the last extracted content.
+</p>
 
 <table>
-  <tr>
-    <th>Domain</th>
-  </tr>
+	<tr>
+		<th>Extractor Name</th>
+		<th>Domain</th>
+		<th colspan="2"> </th>
+	</tr>
 <% @extractors.each do |extractor| %>
-  <tr>
-    <td><%=h extractor.domain %></td>
-    <td><%= link_to 'Show', extractor %></td>
-    <td><%= link_to 'Edit', edit_extractor_path(extractor) %></td>
-    <td><%= link_to 'Destroy', extractor, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
+	<tr>
+		<td><%=h extractor.name%></td>
+		<td><%=h extractor.domain %></td>
+		<td class="action"><%= link_to 'View', extractor %></td>
+		<td class="action"><%= link_to 'Delete', extractor, :confirm => 'Are you sure?', :method => :delete %></td>
+	</tr>
 <% end %>
 </table>
 
-<br />
+<br/>
 
-<%= link_to 'Logout now', :controller => :sessions,  :action => :destroy%>

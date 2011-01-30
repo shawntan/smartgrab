@@ -5,7 +5,8 @@ ActionController::Routing::Routes.draw do |map|
   map.login '/login', :controller => 'sessions', :action => 'new'
   map.register '/register', :controller => 'users', :action => 'create'
   map.signup '/signup', :controller => 'users', :action => 'new'
-  
+  map.home '/home', :controller => 'extractors', :action => 'index'
+
   map.connect "extractors/:action", :controller => 'extractors', :action => /[a-z]+/i
   map.resources :extractors
   map.resources :users
@@ -59,7 +60,7 @@ ActionController::Routing::Routes.draw do |map|
 	map.connect ':controller.:format'
 	map.connect ':controller/:action.:format'
 	map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
+	map.connect ':controller/:action/:id.:format'
   
 
   
