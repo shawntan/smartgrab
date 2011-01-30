@@ -1,15 +1,12 @@
-<% if logged_in? -%>
-	<div id="user-bar-greeting">
-			</div>
-	<ul id="menu">
-		<li>
-		Logged in as <%= link_to current_user.login, :controller=>:extractors,:action => :index %>
-		 (<%= link_to "Log out", logout_path, { :title => "Log out"}%>)
-		</li>
-	</ul>
 
-<% else -%>
-	<div id="user-bar-greeting">
+<ul id="menu">
+	<li>
+	<% if logged_in? -%>
+		Logged in as <%= link_to current_user.login, :controller=>:extractors,:action => :index %>
+		(<%= link_to "Log out", logout_path, { :title => "Log out"}%>)
+
+	<% else -%>
 		<%= link_to "Log in",  login_path,  { :title => "Log in" } %> /<%= link_to "Sign up", signup_path, { :title => "Create an account" } %>
-	</div>
-<% end -%>
+	<% end -%>
+	</li>
+</ul>
