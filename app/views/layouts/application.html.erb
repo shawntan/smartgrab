@@ -15,9 +15,13 @@
 			<%= render :partial => 'users/user_bar' %>
 		</div>
 		<div id="main">
-			<p style="color: green">
-			<%= flash[:notice] %>
-			</p>
+			<%if flash[:notice] %>
+				<div class="important"> 
+					<p class="big">
+					<%= flash[:notice] %>
+					</p>
+				</div>
+			<%end%>
 			<%= yield %>
 		</div>
 	</body>

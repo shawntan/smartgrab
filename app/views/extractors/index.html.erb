@@ -10,7 +10,7 @@
 		<th colspan="2"> </th>
 	</tr>
 <% @extractors.each do |extractor| %>
-	<tr>
+	<tr class="<%= cycle('odd','even') %>"  >
 		<td><%=h extractor.name%></td>
 		<td><%=h extractor.domain %></td>
 		<td class="action"><%= link_to 'View', extractor %></td>

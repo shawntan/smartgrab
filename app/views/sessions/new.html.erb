@@ -1,16 +1,17 @@
-<h1>Log In</h1>
-
+<h2>Log In</h2>
+<div class="important">
 <% form_tag session_path do -%>
-<p><%= label_tag 'login' %><br />
-<%= text_field_tag 'login', @login %></p>
+<p class="big"><%= label_tag 'login' %><br />
+<%= text_field_tag 'login', @login, :class=> 'login' %></p>
 
-<p><%= label_tag 'password' %><br/>
-<%= password_field_tag 'password', nil %></p>
+<p class="big"><%= label_tag 'password' %><br/>
+<%= password_field_tag 'password', nil, :class=>'login' %></p>
 
 
-<p><%= label_tag 'remember_me', 'Remember me' %>
+<p class="big"><%= label_tag 'remember_me', 'Remember me' %>
 <%= check_box_tag 'remember_me', '1', @remember_me %></p>
 
 
 <p><%= submit_tag 'Log in' %></p>
 <% end -%>
+</div>
