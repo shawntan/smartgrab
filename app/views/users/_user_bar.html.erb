@@ -1,5 +1,5 @@
 
-<ul id="menu">
+<ul id="menu" style="clear:both;">
 	<li>
 	<% if logged_in? -%>
 		Logged in as <%= link_to current_user.login, :controller=>:extractors,:action => :index %>
