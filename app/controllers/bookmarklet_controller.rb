@@ -3,25 +3,20 @@ require 'net/http'
 
 class BookmarkletController < ApplicationController
 	before_filter :login_required  
-	skip_before_filter :verify_authenticity_token
-
-	
-# View controllers.
+	skip_before_filter :verify_authenticity_token	
+	# View controllers.
 	def index
 		respond_to do |format|
-	      format.js 
-	      format.html
+			format.js 
+			format.html
 		end
-	end
-	
+	end	
 	def stylesheet
 		respond_to do |format|
 			format.css
-			format.html {redirect_back_or_default('/')}
 		end
-	end
-	
-#Action controllers
+	end	
+	#Action controllers
 	def extractor
 		#Find, if have id, use id otherwise find using domain.
 		if(params[:id])
@@ -37,11 +32,11 @@ class BookmarkletController < ApplicationController
 		end
 		render :js => "#{params[:callback]}(#{jsonstring});"
 	end
-	
+
 	def annotate
 		if(params[:annotation][:id]) 
 			@annotation = Annotation.find(params[:annotation][:id])
-      @annotation.update_attributes(params[:annotation])
+			@annotation.update_attributes(params[:annotation])
 		else 
 			extractor = current_user.extractors.find(params[:extractor_id]); 
 			extractor.annotations.create(params[:annotation])
@@ -52,7 +47,7 @@ class BookmarkletController < ApplicationController
 			format.html 
 		end
 	end
-	
+
 	def access_denied
 		respond_to do |format|
 			format.js	{render(:js => 'alert("Please log in to Parcels before labeling.");')}

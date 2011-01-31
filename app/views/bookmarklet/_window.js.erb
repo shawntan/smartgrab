@@ -2,7 +2,7 @@
 		className = className?" "+className:""
 		var header = $B("div", {
 			children: [$B('div', {
-				className: parcelsInterfaceStyle,
+				className: styles["interface"] ,
 	        	innerHTML: "X",
 	        	style: {
 	            	'float': 'right',
@@ -17,7 +17,7 @@
 			children: children
 		});
 		var pw = $B("div", {
-			className: parcelsInterfaceStyle+" dialog" + className,
+			className: styles["interface" ]+" dialog" + className,
 	        children: [header, main],
 			style : coordinates?{
 				left: coordinates.left?coordinates.left+"px":null,
