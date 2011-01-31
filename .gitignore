@@ -1,6 +1,7 @@
 tmp
 log
 *.tmp
+*.swp
 *~
 /log
 config/database.yml
