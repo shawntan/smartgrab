@@ -68,7 +68,7 @@
 		this.MakeIframeTarget = function(form, encapsulating_object, callback){
 			var target = encapsulating_object + "_" + iframe_count;
 			var iframe = $B("iframe", {
-				className: parcelsInterfaceStyle,
+				className: styles["interface"],
 				name: target
 			});
 			iframe_count++;

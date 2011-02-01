@@ -1,0 +1,66 @@
+
+/**
+ * @author shawn
+ */
+//begin constants
+
+var stylesheet_home = 	"<%= url_for(:action => 'stylesheet', 		:controller => 'bookmarklet',	:format => :css,	:only_path => false) %>";
+var get_extractor = 	"<%= url_for(:action => 'get_extractor', 	:controller => 'bookmarklet',	:format => :js,		:only_path => false) %>";
+var create_extractor = 	"<%= url_for(:action => 'create_extractor', :controller => 'bookmarklet',	:format => :js, 	:only_path => false) %>";
+var find_extractors = 	"<%= url_for(:action => 'find_extractors', 	:controller => 'bookmarklet',	:format => :js, 	:only_path => false) %>";
+var create_page = 		"<%= url_for(:action => 'create_page', 		:controller => 'bookmarklet',	:format => :js,		:only_path => false) %>";
+var create_annotation = "<%= url_for(:action => 'create_annotation',:controller => 'bookmarklet',	:format => :js, 	:only_path => false) %>";
+var edit_annotation = 	"<%= url_for(:action => 'edit_annotation',	:controller => 'bookmarklet', 	:format => :js,		:only_path => false) %>";
+var styles = {
+	interface:	"parcels_interface",
+	selected:	"parcels_selected",
+	rejected:	"parcels_rejected",
+	highlighted:"parcels_highlight"
+}
+var classignorelist = [styles.selected,styles.rejected,styles.highlighted,styles.interface];
+//end of constants
+//Load CSS
+(function(){
+	var link = document.createElement("link");
+	link.rel = "stylesheet";
+	link.type = "text/css";
+	link.href = stylesheet_home;
+	document.getElementsByTagName("head")[0].appendChild(link);
+})();
+//end load css;
+//HACK:problem with sites using prototype
+if(window.Prototype) {
+	delete Object.prototype.toJSON;
+	delete Array.prototype.toJSON;
+	delete Hash.prototype.toJSON;
+	delete String.prototype.toJSON;
+}
+//end HACK
+var exit; //function to exit.
+<%=render :partial => 'util'			%>
+<%=render :partial => 'connection'		%>
+<%=render :partial => 'window'			%>
+<%=render :partial => 'box'				%>
+<%=render :partial => 'list'			%>
+<%=render :partial => 'form'			%>
+<%=render :partial => 'extractor_list'	%>
+
+var list_window;
+var load_extractors = new Connection.JSONDataRequest(find_extractors,"displayRelevantExtractors", function(extractors) {
+	list_window = new GrabWindow([new ExtractorList(extractors)],"list",function(){ list_window.close()});
+});
+load_extractors.request({domain: "news.ycombinator.com"}); //document.location.hostname});
+var main;
+var load_annotations = function(extractor_id) {
+	list_window.close();
+	main = new GrabWindow(
+		[
+			new GrabList(3),
+			new GrabForm()
+		],
+		"main",
+		function(){
+			main.close();
+		}
+	);
+}

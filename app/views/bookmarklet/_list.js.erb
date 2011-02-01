@@ -1,0 +1,23 @@
+var GrabList = function(extractor_id) {
+	var list = $B("ul",{className: styles["interface"] +" xpath_list"});
+	var update_list = function(extractor) {
+		var annotations = extractor.annotations;
+		for (var i = 0; i < annotations.length; i++) {
+			var li = $B("li",{
+				annotation: annotations[i],
+				innerHTML: annotations[i].label
+			});
+			list.appendChild(li);
+		}
+	}
+	var loader = new Connection.JSONDataRequest(
+		get_extractor,
+		"requestExtractorData",
+		update_list
+	);
+	list.update = function() {
+		loader.request({extractor_id: extractor_id});
+	};
+	list.update();
+	return list;
+};

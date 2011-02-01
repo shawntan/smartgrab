@@ -1,0 +1,22 @@
+var ExtractorList = function(extractors) {
+	var const_newval = "new";
+	var select = $B("select",{
+		onchange: function() {
+			if(this.value == "nothing");
+			else if(this.value == const_newval) {
+				alert("test");
+			} else {
+				load_annotations(this.value);
+			}
+		}
+	});
+	select.appendChild($B("option",{innerHTML: "Choose an option...",value: "nothing"}));
+	select.appendChild($B("option",{innerHTML:"New extractor",value: const_newval}));
+	for(var i=0;i<extractors.length;i++){
+		select.appendChild( $B("option", {
+			value: 		extractors[i].id,
+			innerHTML: 	extractors[i].name
+		}));
+	}
+	return select;
+};
