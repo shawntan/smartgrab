@@ -1,7 +1,6 @@
 var GrabForm = function(extractor_id) {
 	var fields = new Object();
 	var form= $B("form", {
-		className: styles["interface"],
 		children: [
 			fields.extractor_id_field	=	$B("input", {type:"hidden",	name:"extractor_id",	exclude:true				}),
 			fields.label_field			=	$B("input", {type:"text",	name:"label",			placeholder: "Label Name"	}),

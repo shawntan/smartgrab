@@ -14,7 +14,7 @@ class BookmarkletController < ApplicationController
 			format.html
 		end
 	end
-		
+
 	def stylesheet
 		respond_to do |format|
 			format.css
@@ -23,12 +23,15 @@ class BookmarkletController < ApplicationController
 
 	#Action controllers
 	def get_extractor
-		@extractor = current_user.extractors.find(params[:extractor_id]);
+		if(params[:extractor_id]) 
+			@extractor = current_user.extractors.find(params[:extractor_id])
+		elsif(params[:domain] && params[:name])
+			@extractor = current_user.extractors.find(:first,:conditions => {:name => params[:name],:domain => params[:domain]})
+		end
 		render :js => "#{params[:callback]}(#{@extractor.to_json(:include=> :annotations,:except=>[:cmodel])});"
 	end
 	def create_extractor
 		@extractor = current_user.extractors.create(params[:extractor]);
-		@extractor.save
 		render :js => "#{params[:callback]}(#{@extractor.to_json(:include=> :annotations,:except=>[:cmodel])});"
 	end
 	def find_extractors

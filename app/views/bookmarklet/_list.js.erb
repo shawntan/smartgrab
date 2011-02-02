@@ -1,7 +1,8 @@
-var GrabList = function(extractor_id) {
-	var list = $B("ul",{className: styles["interface"] +" xpath_list"});
-	var update_list = function(extractor) {
-		var annotations = extractor.annotations;
+var GrabList = function(extractor) {
+	var list = $B("ul",{className:"xpath_list"});
+	var update_list = function(ex) {
+		if(!extractor.id) extractor.id = ex.id;
+		var annotations = ex.annotations;
 		for (var i = 0; i < annotations.length; i++) {
 			var li = $B("li",{
 				annotation: annotations[i],
@@ -16,7 +17,9 @@ var GrabList = function(extractor_id) {
 		update_list
 	);
 	list.update = function() {
-		loader.request({extractor_id: extractor_id});
+		//console.log(extractor);
+		if(extractor.id) loader.request({extractor_id: extractor.id});
+		else loader.request(extractor); 
 	};
 	list.update();
 	return list;

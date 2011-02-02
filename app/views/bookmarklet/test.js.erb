@@ -38,27 +38,35 @@ if(window.Prototype) {
 //end HACK
 var exit; //function to exit.
 <%=render :partial => 'util'			%>
+<%=render :partial => 'simpleset'		%>
 <%=render :partial => 'connection'		%>
 <%=render :partial => 'window'			%>
+<%=render :partial => 'attribute_actions'%>
+<%=render :partial => 'selector'		%>
 <%=render :partial => 'box'				%>
 <%=render :partial => 'list'			%>
 <%=render :partial => 'form'			%>
 <%=render :partial => 'extractor_list'	%>
-
+<%=render :partial => 'controller'		%>
+	
+//init code.
 var list_window;
 var load_extractors = new Connection.JSONDataRequest(find_extractors,"displayRelevantExtractors", function(extractors) {
-	list_window = new GrabWindow([new ExtractorList(extractors)],"list",function(){ list_window.close()});
+	list_window = new GrabWindow(
+		[new ExtractorList(extractors)],
+		"main-dialog",
+		function(){ list_window.close()});
 });
 load_extractors.request({domain: "news.ycombinator.com"}); //document.location.hostname});
 var main;
-var load_annotations = function(extractor_id) {
+var load_annotations = function(extractor) {
 	list_window.close();
 	main = new GrabWindow(
 		[
-			new GrabList(3),
+			new GrabList(extractor),
 			new GrabForm()
 		],
-		"main",
+		"main-dialog",
 		function(){
 			main.close();
 		}

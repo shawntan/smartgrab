@@ -148,8 +148,7 @@
 				
 				return false;
 			},
-			onmouseover: function(e){
-				
+			onmouseover: function(e){	
 				if(pi.selector.tracker.selected.length > 0 &&
 					pi.selector.tracker.selected[0].tagName.toLowerCase() != this.tagName.toLowerCase()) return false;
 				pi.box.setPosition(getPos(this), {

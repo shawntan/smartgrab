@@ -1,20 +1,20 @@
 var border_width = 5;
 var makeBoxBorders = function(border_width, fix_side){
 	var self = this;
-	var d = $B('div', {className: parcelsInterfaceStyle+" "+"box_border"});
+	var d = $B('div', {className: "box_border"});
 	d.style[fix_side] = border_width + "px";
 	return d;
 };
-var createBox = function(){//box : this is the thing that "boxes" up the elements to be selected
+
+
+var GrabBox = function(){//box : this is the thing that "boxes" up the elements to be selected
 	var _box = {
     	visible: false,
     	top: makeBoxBorders(border_width, "height"),
     	bottom: makeBoxBorders(border_width, "height"),
     	left: makeBoxBorders(border_width, "width"),
     	right: makeBoxBorders(border_width, "width"),
-    	text: $B('span', {
-        	className: parcelsInterfaceStyle,
-    	}),
+    	text: $B('span', {}),
 		setPosition: function(position, size){
 			_box.setVisible(true);
 			_box.bottom.style.width = _box.top.style.width = (size.width + border_width * 2) + "px";
@@ -38,11 +38,20 @@ var createBox = function(){//box : this is the thing that "boxes" up the element
 			}
 		}
 	};
+	HTMLElement.prototype.boxElement = function(){
+		_box.setPosition(getPos(this), {
+			width: this.offsetWidth,
+			height: this.offsetHeight
+		});
+		_box.setText(this.parentNode.tagName + " " + this.tagName);
+	};
+	_box.top.boxElement = _box.left.boxElement= _box.bottom.boxElement = _box.right.boxElement = _box.text.boxElement = blank_function;
 	_box.bottom.style.height = "auto";
 	document.body.appendChild(_box.top);
 	document.body.appendChild(_box.left);
 	document.body.appendChild(_box.bottom);
 	document.body.appendChild(_box.right);
 	_box.bottom.appendChild(_box.text);
+	
 	return _box;
 };

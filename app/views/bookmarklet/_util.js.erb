@@ -1,151 +1,135 @@
-	window.queryDocument = (function(){
-		if(document.evaluate){
-			var result_holder=null;
-			return function(expression){
-				if(!expression) return;
-				result_holder = document.evaluate(expression, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, result_holder);
-				var res = new Array(result_holder.snapshotLength);
-				for(var i=res.length-1;i>=0;i--){
-					res[i] = result_holder.snapshotItem(i);
-				}
-				return res;
+window.queryDocument = (function(){
+	if(document.evaluate){
+		var result_holder=null;
+		return function(expression){
+			if(!expression) return;
+			result_holder = document.evaluate(expression, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, result_holder);
+			var res = new Array(result_holder.snapshotLength);
+			for(var i=res.length-1;i>=0;i--){
+				res[i] = result_holder.snapshotItem(i);
 			}
-		}
-	})();
-	var getPos = function(obj) {
-		var curleft,curtop;
-		curleft = curtop = 0;
-		if (obj.offsetParent) {
-			do {
-				curleft += obj.offsetLeft;
-				curtop += obj.offsetTop;
-			} while (obj = obj.offsetParent);
-		}
-		return {
-			left: curleft,
-			top: curtop
-		};
-	};
-	var blockevent = function(e) {
-		if (!e) var e = window.event;
-		e.cancelBubble = true;
-		if (e.stopPropagation) e.stopPropagation();
-	};
-	
-	
-	var overrideAllEvents = function(allElements, event, action) {
-		for (var i = 0; i < allElements.length; i++) {
-			allElements[i]['parcels_' + event] = allElements[i][event];
-			bindEvent(allElements[i], event, action);
-		}
-	};
-	var overridePageElements = function(overrideActions) {
-		allElements = document.body.getElementsByTagName("*");
-		for (var event in overrideActions) {
-			overrideAllEvents(allElements, event, overrideActions[event]);
-		}
-	};
-		
-	var bindEvent = function(element, event, fun) {
-		element[event] = function(e) {
-			return fun.apply(element, [e]);
-		}
-	};
-	var $B = function(tagName, object) {
-		var e = document.createElement(tagName);
-		for (var att in object) {
-			if (att == "style") {
-				for (var i in object.style) {
-					if (i == 'float') e.style.cssFloat = e.style.styleFloat = object.style['float'];
-					else e.style[i] = object.style[i];
-				}
-			}
-			else if (att == "children") for (var i = 0; i < object.children.length; i++) 
-				e.appendChild(object.children[i]);
-			else if (typeof object[att] == "function") {
-				bindEvent(e,att,object[att]);
-			}
-			else e[att] = object[att];
-		}
-		if(tagName == "input"){
-			if(e.placeholder) {
-				e.onblur = function(){
-					if(e.value.length==0) {
-						e.value = e.placeholder;
-					}
-				}
-				e.onfocus = function(){
-					if(e.value == e.placeholder){
-						e.value = "";
-					}
-				}
-				
-			}
-		}
-		$B.elements.push(e);
-		return e;
-	};
-	$B.elements = [];
-	$B.destroyAll = function(){
-		for(var i=$B.elements.length-1;i>=0;i--){
-			var element = $B.elements[i];
-			if(element ){
-				if(element.parentNode) element.parentNode.removeChild(element);
-				delete element;
-			}
-		}
-	};
-	var removeClass = function(element, className) {
-		var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
-		element.className = element.className.replace(reg, ' ').trim();
-	};
-	var addClass = function(element, className) {
-		element.className = (element.className + " " + className).trim();
-	};
-	
-	var removeAllChildren = function(element) {
-		if(element.hasChildNodes()) {
-			while (element.childNodes.length >= 1 ){
-				element.removeChild(element.firstChild);       
-			}
+			return res;
 		}
 	}
-	/*
-	 * Element zhnging methods
-	 */
-	Array.prototype.contains = function(element) {if(array) return (this.indexOf(element) >= 0);};
-	
-	HTMLElement.prototype.getIndex = function(){
+})();
+var getPos = function(obj) {
+	var curleft,curtop;
+	curleft = curtop = 0;
+	if (obj.offsetParent) {
+		do {
+			curleft += obj.offsetLeft;
+			curtop += obj.offsetTop;
+		} while (obj = obj.offsetParent);
+	}
+	return {
+		left: curleft,
+		top: curtop
+	};
+};
+var block_event = function(e) {
+	if (!e) var e = window.event;
+	e.cancelBubble = true;
+	if (e.stopPropagation) e.stopPropagation();
+};
+
+var blank_function = function() {}
+
+var $B = function(tagName, object) {
+	var e = document.createElement(tagName);
+	for (var att in object) {
+		if (att == "style") {
+			for (var i in object.style) {
+				if (i == 'float') e.style.cssFloat = e.style.styleFloat = object.style['float'];
+				else e.style[i] = object.style[i];
+			}
+		}
+		else if (att == "children") for (var i = 0; i < object.children.length; i++) 
+		e.appendChild(object.children[i]);
+		else e[att] = object[att];
+	}
+	e.className = e.className?e.className+" "+styles["interface"]:styles["interface"];
+	e.boxElement = blank_function; 
+	if(tagName == "input"){
+		if(e.placeholder) {
+			e.onblur = function(){
+				if(e.value.length==0) {
+					e.value = e.placeholder;
+				}
+			}
+			e.onfocus = function(){
+				if(e.value == e.placeholder){
+					e.value = "";
+				}
+			}
+
+		}
+	}
+	$B.elements.push(e);
+	return e;
+};
+$B.elements = [];
+$B.destroyAll = function(){
+	for(var i=$B.elements.length-1;i>=0;i--){
+		var element = $B.elements[i];
+		if(element ){
+			if(element.parentNode) element.parentNode.removeChild(element);
+			delete element;
+		}
+	}
+};
+var removeAllChildren = function(element) {
+	if(element.hasChildNodes()) {
+		while (element.childNodes.length >= 1 ){
+			element.removeChild(element.firstChild);       
+		}
+	}
+}
+/*
+ * Element zhnging methods
+ */
+Array.prototype.contains = function(element) {if(array) return (this.indexOf(element) >= 0);};
+
+HTMLElement.prototype.getIndex = function(){
+	if(this.index) return this.index
+	else {
 		var result = 1;
 		var temp = this;
 		var tagname = this.tagName;
-		while (temp = temp.previousSibling)	if (temp.tagName == tagname) result++; 
-		return result;
-	};
-	
-	HTMLElement.prototype.isLast = function(){
-		var last = this.parentNode.children[this.parentNode.children.length-1];
-		do{
-			if(last == this){
-				return true;
-			} else {
-				last = last.previousSibling;
-			} 
-		} while(last.tagName!=this.tagName);
-		return false;
-	};
-	
-	HTMLElement.prototype.getClasses = function(){
-		var result; 
-		if(this.className) {
-			if(this.className.trim()=="") result = null;
-			else {
-				result = this.className.trim().split(/\s+/);
-				var index;
-				for(var i=classignorelist.length-1;i>=0;i--)
-					if((index = result.indexOf(classignorelist[i]))>=0)
-						result.splice(index, 1);
-			}
+		while (temp = temp.previousSibling)	if (temp.tagName == tagname) result++;
+		this.index = result;
+	}
+	return result;
+};
+
+HTMLElement.prototype.isLast = function(){
+	if(this.donelast) return this.last
+	var last = this.parentNode.children[this.parentNode.children.length-1];
+	this.donelast = true;
+	do{
+		if(last == this){
+			this.last = true;
+			return true;
+		} else {
+			last = last.previousSibling;
+		} 
+	} while(last.tagName!=this.tagName);
+	this.last = false;
+	return false;
+};
+
+HTMLElement.prototype.getClasses = function(){
+	if(this.classes) return this.classes;
+	var result;
+	if(this.className) {
+		if(this.className.trim()=="") result = null;
+		else {
+			result = this.className.trim().split(/\s+/);
+			var index;
+			for(var i=classignorelist.length-1;i>=0;i--)
+			if((index = result.indexOf(classignorelist[i]))>=0)
+			result.splice(index, 1);
 		}
-		return result;
-	};
+		this.classes = result;
+	}
+	return result;
+};
