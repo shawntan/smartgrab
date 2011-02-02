@@ -8,8 +8,8 @@ var GrabController = function() {
 		function(el){selector.deselect(el);},
 		function(el){selector.dereject(el)}
 	];
-	var reset_elements = function() {for(var i=0;i<order.length;i++) reset_style(order[i]);};
-	var color_elements = function() {for(var i=0;i<order.length;i++) add_style(classes[i],action[i],order[i]);};
+	var reset_elements = function(){for(var i=0;i<order.length;i++) reset_style(order[i]);};
+	var color_elements = function(){for(var i=0;i<order.length;i++) add_style(classes[i],action[i],order[i]);};
 	var reset_style = function(arr) {
 		for(var i=arr.length-1;i>=0;i--){
 			arr[i].className = arr[i]._className;

@@ -48,7 +48,7 @@ var exit; //function to exit.
 <%=render :partial => 'form'			%>
 <%=render :partial => 'extractor_list'	%>
 <%=render :partial => 'controller'		%>
-	
+<%=render :partial => 'algorithm'		%>
 //init code.
 var list_window;
 var load_extractors = new Connection.JSONDataRequest(find_extractors,"displayRelevantExtractors", function(extractors) {
