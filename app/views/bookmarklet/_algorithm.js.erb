@@ -27,21 +27,19 @@ var Align = function(comparator,match,mismatch) {
 		}
 		var i= table.length-1;
 		var j= table[0].length-1;
-		var result = [];
 		while(i>0 && j>0) {
 			switch(trace[i][j]) {
 				case 0:
-				console.log(match(p1[i-1],p2[j-1]));
-				result.unshift(match(p1[i-1],p2[j-1]));
+				match(p1[i-1],p2[j-1]);
 				i--;
 				j--;
 				break;
 				case 1:
-				result.unshift(mismatch(p1[i-1],p2[j-1]));
+				mismatch(p1[i-1],p2[j-1]);
 				j--;
 				break;
 				case 2:
-				result.unshift(mismatch(p1[i-1],p2[j-1]));
+				mismatch(p1[i-1],p2[j-1]);
 				i--;
 				break;
 			}
