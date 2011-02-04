@@ -39,6 +39,7 @@ if(window.Prototype) {
 var exit; //function to exit.
 <%=render :partial => 'util'			%>
 <%=render :partial => 'simpleset'		%>
+<%=render :partial => 'algorithm'		%>
 <%=render :partial => 'connection'		%>
 <%=render :partial => 'window'			%>
 <%=render :partial => 'attribute_actions'%>
@@ -48,7 +49,7 @@ var exit; //function to exit.
 <%=render :partial => 'form'			%>
 <%=render :partial => 'extractor_list'	%>
 <%=render :partial => 'controller'		%>
-<%=render :partial => 'algorithm'		%>
+
 //init code.
 var list_window;
 var load_extractors = new Connection.JSONDataRequest(find_extractors,"displayRelevantExtractors", function(extractors) {

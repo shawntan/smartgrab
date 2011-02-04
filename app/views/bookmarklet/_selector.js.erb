@@ -19,20 +19,102 @@ HTMLElement.prototype.getPath = function() {
 	}
 	this._path = path;
 	return path;
-}
+};
+var matchAlign = new Align(
+	function(el1,el2) {
+		if(el1.tagName!='*') return el1.tagName==el2.tagName;
+		else return false;
+	},
+	function(el1,el2) {
+		if(el1=='*'||el2=='*') return Features_max_score*(-2);
+		else if(el1==el2) return Features_max_score*2;
+		var score = 0;
+		for(var i in Features){
+			if(el1[i] && el2[i]) score += Features[i].compare.score(el1[i],el2[i]);
+		}
+		return score;
+	},
+	function(el1,el2,result) {
+		var obj = new Object(),val;
+		for(var i in Features){
+			if(el1[i] && el2[i]) {
+				val = Features[i].compare.value(el1[i],el2[i]);
+				if(val) obj[i] = val;
+			}
+		}
+		if(obj.tagName == '*' && obj.index) {
+			if(obj.abs) obj.index=obj.abs;
+			else delete obj.index;
+		}
+		result.unshift(obj);
+	},
+	function(result) {result.unshift("*");},
+	function(){return new Array();}
+);
+var serialisePath = function(arr){
+	if(!arr) return null;
+	var xpath = "",f=true;
+	for(var i=arr.length-1;i>=0;i--){
+		if(arr[i]=="*"){
+			if(f){
+				xpath = "/"+xpath;
+				f=false;
+			}
+		}
+		else {
+			var tag = arr[i].tagName,token = tag;
+			var s;
+			for(var f in Features) {
+				if(Features[f].selector && arr[i][f]) {
+					s = "["+Features[f].selector(arr[i][f])+"]";
+					if(Features[f].unique) return "//"+tag+s+xpath;
+					else token += s;
+				}
+			}
+			xpath = "/"+token+xpath;
+			f=true;
+		}
+	}
+	return "/html/body"+xpath;
+};
 
+var pathComparator = function(a,b){return a._path.length - b._path.length}
 var GrabSelector = function() {
 	var selected = new SimpleSet();
 	var rejected = new SimpleSet();
+	var s = this.selected = selected.toArray();
+	var r = this.rejected = rejected.toArray();
 
-	this.selected = selected.toArray();
-	this.rejected = rejected.toArray();
+
+	var res = this.result = {
+		obj: null,
+		xpath: "",
+		setPath: function(obj) {
+			res.obj = obj;
+			res.xpath = serialisePath(obj);
+		}
+	};
+
+	var recalculate = function(list) {
+		list.sort(pathComparator);
+		var p = list[0]._path;
+		for(var i=1;i<list.length;i++) p = matchAlign(p,list[i]._path);
+		return p;
+	};
+
 	this.select = function(el) {
 		selected.add(el);
+		if(res.obj)	res.obj = matchAlign(res.obj,el.getPath());	
+		else 		res.obj = el.getPath();
+		res.setPath(res.obj);
 	};
 	this.deselect = function(el) {
 		selected.remove(el);
-		console.log(selected.toArray());
+		if(s.length > 0){
+			res.obj = recalculate(s);
+		}
+		else res.obj = null;
+		res.setPath(res.obj)
 	};
 	this.reject = function(el) {
 		rejected.add(el);
@@ -40,4 +122,4 @@ var GrabSelector = function() {
 	this.dereject = function(el) {
 		rejected.remove(el);
 	};
-}
+};

@@ -4,9 +4,11 @@ window.queryDocument = (function(){
 		return function(expression){
 			if(!expression) return;
 			result_holder = document.evaluate(expression, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, result_holder);
-			var res = new Array(result_holder.snapshotLength);
-			for(var i=res.length-1;i>=0;i--){
-				res[i] = result_holder.snapshotItem(i);
+			var res,res_length = result_holder.snapshotLength;
+			res = new Array();
+			for(var i=res_length-1;i>=0;i--){
+				var v = result_holder.snapshotItem(i);
+				res[i] = v;
 			}
 			return res;
 		}
@@ -92,13 +94,18 @@ Array.prototype.contains = function(element) {if(array) return (this.indexOf(ele
 HTMLElement.prototype.getIndex = function(){
 	if(this.index) return this.index
 	else {
-		var result = 1;
-		var temp = this;
-		var tagname = this.tagName;
-		while (temp = temp.previousSibling)	if (temp.tagName == tagname) result++;
+		var result = 1,abs=1,temp = this,tagname = this.tagName;
+		while (temp = temp.previousSibling){
+			abs++;
+			if (temp.tagName == tagname) result++;
+		}
 		this.index = result;
 	}
 	return result;
+};
+HTMLElement.prototype.getAbsolute = function() {
+	if(this.abs) this.getIndex();
+	return this.abs;
 };
 
 HTMLElement.prototype.isLast = function(){
@@ -125,9 +132,10 @@ HTMLElement.prototype.getClasses = function(){
 		else {
 			result = this.className.trim().split(/\s+/);
 			var index;
-			for(var i=classignorelist.length-1;i>=0;i--)
-			if((index = result.indexOf(classignorelist[i]))>=0)
-			result.splice(index, 1);
+			for(var i=classignorelist.length-1;i>=0;i--){
+				if((index = result.indexOf(classignorelist[i]))>=0) result.splice(index, 1);
+			}
+			result.sort();
 		}
 		this.classes = result;
 	}
