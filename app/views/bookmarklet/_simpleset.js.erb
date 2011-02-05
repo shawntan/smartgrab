@@ -1,0 +1,10 @@
+var SimpleSet = function() {
+	var _a = [];
+	var contains = this.contains = function(e) {return (_a.indexOf(e) >= 0)}
+	this.add = function(e) {if(!contains(e)) _a.push(e);}
+	this.remove = function(e) {
+		var i;
+		if((i=_a.indexOf(e))>=0)_a.splice(i,1);	
+	}
+	this.toArray = function(e) {return _a;}
+}

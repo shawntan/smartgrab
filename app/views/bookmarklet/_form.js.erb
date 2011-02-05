@@ -1,0 +1,43 @@
+var GrabForm = function(extractor_id,list) {
+	var fields = new Object(), f;
+	var form= $B("form", {
+		children: f = [
+			fields.extractor_id_field	=	$B("input", {type:"hidden",	name:"extractor_id"}),
+			fields.label_field			=	$B("input", {type:"text",	name:"label",			placeholder: "Label Name"	}),
+			fields.xpath_field			=	$B("input", {type:"hidden",	name:"xpath"										}),
+			fields.raw_field			=	$B("input", {type:"hidden",	name:"raw"											}),
+			fields.id_field				=	$B("input",	{type:"hidden",	name:"id",				disabled:true				}),
+			$B("input",{value:"Save",type:"submit",exclude:true})
+		],
+		action: create_annotation,
+		method: "POST"
+	});
+	form.list = null;
+	form.controller = null;
+	form.extractor = null;
+
+	form.disable = function(){for(var i=f.length-1;i>=0;i--) f[i].disabled=true};
+	form.enable = function(){for(var i=f.length-1;i>=0;i--) f[i].disabled=false;};
+	form.onsubmit = function(){if(!fields.id_field.value) fields.id_field.disabled=true;return true;};
+	form.clear = function() {
+		fields.label_field.value="";
+		fields.xpath_field.value="";
+		fields.raw_field.value="";
+		fields.id_field.value="";
+	}
+	form.update = function(xpath,obj){
+		if(!xpath) form.disable();
+		else {
+			form.enable();
+			form.fields.xpath_field.value = xpath;
+			form.fields.raw_field.value = JSON.stringify(obj);
+		}
+	}
+	form.fields = fields;
+	Connection.MakeIframeTarget(form,"annotation",function(){
+		form.controller.clear();
+		form.list.update();
+	});
+	form.disable();
+	return form
+};

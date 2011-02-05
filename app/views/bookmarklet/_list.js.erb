@@ -1,0 +1,32 @@
+var GrabList = function(extractor){
+	var list = $B("ul",{className:"xpath_list"}),loader;
+	list.form = null;
+	list.controller = null;
+	list.extractor = extractor;
+	var update_list = function(ex) {
+		while(list.hasChildNodes()) list.removeChild(list.firstChild);
+		if(!extractor.id) extractor.id = ex.id;
+		var annotations = ex.annotations;
+		for (var i = 0; i < annotations.length; i++) {
+			var li = $B("li",{
+				annotation: annotations[i],
+				innerHTML: annotations[i].label
+			});
+			list.appendChild(li);
+		}
+		first = false;
+		list.form.fields.extractor_id_field.value = extractor.id; 
+	}
+	loader = new Connection.JSONDataRequest(
+		get_extractor,
+		"requestExtractorData",
+		update_list
+	);
+	list.update = function() {
+		if(list.extractor && list.extractor.id) loader.request({extractor_id: extractor.id});
+		else loader.request(list.extractor);
+		list.scrollTop = list.scrollHeight;	
+	};
+	list.update();
+	return list;
+};

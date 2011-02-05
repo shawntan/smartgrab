@@ -1,58 +1,63 @@
-require 'net/http'
-
-
 class BookmarkletController < ApplicationController
 	before_filter :login_required  
-	skip_before_filter :verify_authenticity_token
-
-	
-# View controllers.
+	skip_before_filter :verify_authenticity_token	
+	# View controllers.
 	def index
 		respond_to do |format|
-	      format.js 
-	      format.html
+			format.js 
+			format.html
 		end
 	end
-	
+	def test
+		respond_to do |format|
+			format.js 
+			format.html
+		end
+	end
+
 	def stylesheet
 		respond_to do |format|
 			format.css
-			format.html {redirect_back_or_default('/')}
 		end
 	end
-	
-#Action controllers
-	def extractor
-		#Find, if have id, use id otherwise find using domain.
-		if(params[:id])
-			@extractor = current_user.extractors.find(params[:id]); 
-		else
-			@extractor = current_user.extractors.find_or_create_by_domain(:domain => params[:domain])
+
+	#Action controllers
+	def get_extractor
+		if(params[:extractor_id]) 
+			@extractor = current_user.extractors.find(params[:extractor_id])
+		elsif(params[:domain] && params[:name])
+			@extractor = current_user.extractors.find(:first,:conditions => {:name => params[:name],:domain => params[:domain]})
 		end
-		jsonstring = @extractor.to_json(:include => [:annotations])
-		#got new page.
-		if(params[:page] and !@extractor.pages.exists?(:url => params[:page][:url]))
-			@extractor.pages.create(params[:page])
-			@extractor.save
-		end
-		render :js => "#{params[:callback]}(#{jsonstring});"
+		render :js => "#{params[:callback]}(#{@extractor.to_json(:include=> :annotations,:except=>[:cmodel])});"
 	end
-	
-	def annotate
-		if(params[:annotation][:id]) 
-			@annotation = Annotation.find(params[:annotation][:id])
-      @annotation.update_attributes(params[:annotation])
-		else 
-			extractor = current_user.extractors.find(params[:extractor_id]); 
-			extractor.annotations.create(params[:annotation])
-			script = "#{params[:callback]}(#{extractor.to_json});";
-		end
-		respond_to do |format|
-			format.js {render(:js => script )}
-			format.html 
+	def create_extractor
+		@extractor = current_user.extractors.create(params[:extractor]);
+		render :js => "#{params[:callback]}(#{@extractor.to_json(:include=> :annotations,:except=>[:cmodel])});"
+	end
+	def find_extractors
+		@extractors = current_user.extractors.find_all_by_domain(params[:domain])
+		render :js => "#{params[:callback]}(#{@extractors.to_json(:except=>[:cmodel])});"
+	end
+
+	def create_page
+		@page = current_user.extractor.pages.find_or_create_by_url(params[:page][:url]);
+		@page.title = page[:page][:title]
+		@page.save
+	end
+
+	def create_annotation
+		@annotation = Annotation.new(params[:annotation]);
+		if @annotation.save
+			render :js => "#{params[:callback]}(#{@extractor.to_json(:include=> :annotations,:except=>[:cmodel])});"
 		end
 	end
-	
+	def edit_annotation
+		@annotation = Annotation.find(params[:annotation][:id])
+		@annotation.update_attributes(params[:annotation])
+		@annotation.save
+	end	
+
+	private	
 	def access_denied
 		respond_to do |format|
 			format.js	{render(:js => 'alert("Please log in to Parcels before labeling.");')}
@@ -60,4 +65,3 @@ class BookmarkletController < ApplicationController
 		end
 	end
 end
-

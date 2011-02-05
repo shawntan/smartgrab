@@ -1,0 +1,41 @@
+var ExtractorList = function(extractors) {
+	var const_newval = "new";
+	var select = $B("select",{
+		onchange: function() {
+			if(this.value == "nothing");
+			else if(this.value == const_newval){
+				var container = select.parentNode;
+				container.removeChild(select);
+				container.appendChild(new ExtractorForm());
+			} else {
+				load_annotations({id:this.value});
+			}
+		},
+		boxElement: blank_function
+	});
+	select.appendChild($B("option",{innerHTML: "Choose an option...",value: "nothing"}));
+	select.appendChild($B("option",{innerHTML: "New extractor",value: const_newval}));
+	for(var i=0;i<extractors.length;i++){
+		select.appendChild( $B("option", {
+			value: 		extractors[i].id,
+			innerHTML: 	extractors[i].name
+		}));
+	}
+	return select;
+};
+var ExtractorForm = function() {
+	var name_field;
+	var form = $B("form", {
+		children: [
+			$B("input", {type:"hidden",	name:"domain",	value: document.location.hostname}),
+			name_field = $B("input", {type:"text",	name:"name",	placeholder: "Name"}),
+			$B("input",{value:"Create!",type:"submit",exclude:true})
+		],
+		action: create_extractor,
+		method: "POST"
+	});
+	Connection.MakeIframeTarget(form,"extractor", function() {
+		load_annotations({name: name_field.value, domain: document.location.hostname});
+	});
+	return form;
+};
