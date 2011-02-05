@@ -46,8 +46,10 @@ class BookmarkletController < ApplicationController
 	end
 
 	def create_annotation
-		@annotation = current_user.extractors.find(params[:extractor_id]).annotations.create(params[:page]);
-		@annotation.save
+		@annotation = Annotation.new(params[:annotation]);
+		if @annotation.save
+			render :js => "#{params[:callback]}(#{@extractor.to_json(:include=> :annotations,:except=>[:cmodel])});"
+		end
 	end
 	def edit_annotation
 		@annotation = Annotation.find(params[:annotation][:id])

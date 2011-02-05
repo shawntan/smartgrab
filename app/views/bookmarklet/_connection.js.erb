@@ -68,13 +68,15 @@ var Connection = new function(){
 		}
 		var ret;
 		if(form.onsubmit) ret = form.onsubmit;
-		var setElementsDisabled = function(v){for (var i=inputs.length-1;i>=0;i--)inputs[i].disabled = v;}
+		var setElementsDisabled = function(v){for (var i=inputs.length-1;i>=0;i--)inputs[i].readOnly = v;}
 		form.onsubmit = function(){
-			if(ret  && ret(arguments)) setElementsDisabled(true);	
+			if(ret  && ret(arguments)) {
+				setElementsDisabled(true);
+			}
 			return true;
 		};
 		iframe.onload = function() {
-			iframe.onload = function(obj1){
+			iframe.onload = function() {
 				setElementsDisabled(false);
 				if(callback) callback();
 			}

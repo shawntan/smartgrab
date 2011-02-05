@@ -1,7 +1,6 @@
-var GrabController = function(callback) {
+var GrabController = function() {
 	var selector = new GrabSelector();
 	var box = new GrabBox();
-
 	var classes = 	[styles.highlighted,	styles.selected,		styles.rejected];
 	var order =		[null,					selector.selected,		selector.rejected];
 	var default_action = HTMLElement.prototype.action = function(el) {selector.select(el)};
@@ -10,7 +9,23 @@ var GrabController = function(callback) {
 		function(el){selector.deselect(el);},
 		function(el){selector.dereject(el)}
 	];
-
+	var self = this;
+	this.form = null;
+	this.list = null;
+	this.extractor = null;
+	this.setExtractor = function(extractor){
+		this.extractor
+		= this.list.extractor
+		= this.form.extactor
+		= extractor;
+	};
+	this.clear = function() {
+		reset_elements();
+		selector = new GrabSelector();
+		self.form.clear();
+		self.form.update(selector.result.xpath,selector.result.obj);
+		order =  [null,selector.selected,selector.rejected];
+	};
 	var reset_elements = function(){for(var i=0;i<order.length;i++) if(order[i]) reset_style(order[i]);};
 	var color_elements = function(){for(var i=0;i<order.length;i++) if(order[i]) add_style(classes[i],action[i],order[i]);};
 	var save_class = function(e){if(!e._className)e._className = e.className?e.className:" ";};
@@ -28,7 +43,7 @@ var GrabController = function(callback) {
 		}
 	};
 	var in_play = function(el) {
-		if(selector.result.tag)	return el.tagName == selector.result.tag
+		if(selector.result.tag)	return el.tagName == selector.result.tag;
 		else return true;
 	};
 	var ActionWrapper = function(fun) {
@@ -42,14 +57,22 @@ var GrabController = function(callback) {
 			return false;
 		};
 	};
-
+	document.body._onclick = document.body.onclick;
+	document.body._onmouseover = document.body.onmouseover;
+	document.body._onmouseout = document.body.onmouseout;
+	this.close = function() {
+		self.clear();
+		document.body.onclick = document.body._onclick;
+		document.body.onmouseover = document.body._onmouseover;
+		document.body.onmouseout = document.body._onmouseout;
+	};
 	document.body.onclick = new ActionWrapper(function(el){
 		var action = el.action;
 		reset_elements();
 		action(el);
 		//console.log(selector.result.obj);
 		order[0] = queryDocument(selector.result.xpath);
-		callback(selector.result.xpath,selector.result.obj);
+		self.form.update(selector.result.xpath,selector.result.obj);
 		color_elements();
 		el.blur();
 	});

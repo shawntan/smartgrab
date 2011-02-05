@@ -88,11 +88,14 @@ var GrabSelector = function() {
 
 	var res = this.result = {
 		tag: null,
-		obj: null,
+		obj: {
+			selected: null,
+			rejected: null
+		},
 		xpath: "",
 		setPath: function(obj) {
 			res.obj = obj;
-			res.xpath = serialisePath(obj);
+			res.xpath = serialisePath(obj.selected);
 		}
 	};
 
@@ -105,23 +108,24 @@ var GrabSelector = function() {
 
 	this.select = function(el) {
 		selected.add(el);
-		if(res.obj)	res.obj = matchAlign(res.obj,el.getPath());	
+		if(res.obj.selected) res.obj.selected = matchAlign(res.obj.selected,el.getPath());	
 		else {
-			res.obj = el.getPath();
+			res.obj.selected = el.getPath();
 			res.tag = el.tagName;
 		}
-		res.setPath(res.obj);
+		res.xpath = serialisePath(res.obj.selected);
 	};
 	this.deselect = function(el) {
 		selected.remove(el);
 		if(s.length > 0){
-			res.obj = recalculate(s);
+			res.obj.selected = recalculate(s);
+			res.xpath = serialisePath(res.obj.selected);
 		}
 		else {
-			res.obj = null;
+			res.obj.selected = null;
 			res.tag = null;
+			res.xpath = null;
 		}
-		res.setPath(res.obj)
 	};
 	this.reject = function(el) {
 		rejected.add(el);
