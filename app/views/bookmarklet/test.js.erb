@@ -62,14 +62,20 @@ load_extractors.request({domain: "news.ycombinator.com"}); //document.location.h
 var main;
 var load_annotations = function(extractor) {
 	list_window.close();
+	var form = new GrabForm();
+	var controller = new GrabController(function(xpath,obj){
+		form.fields.xpath_field.value = xpath;
+		form.fields.raw_field.value = JSON.stringify(obj);
+	});
 	main = new GrabWindow(
 		[
 			new GrabList(extractor),
-			new GrabForm()
+			form
 		],
 		"main-dialog",
 		function(){
 			main.close();
 		}
 	);
+
 }

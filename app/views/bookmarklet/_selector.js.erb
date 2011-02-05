@@ -87,6 +87,7 @@ var GrabSelector = function() {
 
 
 	var res = this.result = {
+		tag: null,
 		obj: null,
 		xpath: "",
 		setPath: function(obj) {
@@ -105,7 +106,10 @@ var GrabSelector = function() {
 	this.select = function(el) {
 		selected.add(el);
 		if(res.obj)	res.obj = matchAlign(res.obj,el.getPath());	
-		else 		res.obj = el.getPath();
+		else {
+			res.obj = el.getPath();
+			res.tag = el.tagName;
+		}
 		res.setPath(res.obj);
 	};
 	this.deselect = function(el) {
@@ -113,7 +117,10 @@ var GrabSelector = function() {
 		if(s.length > 0){
 			res.obj = recalculate(s);
 		}
-		else res.obj = null;
+		else {
+			res.obj = null;
+			res.tag = null;
+		}
 		res.setPath(res.obj)
 	};
 	this.reject = function(el) {

@@ -23,10 +23,7 @@ var getPos = function(obj) {
 			curtop += obj.offsetTop;
 		} while (obj = obj.offsetParent);
 	}
-	return {
-		left: curleft,
-		top: curtop
-	};
+	return {left: curleft,top: curtop};
 };
 var block_event = function(e) {
 	if (!e) var e = window.event;
@@ -34,10 +31,11 @@ var block_event = function(e) {
 	if (e.stopPropagation) e.stopPropagation();
 };
 
-var blank_function = function() {}
-
+var blank_function = function() {};
+var true_function = function(){return true};
 var $B = function(tagName, object) {
 	var e = document.createElement(tagName);
+	e.immune = true; 
 	for (var att in object) {
 		if (att == "style") {
 			for (var i in object.style) {
@@ -45,25 +43,15 @@ var $B = function(tagName, object) {
 				else e.style[i] = object.style[i];
 			}
 		}
-		else if (att == "children") for (var i = 0; i < object.children.length; i++) 
-		e.appendChild(object.children[i]);
+		else if (att == "children") for (var i = 0; i < object.children.length; i++) e.appendChild(object.children[i]);
 		else e[att] = object[att];
 	}
 	e.className = e.className?e.className+" "+styles["interface"]:styles["interface"];
 	e.boxElement = blank_function; 
 	if(tagName == "input"){
 		if(e.placeholder) {
-			e.onblur = function(){
-				if(e.value.length==0) {
-					e.value = e.placeholder;
-				}
-			}
-			e.onfocus = function(){
-				if(e.value == e.placeholder){
-					e.value = "";
-				}
-			}
-
+			e.onblur = function(){if(e.value.length==0) e.value = e.placeholder}
+			e.onfocus = function(){if(e.value == e.placeholder)	e.value = "";}
 		}
 	}
 	$B.elements.push(e);
@@ -73,7 +61,7 @@ $B.elements = [];
 $B.destroyAll = function(){
 	for(var i=$B.elements.length-1;i>=0;i--){
 		var element = $B.elements[i];
-		if(element ){
+		if(element){
 			if(element.parentNode) element.parentNode.removeChild(element);
 			delete element;
 		}
@@ -81,9 +69,7 @@ $B.destroyAll = function(){
 };
 var removeAllChildren = function(element) {
 	if(element.hasChildNodes()) {
-		while (element.childNodes.length >= 1 ){
-			element.removeChild(element.firstChild);       
-		}
+		while (element.childNodes.length >= 1 )	element.removeChild(element.firstChild);
 	}
 }
 /*

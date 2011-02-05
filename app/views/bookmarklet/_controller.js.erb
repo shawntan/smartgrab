@@ -1,26 +1,20 @@
-var GrabController = function() {
+var GrabController = function(callback) {
 	var selector = new GrabSelector();
+	var box = new GrabBox();
 
 	var classes = 	[styles.highlighted,	styles.selected,		styles.rejected];
 	var order =		[null,					selector.selected,		selector.rejected];
-
 	var default_action = HTMLElement.prototype.action = function(el) {selector.select(el)};
 	var action = [
 		function(el){selector.reject(el);},
 		function(el){selector.deselect(el);},
 		function(el){selector.dereject(el)}
 	];
+
 	var reset_elements = function(){for(var i=0;i<order.length;i++) if(order[i]) reset_style(order[i]);};
 	var color_elements = function(){for(var i=0;i<order.length;i++) if(order[i]) add_style(classes[i],action[i],order[i]);};
-	var save_class = function(e){
-		console.log("Original:"+e._className);
-		if(!e._className){
-			console.log("pass");
-			e._className = e.className?e.className:" ";
-			e.className = e._className;
-		}
-	};
-	var reset_style = function(arr) {
+	var save_class = function(e){if(!e._className)e._className = e.className?e.className:" ";};
+	var reset_style = function(arr){
 		for(var i=arr.length-1;i>=0;i--){
 			arr[i].className = arr[i]._className;
 			delete arr[i].action;
@@ -28,25 +22,37 @@ var GrabController = function() {
 	};
 	var add_style = function(className,action,arr) {
 		for(var i=arr.length-1;i>=0;i--){
-			/**if(arr[i].className.charAt(0)==' ') {
-				console.log("adding class:"+className+" to "+arr[i].className+" original:" + arr[i]._className);
-				if(arr[i]._className.charAt(0)==' ') console.log(arr[i]);
-			}**/
 			save_class(arr[i]);
 			arr[i].className = arr[i]._className + " " + className;
 			arr[i].action = action;
 		}
 	};
-	document.body.onclick = function(e){
-		block_event(e);
-		e = e || window.event;
-		var element = e.target || e.srcElement;	
-		var cache_action = element.action;
-		reset_elements();
-		cache_action(element);
-		console.log(selector.result.obj);
-		order[0] = queryDocument(selector.result.xpath);
-		color_elements();
-		return false;
+	var in_play = function(el) {
+		if(selector.result.tag)	return el.tagName == selector.result.tag
+		else return true;
 	};
+	var ActionWrapper = function(fun) {
+		return function(e) {
+			e = e || window.event;
+			var el = e.target || e.srcElement;
+			if(el.immune) return true;
+			block_event(e);
+			if(!in_play(el) || el == document.body) return false;
+			fun(el);
+			return false;
+		};
+	};
+
+	document.body.onclick = new ActionWrapper(function(el){
+		var action = el.action;
+		reset_elements();
+		action(el);
+		//console.log(selector.result.obj);
+		order[0] = queryDocument(selector.result.xpath);
+		callback(selector.result.xpath,selector.result.obj);
+		color_elements();
+		el.blur();
+	});
+	document.body.onmouseover = new ActionWrapper(function(el){el.boxElement();});
+	document.body.onmouseout = function(e){box.setVisible(false);}
 };
