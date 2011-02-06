@@ -13,19 +13,50 @@ var GrabController = function() {
 	this.form = null;
 	this.list = null;
 	this.extractor = null;
+	var save_page = function() {
+		console.log("saving page...");
+		var form  = new $B("form", {
+			action: create_page,
+			method: "POST",
+			children: [
+				$B("input",{type:"hidden",name:"url",value: document.location.href}),
+				$B("input",{type:"hidden",name:"extractor_id",value: self.extractor.id}),
+				$B("input",{type:"hidden",name:"title",value: document.title})
+			]
+		});
+		document.body.appendChild(form);
+		Connection.MakeIframeTarget(form,"page",function(){
+			form.parentNode.removeChild(form);
+			delete form;
+		});
+		form.submit();
+	};
 	this.setExtractor = function(extractor){
 		this.extractor
 		= this.list.extractor
 		= this.form.extactor
 		= extractor;
+		this.form.fields.extractor_id_field.value = extractor.id;
+		console.log(this.extractor);
+		save_page();
 	};
-	this.clear = function() {
+	this.setPathObject = function(obj){
+		setSelector(new GrabSelector(obj))
+	};
+	this.clear = function(){setSelector(new GrabSelector())};
+	var setSelector = function(sel) {
 		reset_elements();
-		selector = new GrabSelector();
+		selector = sel;
 		self.form.clear();
-		self.form.update(selector.result.xpath,selector.result.obj);
-		order =  [null,selector.selected,selector.rejected];
-	};
+		if(self.list.selected) {
+			var id = self.list.selected.annotation.id;
+			var label = self.list.selected.annotation.label;
+			self.form.update(selector.result.xpath,selector.result.obj,id,label);
+		}
+		else self.form.update(selector.result.xpath,selector.result.obj);
+		order =  [queryDocument(selector.result.xpath),selector.selected,selector.rejected];
+		color_elements();
+	}
 	var reset_elements = function(){for(var i=0;i<order.length;i++) if(order[i]) reset_style(order[i]);};
 	var color_elements = function(){for(var i=0;i<order.length;i++) if(order[i]) add_style(classes[i],action[i],order[i]);};
 	var save_class = function(e){if(!e._className)e._className = e.className?e.className:" ";};
@@ -43,7 +74,7 @@ var GrabController = function() {
 		}
 	};
 	var in_play = function(el) {
-		if(selector.result.tag)	return el.tagName == selector.result.tag;
+		if(selector.result.tag)	return el.tagName.toLowerCase() == selector.result.tag.toLowerCase();
 		else return true;
 	};
 	var ActionWrapper = function(fun) {

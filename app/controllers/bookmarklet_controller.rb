@@ -40,13 +40,19 @@ class BookmarkletController < ApplicationController
 	end
 
 	def create_page
-		@page = current_user.extractor.pages.find_or_create_by_url(params[:page][:url]);
-		@page.title = page[:page][:title]
+		@page = current_user.extractors.find(params[:page][:extractor_id]).pages.find_or_create_by_url(params[:page][:url])
+		@page.update_attributes(params[:page]);
 		@page.save
+		render :js => "#{params[:callback]}();"
 	end
 
 	def create_annotation
-		@annotation = Annotation.new(params[:annotation]);
+		if(params[:annotation][:id]) 
+			@annotation = Annotation.find(params[:annotation][:id])
+			@annotation.update_attributes(params[:annotation])
+		else 
+			@annotation = Annotation.new(params[:annotation]);
+		end
 		if @annotation.save
 			render :js => "#{params[:callback]}(#{@extractor.to_json(:include=> :annotations,:except=>[:cmodel])});"
 		end

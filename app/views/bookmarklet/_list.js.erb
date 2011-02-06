@@ -3,6 +3,7 @@ var GrabList = function(extractor){
 	list.form = null;
 	list.controller = null;
 	list.extractor = extractor;
+	list.active = null;
 	var update_list = function(ex) {
 		while(list.hasChildNodes()) list.removeChild(list.firstChild);
 		if(!extractor.id) extractor.id = ex.id;
@@ -15,13 +16,32 @@ var GrabList = function(extractor){
 			list.appendChild(li);
 		}
 		first = false;
-		list.form.fields.extractor_id_field.value = extractor.id; 
+		list.controller.setExtractor(extractor);
+	}
+	list.onclick = function(e) {
+		e = e || window.event;
+		var li=e.target||e.srcElement,a;
+		if(a=li.annotation) {
+			if(list.selected) list.selected.style.backgroundColor = "";
+			if(list.selected == li) {
+				list.selected = null;
+				list.controller.clear();
+			} else {
+				list.selected = li;
+				var obj;
+				if(li._raw) obj = li._raw;
+				else li._raw = obj =eval('('+ a.raw +')');
+				list.controller.setPathObject(obj);
+				li.style.backgroundColor = "#F0F000";
+			}
+		}
 	}
 	loader = new Connection.JSONDataRequest(
 		get_extractor,
 		"requestExtractorData",
 		update_list
 	);
+
 	list.update = function() {
 		if(list.extractor && list.extractor.id) loader.request({extractor_id: extractor.id});
 		else loader.request(list.extractor);
