@@ -57,6 +57,7 @@ var load_extractors = new Connection.JSONDataRequest(find_extractors,"displayRel
 		list_window.close()
 	});
 });
+
 var main;
 var load_annotations = function(extractor) {
 	list_window.close();
@@ -66,7 +67,6 @@ var load_annotations = function(extractor) {
 	form.list = controller.list = list;
 	list.form = controller.form = form;
 	form.controller = list.controller = controller;
-
 	main = new GrabWindow([list,form],"main-dialog",function(){
 		controller.close();
 		$B.destroyAll();

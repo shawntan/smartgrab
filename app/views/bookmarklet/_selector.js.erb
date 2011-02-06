@@ -79,7 +79,7 @@ var serialisePath = function(arr){
 };
 
 var pathComparator = function(a,b){return a._path.length - b._path.length}
-var GrabSelector = function() {
+var GrabSelector = function(resObj) {
 	var selected = new SimpleSet();
 	var rejected = new SimpleSet();
 	var s = this.selected = selected.toArray();
@@ -88,16 +88,14 @@ var GrabSelector = function() {
 
 	var res = this.result = {
 		tag: null,
-		obj: {
-			selected: null,
-			rejected: null
-		},
+		obj: null,
 		xpath: "",
-		setPath: function(obj) {
-			res.obj = obj;
-			res.xpath = serialisePath(obj.selected);
-		}
 	};
+	if(resObj){
+		res.obj = resObj;
+		res.xpath = serialisePath(res.obj.selected);
+		res.tag = resObj.selected[resObj.selected.length-1].tagName;
+	} else res.obj = {selected:null,rejected:null};
 
 	var recalculate = function(list) {
 		list.sort(pathComparator);

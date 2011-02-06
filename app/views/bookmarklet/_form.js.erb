@@ -18,19 +18,23 @@ var GrabForm = function(extractor_id,list) {
 
 	form.disable = function(){for(var i=f.length-1;i>=0;i--) f[i].disabled=true};
 	form.enable = function(){for(var i=f.length-1;i>=0;i--) f[i].disabled=false;};
-	form.onsubmit = function(){if(!fields.id_field.value) fields.id_field.disabled=true;return true;};
 	form.clear = function() {
 		fields.label_field.value="";
 		fields.xpath_field.value="";
 		fields.raw_field.value="";
 		fields.id_field.value="";
 	}
-	form.update = function(xpath,obj){
+	form.update = function(xpath,obj,annotation_id,label){
 		if(!xpath) form.disable();
 		else {
 			form.enable();
 			form.fields.xpath_field.value = xpath;
 			form.fields.raw_field.value = JSON.stringify(obj);
+			if(annotation_id){
+				form.fields.label_field.value = label;
+				form.fields.id_field.value = annotation_id;
+				form.fields.id_field.disabled = false;
+			} else form.fields.id_field.disabled = true;
 		}
 	}
 	form.fields = fields;
