@@ -28,9 +28,7 @@ var GrabList = function(extractor){
 				list.controller.clear();
 			} else {
 				list.selected = li;
-				var obj;
-				if(li._raw) obj = li._raw;
-				else li._raw = obj =eval('('+ a.raw +')');
+				var obj = eval('('+ a.raw +')');
 				list.controller.setPathObject(obj);
 				li.style.backgroundColor = "#F0F000";
 			}

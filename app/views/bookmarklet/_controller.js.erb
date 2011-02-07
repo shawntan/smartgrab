@@ -103,7 +103,13 @@ var GrabController = function() {
 		action(el);
 		//console.log(selector.result.obj);
 		order[0] = queryDocument(selector.result.xpath);
-		self.form.update(selector.result.xpath,selector.result.obj);
+		if(self.list.selected) self.form.update(
+			selector.result.xpath,
+			selector.result.obj,
+			self.list.selected.annotation.id,
+			self.list.selected.annotation.label
+		);
+		else self.form.update(selector.result.xpath,selector.result.obj);
 		color_elements();
 		el.blur();
 	});
