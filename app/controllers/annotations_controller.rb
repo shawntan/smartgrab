@@ -73,10 +73,11 @@ class AnnotationsController < ApplicationController
   # DELETE /annotations/1.xml
   def destroy
     @annotation = Annotation.find(params[:id])
+	extractor = @annotation.extractor
     @annotation.destroy
 
     respond_to do |format|
-      format.html { redirect_to(annotations_url) }
+      format.html { redirect_to(extractor)}
       format.xml  { head :ok }
     end
   end
