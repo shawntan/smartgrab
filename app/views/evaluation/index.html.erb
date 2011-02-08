@@ -1,100 +1,94 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-  <title>Instructions: Introduction</title>
-  <link href="stylesheets/scaffold.css" media="screen" rel="stylesheet" type="text/css" />
-
-</head>
-<body>
-<div style="width:60%;margin:auto;border:1px solid #AAAAAA;padding:60px 40px">
 <h2>Introduction</h2>
 <p>
-	My system aims to help users extract information from webpages by specifying the content to be extracted visually,
-	and places the extracted information in a convenient RSS feed. This tutorial hopes to instruct you on using the system,
-	from how to sign up for an account to extracting data from a Google search result.
+My system aims to help users extract information from webpages by specifying the content to be extracted visually,
+and places the extracted information in a convenient RSS feed. This tutorial hopes to instruct you on using the system,
+from how to sign up for an account to extracting data from a Google search result.
 </p>
 
+<h2><em>Step 1 - </em>Install</h2>
 <ol>
-	<h3>Installation instructions</h3>
 	<li>
-		<h4>Sign up for an account</h4>
-		<p>Sign up for an account <a href="signup" target="new">here</a>. Don't worry, all the links on this page opens in a new window.</p>
+	<h4>Sign up for an account</h4>
+	<p>Sign up for an account <a href="signup" target="new">here</a>. Don't worry, all the links on this page opens in a new window.</p>
 	</li>
 	<li>
-		<h4>Drag the bookmarklet to the toolbar</h4>
-		<img src="images/bookmarklet.png" align="left" style="-moz-box-shadow: 3px 3px 4px #CCCCCC;margin: 15px" />
-		<p>Go <a href="bookmarklet">here</a> to get the bookmarklet. Simply drag the "Parcelize" to your toolbar.</p>
-	</li>
-	<h3>Usage Instructions</h3>
-	<p>			Now that you have installed the bookmarklet, you can extract content from virtually any webpage.
-			In order to use the system, click on the bookmarklet at any page.</p>
-	<li>
-		<h4>Navigate to page for extraction</h4>
-		<p>
+	<h4>Drag the bookmarklet to the toolbar</h4>
+	<img src="images/bookmarklet.png" align="left" style="-moz-box-shadow: 3px 3px 4px #CCCCCC;margin: 15px" />
+	<p>
+	Next, drag the bookmarklet below to your toolbar. You should then see it in you toolbar, just like any other bookmark.
 
-			In this example, let's use a Google search result. 
-		</p>
-		<p>
-			Navigate to <a href="http://www.google.com" target="tutorial">Google</a> and enter any search query you like.
-		</p>
-	</li>
-	
-	<li>
-		<h4>Start selecting!</h4>
-		<p>
-			Click on the bookmarklet that you dragged to the toolbar in step 2. An alert should pop up telling you to login to the system first.
-			Always remember: You have to be signed-in in order to use the system. If you're not logged in, click <a href="login">here</a>.
-		</p>
-		<img src="images/dialogue.png" align="right" style="-moz-box-shadow: 3px 3px 4px #CCCCCC;" />
-		<p>
-			<b>Click on the bookmarklet again.</b> A small dialogue box similar to the one on the right should appear at the top right hand corner of your window.
-			You should now see a grey box appearing around elements on the page as you mouse over them. This is your selector.
-		</p>
-		<p>
-			<b>Click on an entry of the search result.</b> Notice that the browser no longer follows the link through to the page. Instead, it is highlighted in green.
-			<b>Click on another entry</b>, and you will find that all the entries on the page are highlighted in yellow. The yellow elements represent elements that will be
-			selected when the system is allowed to extract.
-		</p>
-		<p>
-			<b>Finally, to save your selection, type in an appropriate name, say "Entries". Then click save.</b> Your selection will now be sent to the server to be saved.
-			Once done, the entry will show up in the empty area on the dialogue box. 
-		</p>
-	</li>
-	<li>
-		<h4>Extract data once for testing</h4>
-		<img src="images/updatetime.png" align="left" style="-moz-box-shadow: 3px 3px 4px #CCCCCC;margin: 15px" />
-		<p>
-			Now that you've specified the content you want to extract from the page, the next step is to extract the data to see if the system does what you want.
-			To do so, first navigate to your <a href="extractors">home page</a>.
-			Here, you should see your first extractor entry. <b>Click "show" to see its details.</b>
-		</p>
-		<p>
-			At the extractor details page, you can set the time for daily extraction, as well as do a test extraction to see if data is extracted correctly.
-			<b>Click "Extract now!" to try this.</b>
-		</p>
-	</li>	
-	<li>
-		<h4>Set time for regular extraction</h4>
-		<p>
-			Once you are satisfied with the data extracted, you can now set the time for daily extraction from the page.
-		</p>
-	</li>
-	<li>
-		<h4>Enjoy.</h4>
+		<div style="text-align:center;padding-top:20px;"><%= render :partial => 'bookmarklet/button'%> </div>
+	</p>
 	</li>
 </ol>
+<h2 style="clear:both;"><em>Step 2 - </em>Select</h2>
 <p>
-	Now that you have familiarised yourself with the basic usage of the system, we can move on to our first scenario.
-	You will be given a task and, using the system, carry out the given task.
-	You will then be asked to provide some feedback regarding the system, such as ease of use, accuracy of extracted data, etc.
+Now that you have installed the bookmarklet, you can extract content from virtually any webpage.
+In order to use the system, click on the bookmarklet at any page.
+</p>
+<ol>
+	<li>
+	<h4>Navigate to page for extraction</h4>
+	<p>
+
+	In this example, let's use a Google search result. 
+	</p>
+	<p>
+	Navigate to <a href="http://www.google.com" target="tutorial">Google</a> and enter any search query you like.
+	</p>
+	</li>
+
+	<li>
+	<h4>Start selecting!</h4>
+	<p>
+	Click on the bookmarklet that you dragged to the toolbar in step 2. An alert should pop up telling you to login to the system first.
+	Always remember: You have to be signed-in in order to use the system. If you're not logged in, click <a href="login">here</a>.
+	</p>
+	<img src="images/dialogue.png" align="right" style="-moz-box-shadow: 3px 3px 4px #CCCCCC;" />
+	<p>
+	<b>Click on the bookmarklet again.</b> A small dialogue box similar to the one on the right should appear at the top right hand corner of your window.
+	You should now see a grey box appearing around elements on the page as you mouse over them. This is your selector.
+	</p>
+	<p>
+	<b>Click on an entry of the search result.</b> Notice that the browser no longer follows the link through to the page. Instead, it is highlighted in green.
+	<b>Click on another entry</b>, and you will find that all the entries on the page are highlighted in yellow. The yellow elements represent elements that will be
+	selected when the system is allowed to extract.
+	</p>
+	<p>
+	<b>Finally, to save your selection, type in an appropriate name, say "Entries". Then click save.</b> Your selection will now be sent to the server to be saved.
+	Once done, the entry will show up in the empty area on the dialogue box. 
+	</p>
+	</li>
+</ol>
+<h2><em>Step 3 - </em>Extract</h2>
+<ol>
+	<li>
+	<h4>Extract data once for testing</h4>
+	<img src="images/updatetime.png" align="left" style="-moz-box-shadow: 3px 3px 4px #CCCCCC;margin: 15px" />
+	<p>
+	Now that you've specified the content you want to extract from the page, the next step is to extract the data to see if the system does what you want.
+	To do so, first navigate to your <a href="extractors">home page</a>.
+	Here, you should see your first extractor entry. <b>Click "show" to see its details.</b>
+	</p>
+	<p>
+	At the extractor details page, you can set the time for daily extraction, as well as do a test extraction to see if data is extracted correctly.
+	<b>Click "Extract now!" to try this.</b>
+	</p>
+	</li>	
+	<li>
+	<h4>Set time for regular extraction</h4>
+	<p>
+	Once you are satisfied with the data extracted, you can now set the time for daily extraction from the page.
+	</p>
+	</li>
+</ol>
+<h2>System evaluation</h2>
+<p>
+Now that you have familiarised yourself with the basic usage of the system, we can move on to our first scenario.
+You will be given a task and, using the system, carry out the given task.
+You will then be asked to provide some feedback regarding the system, such as ease of use, accuracy of extracted data, etc.
 </p>
 <p>
-	Once you are ready, go <a href="instruction_sc1.html">here</a>
+Once you are ready, go <a href="instruction_sc1.html">here</a>
 </p>
-</div>
-</body>
-</html>

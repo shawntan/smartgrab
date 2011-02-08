@@ -3,8 +3,8 @@ body { background-color: #fff; color: #333; }
 
 body, p {
 	font-family: Garamond,Georgia,'Times New Roman';
-	font-size:   15px;
-	line-height: 18px;
+	font-size:   18px;
+	font-weight: 600
 }
 
 pre {
@@ -115,6 +115,7 @@ div.datetime {
 div.datetime .day {
 	width: 35px;
 	float: left;
+	text-align: right;
 	font-size: 40px;
 	display: inline;
 }
@@ -136,9 +137,9 @@ input.login {
 
 a.bookmarklet {
 	background-color: #F5F5F5;
-	border: 1px solid #DCDCDC;
-	border-top: 1px solid #EEE;
-	border-left: 1px solid #EEE;	
+	border: 2px solid #DCDCDC;
+	border-top: 2px solid #EEE;
+	border-left: 2px solid #EEE;	
 	padding-top:8px;
 	padding-bottom:8px;
 	padding-left:15px;
@@ -148,6 +149,7 @@ a.bookmarklet {
 	line-height: 130%;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
+	border-radius: 3px;
 	text-decoration: none;
 	margin-left: 5px;
 	margin-right: 8px;
