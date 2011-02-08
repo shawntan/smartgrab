@@ -9,12 +9,14 @@
 	</head>
 	<body>
 		<div id="header">
+			<div style="float:left;width:300px;" > 
+				<h1 id="title"> grab<em>smart</em></h1>
+			</div>
 			<%if logged_in?%>
-			<div class="big" align="right"> 
-				<em>Drag me to your toolbar:</em> <%= render :partial => 'bookmarklet/button'%>
+			<div class="big" style="float:right;width:400px;text-align:center;padding-top:40px;"> 
+				<em>Drag me to your toolbar:</em><%= render :partial => 'bookmarklet/button'%>
 			</div>
 			<%end%>
-			<h1 id="title" style="float:left;display:inline"> grab<em>smart</em></h1>
 			<%= render :partial => 'users/user_bar' %>
 		</div>
 		<div id="main">
