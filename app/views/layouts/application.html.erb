@@ -9,12 +9,12 @@
 	</head>
 	<body>
 		<div id="header">
-			<h1 id="title" style="float:left;display:inline"> grab<em>smart</em></h1>
-			<% if logged_in?%>
-			<span class="big" style="float:right;margin-top:20px;padding-right:10px">
+			<%if logged_in?%>
+			<div class="big" align="right"> 
 				<em>Drag me to your toolbar:</em> <%= render :partial => 'bookmarklet/button'%>
-			</span>
+			</div>
 			<%end%>
+			<h1 id="title" style="float:left;display:inline"> grab<em>smart</em></h1>
 			<%= render :partial => 'users/user_bar' %>
 		</div>
 		<div id="main">
@@ -29,7 +29,3 @@
 		</div>
 	</body>
 </html>
-
-
-
-
