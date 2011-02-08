@@ -20,14 +20,9 @@ development:
   reconnect: false
   database: parcels_development
   pool: 5
-<<<<<<< HEAD
-  username: shawntan
-  password: stan1818
-=======
   username: root
   password: stan1818 
   host: localhost
->>>>>>> a1abb2c0d63df68a04dd6b6da8667886a2cdd495
   port: 3306
   host: mce.ddns.comp.nus.edu.sg
 
