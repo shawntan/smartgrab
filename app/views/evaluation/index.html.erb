@@ -14,9 +14,9 @@ from how to sign up for an account to extracting data from a Google search resul
 	</li>
 	<li>
 	<h4>Drag the bookmarklet to the toolbar</h4>
-	<img src="images/bookmarklet.png" align="left" style="-moz-box-shadow: 3px 3px 4px #CCCCCC;margin: 15px" />
+	<img src="images/bookmarklet.png" align="left"> 
 	<p>
-	Next, drag the bookmarklet below to your toolbar. You should then see it in you toolbar, just like any other bookmark.
+	Next, drag the button below to your toolbar. You should then see it in you toolbar, just like any other bookmark.
 
 		<div style="text-align:center;padding-top:20px;"><%= render :partial => 'bookmarklet/button'%> </div>
 	</p>
@@ -45,10 +45,17 @@ In order to use the system, click on the bookmarklet at any page.
 	Click on the bookmarklet that you dragged to the toolbar in step 2. An alert should pop up telling you to login to the system first.
 	Always remember: You have to be signed-in in order to use the system. If you're not logged in, click <a href="login">here</a>.
 	</p>
-	<img src="images/dialogue.png" align="right" style="-moz-box-shadow: 3px 3px 4px #CCCCCC;" />
+	<img src="images/dialogue.png" align="right" />
 	<p>
-	<b>Click on the bookmarklet again.</b> A small dialogue box similar to the one on the right should appear at the top right hand corner of your window.
-	You should now see a grey box appearing around elements on the page as you mouse over them. This is your selector.
+	<b>Click on the bookmarklet again.</b> 
+	A small dialogue box similar to the one on the right should appear at the top right hand corner of your window.
+	This drop-down menu allows you to select the extractor you want to edit on the particular page. You can create as many extractors for each page as you want.
+	</p>
+	<p><b>Let's create a new extractor for this example by clicking "New extractor".</b>
+	</p>
+	<img src="images/dialogue_selector.png" align="left"  />
+	<p>
+		A dialog box similar to the one on the right should appear.	You should also see a grey box appearing around elements on the page as you mouse over them. This is your selector.
 	</p>
 	<p>
 	<b>Click on an entry of the search result.</b> Notice that the browser no longer follows the link through to the page. Instead, it is highlighted in green.
@@ -65,7 +72,7 @@ In order to use the system, click on the bookmarklet at any page.
 <ol>
 	<li>
 	<h4>Extract data once for testing</h4>
-	<img src="images/updatetime.png" align="left" style="-moz-box-shadow: 3px 3px 4px #CCCCCC;margin: 15px" />
+	<img src="images/updatetime.png" align="left"  />
 	<p>
 	Now that you've specified the content you want to extract from the page, the next step is to extract the data to see if the system does what you want.
 	To do so, first navigate to your <a href="extractors">home page</a>.

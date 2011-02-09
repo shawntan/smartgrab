@@ -21,10 +21,10 @@ development:
   database: parcels_development
   pool: 5
   username: root
-  password: stan1818 
+  password: 
   host: localhost
   port: 3306
-  host: mce.ddns.comp.nus.edu.sg
+  
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

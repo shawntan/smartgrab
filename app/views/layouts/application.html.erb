@@ -13,9 +13,11 @@
 				<h1 id="title"> grab<em>smart</em></h1>
 			</div>
 			<%if logged_in?%>
-			<div class="big" style="float:right;width:400px;text-align:center;padding-top:40px;"> 
-				<em>Drag me to your toolbar:</em><%= render :partial => 'bookmarklet/button'%>
-			</div>
+				<div class="big" style="float:right;width:400px;margin:0.46em;border:1px solid #F0F0F0;background-color:#FAFAFA;padding:0.76em">
+					<b>To install, drag the button to your toolbar.</b>
+					To find out how to use the bookmarklet, go <%= link_to 'here', :controller=>:evaluation %>
+					<div style="text-align:center;"><%= render :partial => 'bookmarklet/button'%></div>
+				</div>
 			<%end%>
 			<%= render :partial => 'users/user_bar' %>
 		</div>
