@@ -14,7 +14,7 @@ var ExtractorList = function(extractors) {
 		boxElement: blank_function
 	});
 	select.appendChild($B("option",{innerHTML: "Choose an option...",value: "nothing"}));
-	select.appendChild($B("option",{innerHTML: "New extractor",value: const_newval, className:"new"}));
+	select.appendChild($B("option",{innerHTML: "[[New extractor]]",value: const_newval, className:"new"}));
 	for(var i=0;i<extractors.length;i++){
 		select.appendChild( $B("option", {
 			value: 		extractors[i].id,
