@@ -66,14 +66,14 @@
 				<th>Value</th>
 			</tr>
 		</thead>
+		<tbody>
 		<%@latest_scraped_values.each do |scraped_value|%>
-			<tbody>
 				<tr class="<%= cycle('odd','even') %>" >
-					<td><%= scraped_value.annotation.label %></th>
-					<td><%= scraped_value.value %></th>
+					<td><%= scraped_value.annotation.label %></td>
+					<td><%= scraped_value.value %></td>
 				</tr>
-			</tbody>
 		<%end%>
+		</tbody>
 	</table>
 	</p>
 
