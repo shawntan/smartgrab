@@ -4,6 +4,7 @@
  */
 //begin constants
 
+var home_url = 	"<%= url_for(:action => :index, :controller => :extractors, :only_path => false) %>";
 var stylesheet_home = 	"<%= url_for(:action => 'stylesheet', 		:controller => 'bookmarklet',	:format => :css,	:only_path => false) %>";
 var get_extractor = 	"<%= url_for(:action => 'get_extractor', 	:controller => 'bookmarklet',	:format => :js,		:only_path => false) %>";
 var create_extractor = 	"<%= url_for(:action => 'create_extractor', :controller => 'bookmarklet',	:format => :js, 	:only_path => false) %>";
