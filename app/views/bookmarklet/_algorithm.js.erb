@@ -1,6 +1,6 @@
 var Align = function(matcher,scorer,match,mismatch,init){
 	return function(p1,p2) {
-		var result = init();
+		var result = init(p1,p2);
 		var c = new Array(p2.length + 1),p = new Array(p2.length + 1),t = new Array(p1.length + 1);
 		for (var i=0;i<t.length;i++) {
 			t[i] = new Array(p2.length + 1);
@@ -28,9 +28,9 @@ var Align = function(matcher,scorer,match,mismatch,init){
 			switch(t[i][j]) {
 				case 0:		match(p1[i-1],p2[j-1],result);	i--;j--;//up left
 				break;
-				case 1:		mismatch(result);	j--;//left
+				case 1:		mismatch(p1[i-1],p2[j-1],result);	j--;//left
 				break;
-				case 2:		mismatch(result);	i--;//up
+				case 2:		mismatch(p1[i-1],p2[j-1],result);	i--;//up
 				break;
 			}
 		}

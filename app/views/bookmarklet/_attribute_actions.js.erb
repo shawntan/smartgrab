@@ -26,8 +26,22 @@ var listCompare = {
 			else if(list1[i]<list2[j]) i++;
 			else if(list1[i]>list2[j]) j++;
 		}
+		return common;
 	}
 };
+
+var removeCommon = function(list1,list2){ 
+	var i=0,j=0;
+	while(i<list1.length && j<list2.length) {
+		if(list1[i]==list2[j]){
+			list2.splice(j,1);
+			i++;
+		}
+		else if(list1[i]<list2[j]) i++;
+		else if(list1[i]>list2[j]) j++;
+	}
+};
+
 var Features = {
 	tagName: {
 		extract: function(element) {return element.tagName.toLowerCase();},
@@ -37,6 +51,11 @@ var Features = {
 		extract: function(element) {return element.getIndex();},
 		compare: new StrictScorer(1,0,null),
 		selector: function(val){return val;},
+		nselector: function(obj) {
+			return "count(preceding-sibling::"+obj.tagName+" = "
+			        +(obj.tagName=='*'?obj.abs:obj.index) - 1
+					+")";
+		}
 	},
 	abs: {
 		extract: function(element) {return element.getAbsolute();},
@@ -46,7 +65,7 @@ var Features = {
 		extract: function(element) {return element.id;},
 		compare: new StrictScorer(1,0,null),
 		selector: function(val){return "@id='"+val+"'";},
-		unique: true,
+		unique: true
 	},	
 	last: {
 		extract: function(element) {return element.isLast();},
