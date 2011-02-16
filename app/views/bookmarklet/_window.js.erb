@@ -4,8 +4,9 @@ var GrabWindow = function(children,className,closeAction,coordinates) {
 		children: [
 			$B('a', {
 				href: home_url,
+				target:"grabsmart",
 				children:[
-					$B('h3',{innerHTML: "grabsmart",target:"grabsmart"})
+					$B('span',{innerHTML: "grabsmart",className:"header"})
 				]
 			}),
 			$B('div', {
