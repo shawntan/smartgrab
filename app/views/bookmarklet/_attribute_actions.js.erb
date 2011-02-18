@@ -56,9 +56,16 @@ var Features = {
 		compare: new StrictScorer(1,0,null),
 		selector: function(val){return val;},
 		nselector: function(obj) {
-			return "count(preceding-sibling::"+obj.tagName+" = "
-			        +(obj.tagName=='*'?obj.abs:obj.index) - 1
-					+")";
+			var tag = obj.tagName;
+			var countval;
+			if(!obj.tagName || obj.tagName == "*"){
+				if(obj.abs)	countval = obj.abs;
+				else return;
+			} else countval = obj.index;
+			if(!countval) console.log(obj);
+			var result = "count(preceding-sibling::"+tag+")="
+			        + (countval-1);
+			return result;
 		}
 	},
 	abs: {

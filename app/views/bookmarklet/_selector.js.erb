@@ -38,7 +38,6 @@ var merger = 	function(x,y,p1,p2,result) {
 			if(val) obj[i] = val;
 		}
 	}
-	if(p2[y].end) obj.end = true;
 	if(obj.tagName == '*' && obj.index) {
 		if(obj.abs) obj.index=obj.abs;
 		else delete obj.index;
@@ -52,6 +51,7 @@ var matchAlign = new Align(
 	function(x,y,a,b,result) {result.unshift("*");},
 	function(){return new Array();}
 );
+
 var rejectAlign = new Align(
 	matcher,
 	scorer,
@@ -68,8 +68,7 @@ var rejectAlign = new Align(
 			}
 		}
 		if(obj) {
-			if(y==(p2.length-1)) obj.end = true;
-			else obj.tagName = p2[y].tagName;
+			obj.tagName = p2[y].tagName;
 			for(var i in obj) {
 				result.unshift(obj);
 				break;
@@ -86,7 +85,12 @@ var interRejectAlign = new Align(
 	function(x,y,p1,p2,result) {},
 	function(path1,path2){return new Array();}
 );
-var serialisePath = function(arr){
+var serialisePath = function(obj){
+	var result = serialisePositivePath(obj.selected)+(obj.rejected?"["+serialiseRejectedPath(obj.rejected)+"]":"");
+	console.log(result);
+	return result;
+}
+var serialisePositivePath = function(arr){
 	if(!arr) return null;
 	var xpath = "",f=true;
 	for(var i=arr.length-1;i>=0;i--){
@@ -112,6 +116,25 @@ var serialisePath = function(arr){
 	}
 	return "/html/body"+xpath;
 };
+var serialiseRejectedPath = function(arr){
+	if(!arr) return null;
+	var obj,selstr,result;
+	for(var i=arr.length-1;i>=0;i--) {
+		obj = arr[i];
+		selstr = "ancestor-or-self::"+obj.tagName;
+		var s;
+		for(var f in Features){
+			if(Features[f].selector && obj[f]) {
+				if(Features[f].nselector) s = Features[f].nselector(obj);
+				else if(Features[f].selector) s = Features[f].selector(obj[f]);
+				if(s) selstr = selstr +"["+s+"]";
+				else console.log("Error with attribute: "+f);
+			}
+		}
+		result = ((i==arr.length-1)?"":(result + " and "))+ selstr;
+	}
+	return "not("+result+")";
+};
 
 var pathComparator = function(a,b){return a._path.length - b._path.length}
 var GrabSelector = function(resObj) {
@@ -128,13 +151,13 @@ var GrabSelector = function(resObj) {
 	};
 	if(resObj){
 		res.obj = resObj;
-		res.xpath = serialisePath(res.obj.selected);
+		res.xpath = serialisePath(res.obj);
 		res.tag = resObj.selected[resObj.selected.length-1].tagName;
 	} else res.obj = {selected:null,rejected:null};
 
 	var recalculate = function(list,alignFun,initpath) {
 		list.sort(pathComparator);
-		var p = initpath;
+		var p = initpath?initpath:list[0]._path;
 		for(var i=(initpath)?1:0;i<list.length;i++) p = alignFun(p,list[i]._path);
 		return p;
 	};
@@ -146,13 +169,13 @@ var GrabSelector = function(resObj) {
 			res.obj.selected = el.getPath();
 			res.tag = el.tagName;
 		}
-		res.xpath = serialisePath(res.obj.selected);
+		res.xpath = serialisePath(res.obj);
 	};
 	this.deselect = function(el) {
 		selected.remove(el);
 		if(s.length > 0){
 			res.obj.selected = recalculate(s,matchAlign);
-			res.xpath = serialisePath(res.obj.selected);
+			res.xpath = serialisePath(res.obj);
 		}
 		else {
 			res.obj.selected = null;
@@ -166,7 +189,7 @@ var GrabSelector = function(resObj) {
 		else {
 			res.obj.rejected = rejectAlign(res.obj.selected,el.getPath());
 		}
-		console.log(res.obj.rejected);
+		res.xpath = serialisePath(res.obj);
 	};
 	this.dereject = function(el) {
 		rejected.remove(el);
@@ -177,6 +200,6 @@ var GrabSelector = function(resObj) {
 		else {
 			res.obj.rejected = null;
 		}
-		console.log(res.obj.rejected);
+		res.xpath = serialisePath(res.obj);
 	};
 };
