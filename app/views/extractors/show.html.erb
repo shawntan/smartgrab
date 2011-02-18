@@ -4,8 +4,13 @@
 <div class="important">
 	<% form_for(@extractor) do |f| %>
 		<p class="big">
-		Updates daily at <%= time_select :extractor, :update_time %>
-		<%= f.submit 'Change' %>
+		<%if @extractor.update_time %>
+			Updates daily at
+		<%else%>
+			Set an extraction time: 
+		<%end%>
+		 <%= time_select :extractor, :update_time, :default => DateTime.now%>
+					<%= f.submit 'Change' %>
 	<%end%>
 	<p class="big">
 	Click <%=link_to 'here', :action => :extract, :id => @extractor %> to extract now.
