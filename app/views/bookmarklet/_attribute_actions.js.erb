@@ -1,9 +1,23 @@
 var StrictScorer = function(score,neg_score,neg_val){
 	return {
 		score: function(v1,v2) {return v1==v2?score:neg_score},
-		value: function(v1,v2) {return v1==v2?v1:neg_val}
+		value: function(v1,v2) {return v1==v2?v1:neg_val},
+		reject: function(v1,v2) {return v1?(v1==v2?undefined:v2):v2}
 	}
 }
+var removeCommon = function(list1,list2){ 
+	var i=0,j=0;
+	var r = list2.slice(0);
+	while(i<list1.length && j<list2.length) {
+		if(list1[i]==r[j]){
+			r.splice(j,1);
+			i++;
+		}
+		else if(list1[i]<list2[j]) i++;
+		else if(list1[i]>list2[j]) j++;
+	}
+	return (r.length==0)?null:r;
+};
 var listCompare = {
 	score: function(list1,list2){
 		var i=0,j=0;
@@ -27,25 +41,15 @@ var listCompare = {
 			else if(list1[i]>list2[j]) j++;
 		}
 		return common;
-	}
+	},
+	reject: removeCommon
 };
 
-var removeCommon = function(list1,list2){ 
-	var i=0,j=0;
-	while(i<list1.length && j<list2.length) {
-		if(list1[i]==list2[j]){
-			list2.splice(j,1);
-			i++;
-		}
-		else if(list1[i]<list2[j]) i++;
-		else if(list1[i]>list2[j]) j++;
-	}
-};
 
 var Features = {
 	tagName: {
 		extract: function(element) {return element.tagName.toLowerCase();},
-		compare: null,
+		compare: null
 	},
 	index:{
 		extract: function(element) {return element.getIndex();},
@@ -59,7 +63,7 @@ var Features = {
 	},
 	abs: {
 		extract: function(element) {return element.getAbsolute();},
-		compare: new StrictScorer(1,0,null),
+		compare: new StrictScorer(1,0,null)
 	},
 	id:{
 		extract: function(element) {return element.id;},
@@ -79,8 +83,8 @@ var Features = {
 			var p=["contains(concat(' ',@class,' '),' "," ')","]["],sel = p[0] + val[0] + p[1];
 			for(var i=1;i<val.length;i++) sel += p[2] + p[0] + val[i] + p[1];
 			return sel;
-		},
-	},
+		}
+	}
 };
 Features_max_score = (function(){
 	var score = 0;

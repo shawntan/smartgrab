@@ -30,50 +30,61 @@ var scorer = function(el1,el2) {
 	}
 	return score;
 };
+var merger = 	function(x,y,p1,p2,result) {
+	var obj = new Object(),val;
+	for(var i in Features){
+		if(p1[x][i] && p2[y][i]) {
+			val = Features[i].compare.value(p1[x][i],p2[y][i]);
+			if(val) obj[i] = val;
+		}
+	}
+	if(p2[y].end) obj.end = true;
+	if(obj.tagName == '*' && obj.index) {
+		if(obj.abs) obj.index=obj.abs;
+		else delete obj.index;
+	}
+	result.unshift(obj);
+};
 var matchAlign = new Align(
 	matcher,
 	scorer,
-	function(el1,el2,result) {
-		var obj = new Object(),val;
-		for(var i in Features){
-			if(el1[i] && el2[i]) {
-				val = Features[i].compare.value(el1[i],el2[i]);
-				if(val) obj[i] = val;
-			}
-		}
-		if(obj.tagName == '*' && obj.index) {
-			if(obj.abs) obj.index=obj.abs;
-			else delete obj.index;
-		}
-		result.unshift(obj);
-	},
-	function(a,b,result) {result.unshift("*");},
+	merger,
+	function(x,y,a,b,result) {result.unshift("*");},
 	function(){return new Array();}
 );
 var rejectAlign = new Align(
 	matcher,
 	scorer,
-	function(el1,el2,result) {
-		if(el1!=el2) {
-			var el2name = el2.tagName;
-			for(var i in el2) {
-				if(el1[i]) {
-					if(el1[i] instanceof Array) removeCommon(el1[i],el2[i]);
-					else if(el1[i]==el2[i]) delete el2[i];
+	function(x,y,p1,p2,result) {
+		if(p1[x]==p2[y]) return;
+		var obj = null;
+		for(var i in Features) {
+			if(Features[i].compare){
+				var a;
+				if (p2[y][i] && (a = Features[i].compare.reject(p1[x][i],p2[y][i]))){
+					if(!obj) obj = new Object();
+					obj[i] = a;
 				}
 			}
-			for(var i in el2) {
-				if(el2name) el2.tagName = el2name;
-				result.unshift(el2);
+		}
+		if(obj) {
+			if(y==(p2.length-1)) obj.end = true;
+			else obj.tagName = p2[y].tagName;
+			for(var i in obj) {
+				result.unshift(obj);
 				break;
 			}
 		}
 	},
-	function(el1,el2,result) {result.unshift(el2);},
-	function(path1,path2){
-		path2[path2.length-1].leaf = true;
-		return new Array();
-	}
+	function(x,y,p1,p2,result) {result.unshift(p2[y]);},
+	function(path1,path2){return new Array();}
+);
+var interRejectAlign = new Align(
+	matcher,
+	scorer,
+	merger,
+	function(x,y,p1,p2,result) {},
+	function(path1,path2){return new Array();}
 );
 var serialisePath = function(arr){
 	if(!arr) return null;
@@ -121,10 +132,10 @@ var GrabSelector = function(resObj) {
 		res.tag = resObj.selected[resObj.selected.length-1].tagName;
 	} else res.obj = {selected:null,rejected:null};
 
-	var recalculate = function(list) {
+	var recalculate = function(list,alignFun,initpath) {
 		list.sort(pathComparator);
-		var p = list[0]._path;
-		for(var i=1;i<list.length;i++) p = matchAlign(p,list[i]._path);
+		var p = initpath;
+		for(var i=(initpath)?1:0;i<list.length;i++) p = alignFun(p,list[i]._path);
 		return p;
 	};
 
@@ -140,7 +151,7 @@ var GrabSelector = function(resObj) {
 	this.deselect = function(el) {
 		selected.remove(el);
 		if(s.length > 0){
-			res.obj.selected = recalculate(s);
+			res.obj.selected = recalculate(s,matchAlign);
 			res.xpath = serialisePath(res.obj.selected);
 		}
 		else {
@@ -151,7 +162,7 @@ var GrabSelector = function(resObj) {
 	};
 	this.reject = function(el) {
 		rejected.add(el);
-		if(res.obj.rejected)res.obj.rejected = matchAlign(res.obj.rejected,el.getPath());
+		if(res.obj.rejected)res.obj.rejected = interRejectAlign(res.obj.rejected,el.getPath());
 		else {
 			res.obj.rejected = rejectAlign(res.obj.selected,el.getPath());
 		}
@@ -159,5 +170,13 @@ var GrabSelector = function(resObj) {
 	};
 	this.dereject = function(el) {
 		rejected.remove(el);
+		if(r.length > 0) {
+			res.obj.rejected = rejectAlign(res.obj.selected,r[0].getPath());
+			res.obj.rejected = recalculate(r,interRejectAlign,res.obj.rejected);
+		}
+		else {
+			res.obj.rejected = null;
+		}
+		console.log(res.obj.rejected);
 	};
 };
