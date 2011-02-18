@@ -13,8 +13,8 @@ var GrabController = function() {
 	this.form = null;
 	this.list = null;
 	this.extractor = null;
+	this.header = null;
 	var save_page = function() {
-		console.log("saving page...");
 		var form  = new $B("form", {
 			action: create_page,
 			method: "POST",
@@ -36,8 +36,8 @@ var GrabController = function() {
 		= this.list.extractor
 		= this.form.extactor
 		= extractor;
+		this.header.innerHTML = extractor.name;
 		this.form.fields.extractor_id_field.value = extractor.id;
-		console.log(this.extractor);
 		save_page();
 	};
 	this.setPathObject = function(obj){

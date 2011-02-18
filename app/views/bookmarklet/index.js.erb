@@ -65,10 +65,13 @@ var load_annotations = function(extractor) {
 	var form = new GrabForm();
 	var list = new GrabList(extractor);
 	var controller = new GrabController();
+	var header = $B("span",{className:"exname"});
+
 	form.list = controller.list = list;
 	list.form = controller.form = form;
 	form.controller = list.controller = controller;
-	main = new GrabWindow([list,form],"main-dialog",function(){
+	controller.header = header;
+	main = new GrabWindow([header,list,form],"main-dialog",function(){
 		controller.close();
 		$B.destroyAll();
 	});

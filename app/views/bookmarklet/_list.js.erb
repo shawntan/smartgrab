@@ -6,7 +6,7 @@ var GrabList = function(extractor){
 	list.active = null;
 	var update_list = function(ex) {
 		while(list.hasChildNodes()) list.removeChild(list.firstChild);
-		if(!extractor.id) extractor.id = ex.id;
+		extractor = ex;
 		var annotations = ex.annotations;
 		for (var i = 0; i < annotations.length; i++) {
 			var li = $B("li",{
