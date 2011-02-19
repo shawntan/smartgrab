@@ -30,24 +30,41 @@ var scorer = function(el1,el2) {
 	}
 	return score;
 };
-var merger = 	function(x,y,p1,p2,result) {
-	var obj = new Object(),val;
-	for(var i in Features){
-		if(p1[x][i] && p2[y][i]) {
-			val = Features[i].compare.value(p1[x][i],p2[y][i]);
-			if(val) obj[i] = val;
+var MergeFunction = function(postprocess) {
+	return function(x,y,p1,p2,result) {
+		var obj = new Object(),val;
+		for(var i in Features){
+			if(p1[x][i] && p2[y][i]) {
+				val = Features[i].compare.value(p1[x][i],p2[y][i]);
+				if(val) obj[i] = val;
+			}
 		}
-	}
+		if(postprocess(obj)) result.unshift(obj);
+	};
+};
+var normalproc = function(obj) {
 	if(obj.tagName == '*' && obj.index) {
 		if(obj.abs) obj.index=obj.abs;
 		else delete obj.index;
 	}
-	result.unshift(obj);
+	return true;
 };
+var rejectproc = function(obj){
+	if(obj.tagName == '*') {
+		for(var i in obj) {
+			if(i!='tagName') {
+				normalproc(obj);
+				break;
+			}
+			else return false;
+		}
+	}
+	return true;
+}
 var matchAlign = new Align(
 	matcher,
 	scorer,
-	merger,
+	new MergeFunction(normalproc),
 	function(x,y,a,b,result) {result.unshift("*");},
 	function(){return new Array();}
 );
@@ -81,7 +98,7 @@ var rejectAlign = new Align(
 var interRejectAlign = new Align(
 	matcher,
 	scorer,
-	merger,
+	new MergeFunction(rejectproc),
 	function(x,y,p1,p2,result) {},
 	function(path1,path2){return new Array();}
 );

@@ -8,6 +8,7 @@ var StrictScorer = function(score,neg_score,neg_val){
 var removeCommon = function(list1,list2){ 
 	var i=0,j=0;
 	var r = list2.slice(0);
+	if(!list1) return r;
 	while(i<list1.length && j<list2.length) {
 		if(list1[i]==r[j]){
 			r.splice(j,1);
@@ -81,7 +82,10 @@ var Features = {
 	last: {
 		extract: function(element) {return element.isLast();},
 		compare: new StrictScorer(1,0,null),
-		selector: function(val){return val?"last()":null;}
+		selector: function(val){return val?"last()":null;},
+		nselector: function(obj) {
+			return "count(following-sibling::"+obj.tagName+")=0";
+		}
 	},
 	classes: {
 		extract: function(element) {return element.getClasses();},
